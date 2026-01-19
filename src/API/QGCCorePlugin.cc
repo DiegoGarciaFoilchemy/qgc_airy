@@ -84,10 +84,10 @@ const QVariantList &QGCCorePlugin::analyzePages()
             QUrl::fromUserInput(QStringLiteral("qrc:/qml/QGroundControl/AnalyzeView/LogDownloadPage.qml")),
             QUrl::fromUserInput(QStringLiteral("qrc:/qmlimages/LogDownloadIcon.svg")))),
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-        QVariant::fromValue(new QmlComponentInfo(
-            tr("GeoTag Images"),
-            QUrl::fromUserInput(QStringLiteral("qrc:/qml/QGroundControl/AnalyzeView/GeoTagPage.qml")),
-            QUrl::fromUserInput(QStringLiteral("qrc:/qmlimages/GeoTagIcon.svg")))),
+        // QVariant::fromValue(new QmlComponentInfo(
+        //     tr("GeoTag Images"),
+        //     QUrl::fromUserInput(QStringLiteral("qrc:/qml/QGroundControl/AnalyzeView/GeoTagPage.qml")),
+        //     QUrl::fromUserInput(QStringLiteral("qrc:/qmlimages/GeoTagIcon.svg")))),
 #endif
         QVariant::fromValue(new QmlComponentInfo(
             tr("MAVLink Console"),
@@ -99,10 +99,10 @@ const QVariantList &QGCCorePlugin::analyzePages()
             QUrl::fromUserInput(QStringLiteral("qrc:/qml/QGroundControl/AnalyzeView/MAVLinkInspectorPage.qml")),
             QUrl::fromUserInput(QStringLiteral("qrc:/qmlimages/MAVLinkInspector.svg")))),
 #endif
-        QVariant::fromValue(new QmlComponentInfo(
-            tr("Vibration"),
-            QUrl::fromUserInput(QStringLiteral("qrc:/qml/QGroundControl/AnalyzeView/VibrationPage.qml")),
-            QUrl::fromUserInput(QStringLiteral("qrc:/qmlimages/VibrationPageIcon")))),
+        // QVariant::fromValue(new QmlComponentInfo(
+        //     tr("Vibration"),
+        //     QUrl::fromUserInput(QStringLiteral("qrc:/qml/QGroundControl/AnalyzeView/VibrationPage.qml")),
+        //     QUrl::fromUserInput(QStringLiteral("qrc:/qmlimages/VibrationPageIcon")))),
     };
 
     return analyzeList;

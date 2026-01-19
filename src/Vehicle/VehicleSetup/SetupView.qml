@@ -98,13 +98,13 @@ Rectangle {
         }
     }
 
-    Component.onCompleted: _showSummaryPanel()
+    Component.onCompleted: showParametersPanel()
 
     Connections {
         target: QGroundControl.corePlugin
         onShowAdvancedUIChanged: {
             if(!QGroundControl.corePlugin.showAdvancedUI) {
-                _showSummaryPanel()
+                showParametersPanel()
             }
         }
     }
@@ -118,8 +118,9 @@ Rectangle {
                 //      The summary panel is already showing and the active vehicle goes away
                 //      The active vehicle goes away and we are not on the Firmware panel.
                 summaryButton.checked = true
-                _showSummaryPanel()
+                
             }
+            showParametersPanel()
         }
     }
 
@@ -213,52 +214,52 @@ Rectangle {
             id:         buttonColumn
             spacing:    ScreenTools.defaultFontPixelHeight / 4
 
-            ConfigButton {
-                id:                 summaryButton
-                icon.source:        "/qmlimages/VehicleSummaryIcon.png"
-                checked:            true
-                text:               qsTr("Summary")
-                Layout.fillWidth:   true
+            // ConfigButton {
+            //     id:                 summaryButton
+            //     icon.source:        "/qmlimages/VehicleSummaryIcon.png"
+            //     checked:            true
+            //     text:               qsTr("Summary")
+            //     Layout.fillWidth:   true
 
-                onClicked: showSummaryPanel()
-            }
+            //     onClicked: showSummaryPanel()
+            // }
 
-            ConfigButton {
-                visible:            QGroundControl.multiVehicleManager.activeVehicle ? QGroundControl.multiVehicleManager.activeVehicle.flowImageIndex > 0 : false
-                text:               qsTr("Optical Flow")
-                Layout.fillWidth:   true
-                onClicked:          showPanel(this, "qrc:/qml/QGroundControl/VehicleSetup/OpticalFlowSensor.qml")
-            }
+            // ConfigButton {
+            //     visible:            QGroundControl.multiVehicleManager.activeVehicle ? QGroundControl.multiVehicleManager.activeVehicle.flowImageIndex > 0 : false
+            //     text:               qsTr("Optical Flow")
+            //     Layout.fillWidth:   true
+            //     onClicked:          showPanel(this, "qrc:/qml/QGroundControl/VehicleSetup/OpticalFlowSensor.qml")
+            // }
 
-            ConfigButton {
-                id:                 joystickButton
-                icon.source:      "/qmlimages/Joystick.png"
-                setupComplete:      _activeJoystick ? _activeJoystick.calibrated || _buttonsOnly : false
-                visible:            _fullParameterVehicleAvailable && joystickManager.joysticks.length !== 0
-                text:               _forcedToButtonsOnly ? qsTr("Buttons") : qsTr("Joystick")
-                Layout.fillWidth:   true
-                onClicked:          showPanel(this, "qrc:/qml/QGroundControl/VehicleSetup/JoystickConfig.qml")
+            // ConfigButton {
+            //     id:                 joystickButton
+            //     icon.source:      "/qmlimages/Joystick.png"
+            //     setupComplete:      _activeJoystick ? _activeJoystick.calibrated || _buttonsOnly : false
+            //     visible:            _fullParameterVehicleAvailable && joystickManager.joysticks.length !== 0
+            //     text:               _forcedToButtonsOnly ? qsTr("Buttons") : qsTr("Joystick")
+            //     Layout.fillWidth:   true
+            //     onClicked:          showPanel(this, "qrc:/qml/QGroundControl/VehicleSetup/JoystickConfig.qml")
 
-                property var    _activeJoystick:        joystickManager.activeJoystick
-                property bool   _buttonsOnly:           _activeJoystick ? _activeJoystick.axisCount == 0 : false
-                property bool   _forcedToButtonsOnly:   !QGroundControl.corePlugin.options.allowJoystickSelection && _buttonsOnly
-            }
+            //     property var    _activeJoystick:        joystickManager.activeJoystick
+            //     property bool   _buttonsOnly:           _activeJoystick ? _activeJoystick.axisCount == 0 : false
+            //     property bool   _forcedToButtonsOnly:   !QGroundControl.corePlugin.options.allowJoystickSelection && _buttonsOnly
+            // }
 
-            Repeater {
-                id:     componentRepeater
-                model:  _fullParameterVehicleAvailable ? QGroundControl.multiVehicleManager.activeVehicle.autopilotPlugin.vehicleComponents : 0
+            // Repeater {
+            //     id:     componentRepeater
+            //     model:  _fullParameterVehicleAvailable ? QGroundControl.multiVehicleManager.activeVehicle.autopilotPlugin.vehicleComponents : 0
 
-                ConfigButton {
-                    icon.source:      modelData.iconResource
-                    setupComplete:      modelData.setupComplete
-                    text:               modelData.name
-                    visible:            modelData.setupSource.toString() !== ""
-                    Layout.fillWidth:   true
-                    onClicked:          showVehicleComponentPanel(componentUrl)
+            //     ConfigButton {
+            //         icon.source:      modelData.iconResource
+            //         setupComplete:      modelData.setupComplete
+            //         text:               modelData.name
+            //         visible:            modelData.setupSource.toString() !== ""
+            //         Layout.fillWidth:   true
+            //         onClicked:          showVehicleComponentPanel(componentUrl)
 
-                    property var componentUrl: modelData
-                }
-            }
+            //         property var componentUrl: modelData
+            //     }
+            // }
 
             ConfigButton {
                 id:                 parametersButton
