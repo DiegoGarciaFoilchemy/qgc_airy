@@ -28,6 +28,13 @@ import QGroundControl.UTMSP
 ApplicationWindow {
     id:             mainWindow
     visible:        true
+    width:          1280
+    height:         800
+    minimumWidth:   1280
+    minimumHeight:  800
+    maximumWidth:   1280
+    maximumHeight:  800
+    flags:          Qt.Window | Qt.WindowTitleBarButtonsHint | Qt.WindowSystemMenuHint
 
     property bool   _utmspSendActTrigger
     property bool   _utmspStartTelemetry
@@ -38,9 +45,9 @@ ApplicationWindow {
     }
 
     /// Saves main window position and size and re-opens it in the same position and size next time
-    MainWindowSavedState {
-        window: mainWindow
-    }
+    // MainWindowSavedState {
+    //     window: mainWindow
+    // }
 
     QtObject {
         id: firstRunPromptManager

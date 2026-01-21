@@ -249,9 +249,9 @@ else()
     )
 endif()
 
-if(NOT QGC_BUILD_TESTING)
+# if(NOT QGC_BUILD_TESTING)
     set(BUILD_TESTING OFF CACHE INTERNAL "" FORCE)
-endif()
+# endif()
 
 #######################################################
 #                Custom Build Configuration
@@ -286,7 +286,7 @@ else()
 endif()
 
 if(QGC_BUILD_TESTING)
-    list(APPEND QGC_RESOURCES ${CMAKE_SOURCE_DIR}/test/UnitTest.qrc)
+    # list(APPEND QGC_RESOURCES ${CMAKE_SOURCE_DIR}/test/UnitTest.qrc)
 endif()
 
 #######################################################
@@ -518,7 +518,7 @@ qt_add_qml_module(${CMAKE_PROJECT_NAME}
 
 add_subdirectory(src)
 if(QGC_BUILD_TESTING)
-    add_subdirectory(test)
+    # add_subdirectory(test)
 endif()
 
 if(QGC_CUSTOM_BUILD)

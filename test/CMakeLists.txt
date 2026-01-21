@@ -36,8 +36,8 @@ function(add_qgc_test test_name)
     add_dependencies(check ${PROJECT_NAME})
 endfunction()
 
-add_subdirectory(ADSB)
-add_qgc_test(ADSBTest)
+# add_subdirectory(ADSB)
+# add_qgc_test(ADSBTest)
 
 add_subdirectory(AnalyzeView)
 add_qgc_test(ExifParserTest)

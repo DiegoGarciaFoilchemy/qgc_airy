@@ -116,10 +116,40 @@ Item {
             // Minimal properties expected by code elsewhere
             property bool isSatelliteMap: false
 
-            // Plain white background replacing the map
-            Rectangle {
-                anchors.fill: parent
-                color: "white"
+            // SwipeView for multiple screens
+            SwipeView {
+                id: screenSwipeView
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: navBar.top
+                anchors.bottomMargin: 12
+                clip: true
+
+                Page1 { width: screenSwipeView.width; height: screenSwipeView.height }
+                Page2 { width: screenSwipeView.width; height: screenSwipeView.height }
+                Page3 { width: screenSwipeView.width; height: screenSwipeView.height }
+                Page4 { width: screenSwipeView.width; height: screenSwipeView.height }
+                Page5 { width: screenSwipeView.width; height: screenSwipeView.height }
+            }
+
+            // Bottom navigation buttons
+            Row {
+                id: navBar
+                anchors.bottom: parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottomMargin: 12
+                spacing: 12
+
+                Repeater {
+                    model: 5
+                    delegate: Button {
+                        text: "Page " + (index + 1)
+                        checkable: true
+                        checked: screenSwipeView.currentIndex === index
+                        onClicked: screenSwipeView.currentIndex = index
+                    }
+                }
             }
         }
 

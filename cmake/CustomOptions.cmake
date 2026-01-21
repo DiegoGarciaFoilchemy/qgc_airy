@@ -30,14 +30,14 @@ option(QGC_VIEWER3D "Enable Viewer3D" ON) # Qt6Quick3D_FOUND
 # option(QGC_DISABLE_MAVLINK_INSPECTOR "Disable Mavlink Inspector" OFF) # This removes QtCharts which is GPL licensed
 
 # Comms
-option(QGC_ENABLE_BLUETOOTH "Enable Bluetooth Links" ON) # Qt6Bluetooth_FOUND
+option(QGC_ENABLE_BLUETOOTH "Enable Bluetooth Links" OFF) # Qt6Bluetooth_FOUND
 option(QGC_ZEROCONF_ENABLED "Enable ZeroConf Compatibility" OFF)
 option(QGC_AIRLINK_DISABLED "Disable AIRLink" ON)
 option(QGC_NO_SERIAL_LINK "Disable Serial Links" OFF) # NOT IOS AND Qt6SerialPort_FOUND
 
 # Video
 option(QGC_ENABLE_UVC "Enable UVC Devices" ON) # Qt6Multimedia_FOUND
-option(QGC_ENABLE_GST_VIDEOSTREAMING "Enable GStreamer Video Backend" ON)
+option(QGC_ENABLE_GST_VIDEOSTREAMING "Enable GStreamer Video Backend" OFF)
 option(QGC_ENABLE_QT_VIDEOSTREAMING "Enable QtMultimedia Video Backend" OFF) # Qt6Multimedia_FOUND
 
 # MAVLink
@@ -45,9 +45,9 @@ set(QGC_MAVLINK_GIT_REPO "https://github.com/mavlink/c_library_v2.git" CACHE STR
 set(QGC_MAVLINK_GIT_TAG "19f9955598af9a9181064619bd2e3c04bd2d848a" CACHE STRING "Tag of MAVLink Git Repo")
 
 # APM
-option(QGC_DISABLE_APM_MAVLINK "Disable APM Dialect" OFF)
-option(QGC_DISABLE_APM_PLUGIN "Disable APM Plugin" OFF)
-option(QGC_DISABLE_APM_PLUGIN_FACTORY "Disable APM Plugin Factory" OFF)
+option(QGC_DISABLE_APM_MAVLINK "Disable APM Dialect" ON)
+option(QGC_DISABLE_APM_PLUGIN "Disable APM Plugin" ON)
+option(QGC_DISABLE_APM_PLUGIN_FACTORY "Disable APM Plugin Factory" ON)
 
 # PX4
 option(QGC_DISABLE_PX4_PLUGIN "Disable PX4 Plugin" OFF)
