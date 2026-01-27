@@ -24,7 +24,7 @@ qt_add_qml_module(FlightMapModule
         Widgets/CompassHeadingIndicator.qml
         Widgets/HorizontalCompassAttitude.qml
         Widgets/VesselAttitude.qml
-        Widgets/FoilPosition.qml
+        Widgets/FoilAngle.qml
         Widgets/IntegratedAttitudeIndicator.qml
         Widgets/IntegratedCompassAttitude.qml
         Widgets/MapFitFunctions.qml

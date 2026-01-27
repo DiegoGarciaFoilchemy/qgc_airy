@@ -507,10 +507,10 @@ ApplicationWindow {
                 anchors.bottom:     parent.bottom
                 spacing:            ScreenTools.defaultFontPixelWidth
 
-                QGCLabel {
-                    font.pointSize: ScreenTools.largeFontPointSize
-                    text:           "<"
-                }
+                // QGCLabel {
+                //     font.pointSize: ScreenTools.largeFontPointSize
+                //     text:           "<"
+                // }
 
                 QGCLabel {
                     id:             toolbarDrawerText
@@ -710,27 +710,27 @@ ApplicationWindow {
                 opacity:        0.85
             }
 
-            Rectangle {
-                anchors.horizontalCenter:   backgroundRect.right
-                anchors.verticalCenter:     backgroundRect.top
-                width:                      ScreenTools.largeFontPixelHeight
-                height:                     width
-                radius:                     width / 2
-                color:                      QGroundControl.globalPalette.button
-                border.color:               QGroundControl.globalPalette.buttonText
-                visible:                    indicatorDrawerLoader.item && indicatorDrawerLoader.item.showExpand && !indicatorDrawer._expanded
+            // Rectangle {
+            //     anchors.horizontalCenter:   backgroundRect.right
+            //     anchors.verticalCenter:     backgroundRect.top
+            //     width:                      ScreenTools.largeFontPixelHeight
+            //     height:                     width
+            //     radius:                     width / 2
+            //     color:                      QGroundControl.globalPalette.button
+            //     border.color:               QGroundControl.globalPalette.buttonText
+            //     visible:                    indicatorDrawerLoader.item && indicatorDrawerLoader.item.showExpand && !indicatorDrawer._expanded
 
-                QGCLabel {
-                    anchors.centerIn:   parent
-                    text:               ">"
-                    color:              QGroundControl.globalPalette.buttonText
-                }  
+            //     QGCLabel {
+            //         anchors.centerIn:   parent
+            //         text:               ">"
+            //         color:              QGroundControl.globalPalette.buttonText
+            //     }  
 
-                QGCMouseArea {
-                    fillItem: parent
-                    onClicked: indicatorDrawer._expanded = true
-                }
-            }
+            //     QGCMouseArea {
+            //         fillItem: parent
+            //         onClicked: indicatorDrawer._expanded = true
+            //     }
+            // }
         }
 
         contentItem: QGCFlickable {

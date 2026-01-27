@@ -20,35 +20,35 @@ import QGroundControl.FactSystem
 import QGroundControl.FactControls
 
 ColumnLayout {
-    spacing: ScreenTools.defaultFontPixelHeight / 2
+    // spacing: ScreenTools.defaultFontPixelHeight / 2
 
-    FactPanelController { id: controller }
+    // FactPanelController { id: controller }
 
-    SettingsGroupLayout {
-        heading:            qsTr("Ground Control Comm Loss Failsafe")
-        Layout.fillWidth:   true
+    // SettingsGroupLayout {
+    //     heading:            qsTr("Ground Control Comm Loss Failsafe")
+    //     Layout.fillWidth:   true
 
-        RowLayout {
-            Layout.fillWidth: true
-            spacing:          ScreenTools.defaultFontPixelWidth * 2
+    //     RowLayout {
+    //         Layout.fillWidth: true
+    //         spacing:          ScreenTools.defaultFontPixelWidth * 2
 
-            QGCLabel {
-                Layout.fillWidth:   true;
-                text:               qsTr("Vehicle Action")
-            }
-            FactComboBox {
-                id:                     failsafeActionCombo
-                fact:                   controller.getParameterFact(-1, "NAV_DLL_ACT")
-                indexModel:             false
-            }
-        }
+    //         QGCLabel {
+    //             Layout.fillWidth:   true;
+    //             text:               qsTr("Vehicle Action")
+    //         }
+    //         FactComboBox {
+    //             id:                     failsafeActionCombo
+    //             fact:                   controller.getParameterFact(-1, "NAV_DLL_ACT")
+    //             indexModel:             false
+    //         }
+    //     }
 
-        FactSlider {
-            Layout.fillWidth:       true
-            Layout.preferredWidth:  ScreenTools.defaultFontPixelWidth * 40
-            label:                  qsTr("Loss Timeout")
-            fact:                   controller.getParameterFact(-1, "COM_DL_LOSS_T")
-            majorTickStepSize:      5
-        }
-    }
+    //     FactSlider {
+    //         Layout.fillWidth:       true
+    //         Layout.preferredWidth:  ScreenTools.defaultFontPixelWidth * 40
+    //         label:                  qsTr("Loss Timeout")
+    //         fact:                   controller.getParameterFact(-1, "COM_DL_LOSS_T")
+    //         majorTickStepSize:      5
+    //     }
+    // }
 }

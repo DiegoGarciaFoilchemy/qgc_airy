@@ -39,10 +39,10 @@ PX4FirmwarePlugin::PX4FirmwarePlugin()
     qmlRegisterType<SensorsComponentController>         ("QGroundControl.Controllers", 1, 0, "SensorsComponentController");
     qmlRegisterType<PowerComponentController>           ("QGroundControl.Controllers", 1, 0, "PowerComponentController");
 
-    const QString manualFlightModeName = tr("Manual");
-    const QString acroFlightModeName = tr("Acro");
-    const QString stabilizedFlightModeName = tr("Stabilized");
-    const QString rattitudeFlightModeName = tr("Rattitude");
+    const QString manualFlightModeName = tr("High Speed");
+    const QString acroFlightModeName = tr("Approach");
+    const QString stabilizedFlightModeName = tr("Debug");
+    const QString rattitudeFlightModeName = tr("Low speed");
     const QString altCtlFlightModeName = tr("Altitude");
     const QString posCtlFlightModeName = tr("Position");
     const QString offboardFlightModeName = tr("Offboard");
@@ -84,19 +84,19 @@ PX4FirmwarePlugin::PX4FirmwarePlugin()
         { stabilizedFlightModeName, PX4CustomMode::STABILIZED,      true,   true },
         { acroFlightModeName,       PX4CustomMode::ACRO,            true,   true },
         { rattitudeFlightModeName,  PX4CustomMode::RATTITUDE,       true,   false},
-        { altCtlFlightModeName,     PX4CustomMode::ALTCTL,          true,   false},
-        { offboardFlightModeName,   PX4CustomMode::OFFBOARD,        true,   true },
-        { simpleFlightModeName,     PX4CustomMode::SIMPLE,          false,  false},
-        { posCtlFlightModeName,     PX4CustomMode::POSCTL_POSCTL,   true,   false},
-        { orbitFlightModeName,      PX4CustomMode::POSCTL_ORBIT,    false,  true },
-        { holdFlightModeName,       PX4CustomMode::AUTO_LOITER,     true,   true },
-        { missionFlightModeName,    PX4CustomMode::AUTO_MISSION,    true,   true },
-        { rtlFlightModeName,        PX4CustomMode::AUTO_RTL,        true,   true },
-        { landingFlightModeName,    PX4CustomMode::AUTO_LAND,       false,  true },
-        { preclandFlightModeName,   PX4CustomMode::AUTO_PRECLAND,   true,   true },
-        { readyFlightModeName,      PX4CustomMode::AUTO_READY,      false,  false},
-        { rtgsFlightModeName,       PX4CustomMode::AUTO_RTGS,       false,  false},
-        { takeoffFlightModeName,    PX4CustomMode::AUTO_TAKEOFF,    false,  false},
+        // { altCtlFlightModeName,     PX4CustomMode::ALTCTL,          true,   false},
+        // { offboardFlightModeName,   PX4CustomMode::OFFBOARD,        true,   true },
+        // { simpleFlightModeName,     PX4CustomMode::SIMPLE,          false,  false},
+        // { posCtlFlightModeName,     PX4CustomMode::POSCTL_POSCTL,   true,   false},
+        // { orbitFlightModeName,      PX4CustomMode::POSCTL_ORBIT,    false,  true },
+        // { holdFlightModeName,       PX4CustomMode::AUTO_LOITER,     true,   true },
+        // { missionFlightModeName,    PX4CustomMode::AUTO_MISSION,    true,   true },
+        // { rtlFlightModeName,        PX4CustomMode::AUTO_RTL,        true,   true },
+        // { landingFlightModeName,    PX4CustomMode::AUTO_LAND,       false,  true },
+        // { preclandFlightModeName,   PX4CustomMode::AUTO_PRECLAND,   true,   true },
+        // { readyFlightModeName,      PX4CustomMode::AUTO_READY,      false,  false},
+        // { rtgsFlightModeName,       PX4CustomMode::AUTO_RTGS,       false,  false},
+        // { takeoffFlightModeName,    PX4CustomMode::AUTO_TAKEOFF,    false,  false},
     };
 
     updateAvailableFlightModes(availableFlightModes);
@@ -245,18 +245,18 @@ QList<MAV_CMD> PX4FirmwarePlugin::supportedMissionCommands(QGCMAVLink::VehicleCl
     };
 
     if (vehicleClass == QGCMAVLink::VehicleClassGeneric) {
-        supportedCommands   += vtolCommands;
-        supportedCommands   += flightCommands;
+        // supportedCommands   += vtolCommands;
+        // supportedCommands   += flightCommands;
     }
     if (vehicleClass == QGCMAVLink::VehicleClassVTOL) {
-        supportedCommands += vtolCommands;
-        supportedCommands += flightCommands;
+        // supportedCommands += vtolCommands;
+        // supportedCommands += flightCommands;
     } else if (vehicleClass == QGCMAVLink::VehicleClassFixedWing || vehicleClass == QGCMAVLink::VehicleClassMultiRotor) {
-        supportedCommands += flightCommands;
+        // supportedCommands += flightCommands;
     }
 
     if (SettingsManager::instance()->planViewSettings()->useConditionGate()->rawValue().toBool()) {
-        supportedCommands.append(MAV_CMD_CONDITION_GATE);
+        // supportedCommands.append(MAV_CMD_CONDITION_GATE);
     }
 
     return supportedCommands;

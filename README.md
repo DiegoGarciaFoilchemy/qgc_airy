@@ -56,5 +56,7 @@ QGroundControl is *open-source*, meaning you have the power to shape it! Whether
 With QGroundControl, you're in full command of your UAV, ready to take your missions to the next level.
 
 ~/Qt/6.8.3/gcc_64/bin/qt-cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
-cmake --build build --config Debug
+
+
+
 ./build/Debug/QGroundControl
