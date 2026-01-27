@@ -46,7 +46,12 @@ VehicleFactGroup::VehicleFactGroup(QObject *parent)
     _addFact(&_hobbsFact);
     _addFact(&_throttlePctFact);
     _addFact(&_imuTempFact);
-
+    _addFact(&_acu1AngleFact);
+    _addFact(&_acu2AngleFact);
+    _addFact(&_acu3AngleFact);
+    _addFact(&_acu4AngleFact);
+    _addFact(&_acu5AngleFact);
+    _addFact(&_acu6AngleFact);
     _hobbsFact.setRawValue(QStringLiteral("0000:00:00"));
 }
 
@@ -56,9 +61,9 @@ void VehicleFactGroup::handleMessage(Vehicle *vehicle, const mavlink_message_t &
     case MAVLINK_MSG_ID_ATTITUDE:
         _handleAttitude(vehicle, message);
         break;
-    case MAVLINK_MSG_ID_ATTITUDE_QUATERNION:
-        _handleAttitudeQuaternion(vehicle, message);
-        break;
+    // case MAVLINK_MSG_ID_ATTITUDE_QUATERNION:
+    //     _handleAttitudeQuaternion(vehicle, message);
+    //     break;
     case MAVLINK_MSG_ID_ALTITUDE:
         _handleAltitude(message);
         break;
@@ -100,6 +105,12 @@ void VehicleFactGroup::_handleAttitudeWorker(double rollRadians, double pitchRad
     roll()->setRawValue(rollDegrees);
     pitch()->setRawValue(pitchDegrees);
     heading()->setRawValue(yawDegrees);
+    acu1Angle()->setRawValue(rollDegrees);
+    acu2Angle()->setRawValue(pitchDegrees);
+    acu3Angle()->setRawValue(yawDegrees);
+    acu4Angle()->setRawValue(rollDegrees);
+    acu5Angle()->setRawValue(pitchDegrees);
+    acu6Angle()->setRawValue(yawDegrees);
 }
 
 void VehicleFactGroup::_handleAttitude(Vehicle *vehicle, const mavlink_message_t &message)

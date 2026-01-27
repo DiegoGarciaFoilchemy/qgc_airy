@@ -275,7 +275,7 @@ void QGCApplication::init()
     MultiVehicleManager::registerQmlTypes();
     QGCPositionManager::registerQmlTypes();
     SettingsManager::registerQmlTypes();
-    VideoManager::registerQmlTypes();
+    // VideoManager::registerQmlTypes();
     QGCCorePlugin::registerQmlTypes();
     GPSRtk::registerQmlTypes();
     JoystickManager::registerQmlTypes();
@@ -335,7 +335,7 @@ void QGCApplication::_initVideo()
 #endif
 
     QGCCorePlugin::instance();  // CorePlugin must be initialized before VideoManager for Video Cleanup
-    VideoManager::instance();
+    // VideoManager::instance();
     _videoManagerInitialized = true;
 }
 
@@ -355,7 +355,7 @@ void QGCApplication::_initForNormalAppBoot()
     FollowMe::instance()->init();
     QGCPositionManager::instance()->init();
     LinkManager::instance()->init();
-    VideoManager::instance()->init(mainRootWindow());
+    // VideoManager::instance()->init(mainRootWindow());
 
     // Image provider for Optical Flow
     _qmlAppEngine->addImageProvider(_qgcImageProviderId, new QGCImageProvider());

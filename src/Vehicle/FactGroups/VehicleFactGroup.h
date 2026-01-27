@@ -42,6 +42,12 @@ class VehicleFactGroup : public FactGroup
     Q_PROPERTY(Fact *hobbs                  READ hobbs                  CONSTANT)
     Q_PROPERTY(Fact *throttlePct            READ throttlePct            CONSTANT)
     Q_PROPERTY(Fact *imuTemp                READ imuTemp                CONSTANT)
+    Q_PROPERTY(Fact *acu1Angle              READ acu1Angle              CONSTANT)
+    Q_PROPERTY(Fact *acu2Angle              READ acu2Angle              CONSTANT)
+    Q_PROPERTY(Fact *acu3Angle              READ acu3Angle              CONSTANT)
+    Q_PROPERTY(Fact *acu4Angle              READ acu4Angle              CONSTANT)
+    Q_PROPERTY(Fact *acu5Angle              READ acu5Angle              CONSTANT)
+    Q_PROPERTY(Fact *acu6Angle              READ acu6Angle              CONSTANT)
 
 public:
     explicit VehicleFactGroup(QObject *parent = nullptr);
@@ -74,6 +80,12 @@ public:
     Fact *hobbs() { return &_hobbsFact; }
     Fact *throttlePct() { return &_throttlePctFact; }
     Fact *imuTemp() { return &_imuTempFact; }
+    Fact *acu1Angle() { return &_acu1AngleFact; }
+    Fact *acu2Angle() { return &_acu2AngleFact; }
+    Fact *acu3Angle() { return &_acu3AngleFact; }
+    Fact *acu4Angle() { return &_acu4AngleFact; }
+    Fact *acu5Angle() { return &_acu5AngleFact; }
+    Fact *acu6Angle() { return &_acu6AngleFact; }
 
     void handleMessage(Vehicle *vehicle, const mavlink_message_t &message) override;
 
@@ -117,7 +129,12 @@ protected:
     Fact _hobbsFact = Fact(0, QStringLiteral("hobbs"), FactMetaData::valueTypeString);
     Fact _throttlePctFact = Fact(0, QStringLiteral("throttlePct"), FactMetaData::valueTypeUint16);
     Fact _imuTempFact = Fact(0, QStringLiteral("imuTemp"), FactMetaData::valueTypeInt16);
-
+    Fact _acu1AngleFact = Fact(0, QStringLiteral("acu1Angle"), FactMetaData::valueTypeDouble);
+    Fact _acu2AngleFact = Fact(0, QStringLiteral("acu2Angle"), FactMetaData::valueTypeDouble);
+    Fact _acu3AngleFact = Fact(0, QStringLiteral("acu3Angle"), FactMetaData::valueTypeDouble);
+    Fact _acu4AngleFact = Fact(0, QStringLiteral("acu4Angle"), FactMetaData::valueTypeDouble);
+    Fact _acu5AngleFact = Fact(0, QStringLiteral("acu5Angle"), FactMetaData::valueTypeDouble);
+    Fact _acu6AngleFact = Fact(0, QStringLiteral("acu6Angle"), FactMetaData::valueTypeDouble);
     float _altitudeTuningOffset = qQNaN();
 
 protected:

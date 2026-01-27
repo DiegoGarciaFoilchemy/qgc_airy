@@ -39,7 +39,8 @@ Item {
 
     // Properties of UTM adapter
     property bool utmspSendActTrigger: false
-
+    // Page names for navigation
+    property var pageNames: ["overview", "actuators", "alarms", "debug", "test"]
     // PlanMasterController {
     //     id:                     _planController
     //     flyView:                true
@@ -142,9 +143,9 @@ Item {
                 spacing: 12
 
                 Repeater {
-                    model: 5
+                    model: pageNames
                     delegate: Button {
-                        text: "Page " + (index + 1)
+                        text: modelData
                         checkable: true
                         checked: screenSwipeView.currentIndex === index
                         onClicked: screenSwipeView.currentIndex = index
