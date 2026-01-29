@@ -1622,11 +1622,22 @@ void Vehicle::setArmed(bool armed, bool showError)
 
 void Vehicle::forceArm(void)
 {
+    qCWarning(VehicleLog) << "Vehicle::forceArm";
     sendMavCommand(_defaultComponentId,
                    MAV_CMD_COMPONENT_ARM_DISARM,
                    true,    // show error if fails
                    1.0f,    // arm
                    2989);   // force arm
+}
+
+void Vehicle::forceDisarm(void)
+{
+    qCDebug(VehicleLog) << "Vehicle::forceDisarm";
+    sendMavCommand(_defaultComponentId,
+                   MAV_CMD_COMPONENT_ARM_DISARM,
+                   true,    // show error if fails
+                   0.0f,    // disarm
+                   21196);  // force disarm
 }
 
 bool Vehicle::flightModeSetAvailable()
@@ -1654,9 +1665,10 @@ void Vehicle::setFlightMode(const QString& flightMode)
 {
     uint8_t     base_mode;
     uint32_t    custom_mode;
-
+    qWarning(VehicleLog) << "setFlightMode called for mode:" << flightMode;
     if (setFlightModeCustom(flightMode, &base_mode, &custom_mode)) {
         SharedLinkInterfacePtr sharedLink = vehicleLinkManager()->primaryLink().lock();
+        qCWarning(VehicleLog) << "base mode:" << base_mode << "custom mode:" << custom_mode;
         if (!sharedLink) {
             qCDebug(VehicleLog) << "setFlightMode: primary link gone!";
             return;

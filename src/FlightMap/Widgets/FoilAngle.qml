@@ -16,7 +16,7 @@ import QGroundControl.Palette
 
 
 Item {
-    width: 200
+    width: 250
     height: width
     
     property real value: 0 // Current speedometer value (-40 to 40)
@@ -24,6 +24,7 @@ Item {
     property real maxValue: 40
     property real needleWidth: 4
     property real needleLength: 80
+    property real foilAngle: 0
     
     // Canvas for drawing the speedometer
     Canvas {
@@ -32,36 +33,41 @@ Item {
         
         onPaint: {
             var ctx = getContext("2d")
-            var centerX = width / 2
+            var centerX = width / 2 + 40
             var centerY = height / 2
             var radius = Math.min(width, height) / 2 - 10
+            var spanRadians = 80 * Math.PI / 180
+            var startAngle = Math.PI - spanRadians / 2
+            var endAngle = Math.PI + spanRadians / 2
             
             // Clear canvas
             ctx.clearRect(0, 0, width, height)
             
-            // Draw outer circle
-            ctx.strokeStyle = "#333333"
+            // Draw outer arc (80°)
+            ctx.strokeStyle = "#ffffff"
             ctx.lineWidth = 2
             ctx.beginPath()
-            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
+            ctx.arc(centerX, centerY, radius, startAngle, endAngle)
             ctx.stroke()
             
-            // Draw inner circle
+            // Draw inner arc (80°)
             ctx.strokeStyle = "#cccccc"
             ctx.lineWidth = 1
             ctx.beginPath()
-            ctx.arc(centerX, centerY, radius - 5, 0, 2 * Math.PI)
+            ctx.arc(centerX, centerY, radius - 5, startAngle, endAngle)
             ctx.stroke()
             
             // Draw scale markings and numbers
-            ctx.fillStyle = "#000000"
-            ctx.strokeStyle = "#000000"
+            ctx.fillStyle = "#ffffff"
+            ctx.strokeStyle = "#ffffff"
             ctx.font = "12px Arial"
             ctx.textAlign = "center"
             ctx.textBaseline = "middle"
             
-            for (let i = minValue; i <= maxValue; i += 20) {
-                var angle = ((i - minValue) / (maxValue - minValue)) * Math.PI - Math.PI / 2
+            var majorValues = [minValue, 0, maxValue]
+            for (let i = 0; i < majorValues.length; i++) {
+                var value = majorValues[i]
+                var angle = startAngle + ((value - minValue) / (maxValue - minValue)) * spanRadians
                 
                 // Draw tick marks
                 var x1 = centerX + (radius - 15) * Math.cos(angle)
@@ -75,61 +81,50 @@ Item {
                 ctx.lineTo(x2, y2)
                 ctx.stroke()
                 
-                // Draw numbers
-                var numX = centerX + (radius - 30) * Math.cos(angle)
-                var numY = centerY + (radius - 30) * Math.sin(angle)
-                ctx.fillText(i.toString(), numX, numY)
-            }
-            
-            // Draw smaller tick marks between numbers
-            ctx.lineWidth = 1
-            for (let i = minValue + 10; i < maxValue; i += 20) {
-                var angle = ((i - minValue) / (maxValue - minValue)) * Math.PI - Math.PI / 2
-                var x1 = centerX + (radius - 10) * Math.cos(angle)
-                var y1 = centerY + (radius - 10) * Math.sin(angle)
-                var x2 = centerX + (radius - 5) * Math.cos(angle)
-                var y2 = centerY + (radius - 5) * Math.sin(angle)
-                
-                ctx.beginPath()
-                ctx.moveTo(x1, y1)
-                ctx.lineTo(x2, y2)
-                ctx.stroke()
+                // Draw numbers (outside the arc)
+                var numX = centerX + (radius + 12) * Math.cos(angle)
+                var numY = centerY + (radius + 12) * Math.sin(angle)
+                ctx.fillText(value.toString(), numX, numY)
             }
         }
     }
     
     // Needle
-    Rectangle {
-        id: needle
-        x: parent.width / 2 - needleWidth / 2
-        y: parent.height / 2 - needleLength
-        width: needleWidth
-        height: needleLength
-        color: "#ff0000"
-        radius: needleWidth / 2
+    Image {
+        id: foil
+        source:             "/qmlimages/foil.svg"
+        mipmap:             true
+        fillMode:           Image.PreserveAspectFit
+        width:120
+        x: parent.width / 2 - width / 2
+        y: parent.height / 2 - height
+        rotation: foilAngle
+        // width: needleWidth
+        // height: needleLength
+        // radius: needleWidth / 2
         
-        transformOrigin: Item.Bottom
-        rotation: {
-            // Convert value to angle: -40 = 0°, 0 = 90°, 40 = 180°
-            var normalized = (value - minValue) / (maxValue - minValue)
-            return normalized * 180
-        }
+        // transformOrigin: Item.Bottom
+        // rotation: {
+        //     // Convert value to angle: -40 = 0°, 0 = 90°, 40 = 180°
+        //     var normalized = (value - minValue) / (maxValue - minValue)
+        //     return normalized * 180
+        // }
         
-        Behavior on rotation {
-            SmoothedAnimation {
-                duration: 300
-                velocity: 360
-            }
-        }
+        // Behavior on rotation {
+        //     SmoothedAnimation {
+        //         duration: 300
+        //         velocity: 360
+        //     }
+        // }
     }
     
     // Center circle
-    Circle {
-        anchors.centerIn: parent
-        width: 12
-        height: width
-        color: "#333333"
-    }
+    // Circle {
+    //     anchors.centerIn: parent
+    //     width: 12
+    //     height: width
+    //     color: "#333333"
+    // }
     
     // Redraw canvas when needed
     onWidthChanged: canvas.requestPaint()

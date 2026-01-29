@@ -50,6 +50,7 @@ RowLayout {
             text:               activeVehicle ? activeVehicle.flightMode : qsTr("N/A", "No data to display")
             font.pointSize:     fontPointSize
             Layout.alignment:   Qt.AlignCenter
+            Layout.minimumWidth: 130
 
             MouseArea {
                 anchors.fill:   parent
@@ -141,15 +142,9 @@ RowLayout {
                         Layout.fillWidth:   true
 
                         onClicked: {
-                            if (editMode) {
-                                parent.children[1].toggle()
-                                parent.children[1].clicked()
-                            } else {
-                                //var controller = globals.guidedControllerFlyView
-                                //controller.confirmAction(controller.actionSetFlightMode, modelData)
-                                activeVehicle.flightMode = modelData
+                                console.log("Flight Mode:", modelData);
+                                _activeVehicle.setFlightMode(modelData);
                                 mainWindow.closeIndicatorDrawer()
-                            }
                         }
                     }
 

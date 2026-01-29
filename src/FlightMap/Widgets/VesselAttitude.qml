@@ -15,11 +15,11 @@ import QGroundControl.ScreenTools
 import QGroundControl.Palette
 
 
-Rectangle {
+Item {
     id:     root
     width:  190
     height: 200
-    color:  "transparent"
+    // color:  "transparent"
 
     property real extraInset:           0
 
@@ -41,7 +41,7 @@ Rectangle {
     QGCPalette { id: qgcPal; colorGroupEnabled: true }
 
     Timer {
-        interval: 500
+        interval: 300
         running: true
         repeat: true
         onTriggered: {
@@ -53,13 +53,13 @@ Rectangle {
     DeadMouseArea { anchors.fill: parent }
 
     // Top section - roll display
-    Rectangle {
+    Item {
         id:             topSection
         width:          parent.width
         height:         parent.height / 2
         anchors.top:    parent.top
         // radius:         _outerRadius / 5
-        color:          qgcPal.windowShadeLight
+        // color:          qgcPal.windowShadeLight
 
         // Roll scale on the left
         Rectangle {
@@ -82,7 +82,7 @@ Rectangle {
                 height:         rollScale.trackHeight
                 radius:         width / 2
                 color:          qgcPal.windowShade
-                border.color:   qgcPal.windowShadeDark
+                border.color:   "#000000"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top:    parent.top
                 anchors.topMargin: rollScale.trackTop
@@ -148,13 +148,13 @@ Rectangle {
     }
 
     // Bottom section - pitch display
-    Rectangle {
+    Item {
         id:             bottomSection
         width:          parent.width
         height:         parent.height / 2
         anchors.bottom: parent.bottom
         // radius:         _outerRadius / 5
-        color:          qgcPal.windowShadeLight
+        // color:          qgcPal.windowShadeLight
 
     // Pitch scale on the left, showing unclamped pitch range
         Rectangle {
@@ -177,7 +177,7 @@ Rectangle {
                 height:         pitchScale.trackHeight
                 radius:         width / 2
                 color:          qgcPal.windowShade
-                border.color:   qgcPal.windowShadeDark
+                border.color:   "#000000"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top:    parent.top
                 anchors.topMargin: pitchScale.trackTop

@@ -20,27 +20,53 @@ import QGroundControl.Palette
 //-- Vessel attitude indicator
 
 Item {
-    anchors.verticalCenter: parent.verticalCenter
-    implicitWidth: column.implicitWidth
-    implicitHeight: column.implicitHeight
+    anchors.top: parent.top
+    anchors.topMargin: 0
+    implicitWidth: row.implicitWidth
+    implicitHeight: row.implicitHeight
     property var    _activeVehicle:     QGroundControl.multiVehicleManager.activeVehicle
     property real   _heel:              _activeVehicle ? _activeVehicle.roll.rawValue : 0
     property real   _trim:             _activeVehicle ? _activeVehicle.pitch.rawValue : 0
 
-    Column {
-        id: column
-        spacing: 4
+    Row {
+        id: row
+        spacing: 10
 
-        Text {
-            text: qsTr("heel %1 °").arg(_heel.toFixed(1))
-            color: "#ffffff"
-            font.pointSize: 12
+        Column {
+            id: column1
+            spacing: 0
+
+            Text {
+                text: qsTr("heel %1°").arg(_heel.toFixed(1).padStart(5))
+                color: "#ffffff"
+                font.pointSize: 14
+                font.family: "DejaVu Sans Mono"
+            }
+
+            Text {
+                text: qsTr("trim %1°").arg(_trim.toFixed(1).padStart(5))
+                color: "#ffffff"
+                font.pointSize: 14
+                font.family: "DejaVu Sans Mono"
+            }
         }
+        Column {
+            id: column2
+            spacing: 0
 
-        Text {
-            text: qsTr("trim %1 °").arg(_trim.toFixed(1))
-            color: "#ffffff"
-            font.pointSize: 12
+            Text {
+                text: qsTr("Speed %1kn").arg(_heel.toFixed(1).padStart(5))
+                color: "#ffffff"
+                font.pointSize: 14
+                font.family: "DejaVu Sans Mono"
+            }
+
+            Text {
+                text: qsTr("Heave %1m").arg(_trim.toFixed(1).padStart(5))
+                color: "#ffffff"
+                font.pointSize: 14
+                font.family: "DejaVu Sans Mono"
+            }
         }
     }
 }

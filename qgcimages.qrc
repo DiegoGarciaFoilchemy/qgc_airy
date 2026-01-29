@@ -217,5 +217,7 @@
     <file alias="Viewer3D/City3DMapIcon.svg">src/Viewer3D/Images/city_3d_map_icon.svg</file>
     <file alias="boat_side.svg">src/FlightMap/Images/boat_side.svg</file>
     <file alias="boat_rear.svg">src/FlightMap/Images/boat_rear.svg</file>
+    <file alias="vesselOutline.svg">src/FlightMap/Images/vesselOutline.svg</file>
+    <file alias="foil.svg">src/FlightMap/Images/foil.svg</file>
   </qresource>
 </RCC>

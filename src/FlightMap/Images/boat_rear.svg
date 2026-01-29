@@ -24,7 +24,7 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="1.8156716"
-     inkscape:cx="315.03495"
+     inkscape:cx="314.48418"
      inkscape:cy="223.60872"
      inkscape:window-width="1920"
      inkscape:window-height="1043"
@@ -35,19 +35,12 @@
   <defs
      id="defs1" />
   <path
-     d="m 1.4499937,12.95 -0.99999997,-5.5 8.99999997,-3 9.0000003,3 -1,5.5 M 2.4499937,6.7833 V 2.45 c 0,-1.10457 0.89543,-1.99999993 2,-1.99999993 H 14.449994 c 1.1046,0 2,0.89542993 2,1.99999993 v 4.3333"
+     d="M 0.45,9.5639101 C 0.440519,8.9557999 0.44999373,6.6099864 0.44999373,6.6099864 L 9.3508568,6.7162849 18.45,6.6099963 c 0,0 0.04605,2.2745168 0,2.9539138 -0.185941,2.7434969 -9.074359,3.4591359 -9.074359,3.4591359 0,0 -8.89455607,-1.465451 -8.925641,-3.4591359 z M 3.34998,6.4720263 V 3.18499 c 0,-1.10457 0.8954401,-1.418 2.0000101,-1.418 H 13.54998 c 1.1046,0 2.00001,0.31343 2.00001,1.418 v 3.1052853"
      stroke="#000000"
      stroke-width="2"
      stroke-linecap="round"
      stroke-linejoin="round"
      id="path1"
-     style="stroke:#ffffff;stroke-width:0.60000001;stroke-dasharray:none;stroke-opacity:1" />
-  <path
-     d="M 1.4499937,12.95 17.331622,12.92041 M 2.4499937,6.7833 V 2.45 c 0,-1.10457 0.89543,-1.99999993 2,-1.99999993 H 14.449994 c 1.1046,0 2,0.89542993 2,1.99999993 v 4.3333"
-     stroke="#000000"
-     stroke-width="2"
-     stroke-linecap="round"
-     stroke-linejoin="round"
-     id="path2"
-     style="opacity:1;stroke:#ffffff;stroke-width:0.60000001;stroke-dasharray:none;stroke-opacity:1" />
+     style="stroke:#ffffff;stroke-width:0.6;stroke-dasharray:none;stroke-opacity:1"
+     sodipodi:nodetypes="scccscscssssc" />
 </svg>

@@ -28,7 +28,7 @@ RowLayout {
     property real   _margins:           ScreenTools.defaultFontPixelWidth
     property real   _spacing:           ScreenTools.defaultFontPixelWidth / 2
     property bool   _healthAndArmingChecksSupported: _activeVehicle ? _activeVehicle.healthAndArmingCheckReport.supported : false
-
+    property var  vehicle:      globals.activeVehicle
     function dropMainStatusIndicator() {
         let overallStatusComponent = _activeVehicle ? overallStatusIndicatorPage : overallStatusOfflineIndicatorPage
         mainWindow.showIndicatorDrawer(overallStatusComponent, control)
@@ -37,16 +37,16 @@ RowLayout {
     QGCLabel {
         id:                 mainStatusLabel
         Layout.fillHeight:  true
-        Layout.preferredWidth: contentWidth + vehicleMessagesIcon.width + control.spacing
+        Layout.preferredWidth: 130//contentWidth + vehicleMessagesIcon.width + control.spacing
         verticalAlignment:  Text.AlignVCenter
         text:               mainStatusText()
         font.pointSize:     ScreenTools.largeFontPointSize
 
         property string _commLostText:      qsTr("Comms Lost")
-        property string _readyToFlyText:    qsTr("Ready To Fly")
-        property string _notReadyToFlyText: qsTr("Not Ready")
+        property string _readyToFlyText:    qsTr("    OFF")
+        property string _notReadyToFlyText: qsTr("    OFF")
         property string _disconnectedText:  qsTr("Disconnected - Click to manually connect")
-        property string _armedText:         qsTr("Armed")
+        property string _armedText:         qsTr("Running")
         property string _flyingText:        qsTr("Flying")
         property string _landingText:       qsTr("Landing")
 
@@ -115,30 +115,30 @@ RowLayout {
             }
         }
 
-        QGCColoredImage {
-            id:                     vehicleMessagesIcon
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right:          parent.right
-            width:                  ScreenTools.defaultFontPixelWidth * 2
-            height:                 width
-            source:                 "/res/VehicleMessages.png"
-            color:                  getIconColor()
-            sourceSize.width:       width
-            fillMode:               Image.PreserveAspectFit
-            //visible:                _activeVehicle && _activeVehicle.messageCount > 0// FIXME: Is messageCount check needed?
+        // QGCColoredImage {
+        //     id:                     vehicleMessagesIcon
+        //     anchors.verticalCenter: parent.verticalCenter
+        //     anchors.right:          parent.right
+        //     width:                  ScreenTools.defaultFontPixelWidth * 2
+        //     height:                 width
+        //     source:                 "/res/VehicleMessages.png"
+        //     color:                  getIconColor()
+        //     sourceSize.width:       width
+        //     fillMode:               Image.PreserveAspectFit
+        //     //visible:                _activeVehicle && _activeVehicle.messageCount > 0// FIXME: Is messageCount check needed?
 
-            function getIconColor() {
-                let iconColor = qgcPal.text
-                if (_activeVehicle) {
-                    if (_activeVehicle.messageTypeWarning) {
-                        iconColor = qgcPal.colorOrange
-                    } else if (_activeVehicle.messageTypeError) {
-                        iconColor = qgcPal.colorRed
-                    }
-                }
-                return iconColor
-            }
-        }
+        //     function getIconColor() {
+        //         let iconColor = qgcPal.text
+        //         if (_activeVehicle) {
+        //             if (_activeVehicle.messageTypeWarning) {
+        //                 iconColor = qgcPal.colorOrange
+        //             } else if (_activeVehicle.messageTypeError) {
+        //                 iconColor = qgcPal.colorRed
+        //             }
+        //         }
+        //         return iconColor
+        //     }
+        // }
 
         QGCMouseArea {
             anchors.fill:   parent
@@ -191,72 +191,68 @@ RowLayout {
             QGCButton {
                 // FIXME: forceArm is not possible anymore if _healthAndArmingChecksSupported == true
                 enabled:            _armed || !_healthAndArmingChecksSupported || _activeVehicle.healthAndArmingCheckReport.canArm
-                text:               _armed ?  qsTr("Disarm") : (forceArm ? qsTr("Force Arm") : qsTr("Arm"))
+                text:               _armed ?  qsTr("STOP") : qsTr("START")
                 Layout.alignment:   Qt.AlignLeft
 
                 property bool forceArm: false
 
-                onPressAndHold: forceArm = true
+                // onPressAndHold: forceArm = true
 
                 onClicked: {
                     if (_armed) {
-                        mainWindow.disarmVehicleRequest()
+                        vehicle.forceDisarm()
                     } else {
-                        if (forceArm) {
-                            mainWindow.forceArmVehicleRequest()
-                        } else {
-                            mainWindow.armVehicleRequest()
-                        }
+                        vehicle.forceArm()
                     }
                     forceArm = false
                     mainWindow.closeIndicatorDrawer()
                 }
             }
 
-            SettingsGroupLayout {
-                //Layout.fillWidth:   true
-                heading:            qsTr("Vehicle Messages")
-                visible:            !vehicleMessageList.noMessages
+            // SettingsGroupLayout {
+            //     //Layout.fillWidth:   true
+            //     heading:            qsTr("Vehicle Messages")
+            //     visible:            !vehicleMessageList.noMessages
 
-                VehicleMessageList { 
-                    id: vehicleMessageList
-                }
-            }
+            //     VehicleMessageList { 
+            //         id: vehicleMessageList
+            //     }
+            // }
 
-            SettingsGroupLayout {
-                //Layout.fillWidth:   true
-                heading:            qsTr("Sensor Status")
-                visible:            !_healthAndArmingChecksSupported
+            // SettingsGroupLayout {
+            //     //Layout.fillWidth:   true
+            //     heading:            qsTr("Sensor Status")
+            //     visible:            !_healthAndArmingChecksSupported
 
-                GridLayout {
-                    rowSpacing:     _spacing
-                    columnSpacing:  _spacing
-                    rows:           _activeVehicle.sysStatusSensorInfo.sensorNames.length
-                    flow:           GridLayout.TopToBottom
+            //     GridLayout {
+            //         rowSpacing:     _spacing
+            //         columnSpacing:  _spacing
+            //         rows:           _activeVehicle.sysStatusSensorInfo.sensorNames.length
+            //         flow:           GridLayout.TopToBottom
 
-                    Repeater {
-                        model: _activeVehicle.sysStatusSensorInfo.sensorNames
-                        QGCLabel { text: modelData }
-                    }
+            //         Repeater {
+            //             model: _activeVehicle.sysStatusSensorInfo.sensorNames
+            //             QGCLabel { text: modelData }
+            //         }
 
-                    Repeater {
-                        model: _activeVehicle.sysStatusSensorInfo.sensorStatus
-                        QGCLabel { text: modelData }
-                    }
-                }
-            }
+            //         Repeater {
+            //             model: _activeVehicle.sysStatusSensorInfo.sensorStatus
+            //             QGCLabel { text: modelData }
+            //         }
+            //     }
+            // }
 
-            SettingsGroupLayout {
-                //Layout.fillWidth:   true
-                heading:            qsTr("Overall Status")
-                visible:            _healthAndArmingChecksSupported && _activeVehicle.healthAndArmingCheckReport.problemsForCurrentMode.count > 0
+            // SettingsGroupLayout {
+            //     //Layout.fillWidth:   true
+            //     heading:            qsTr("Overall Status")
+            //     visible:            _healthAndArmingChecksSupported && _activeVehicle.healthAndArmingCheckReport.problemsForCurrentMode.count > 0
 
-                // List health and arming checks
-                Repeater {
-                    model:      _activeVehicle ? _activeVehicle.healthAndArmingCheckReport.problemsForCurrentMode : null
-                    delegate:   listdelegate
-                }
-            }
+            //     // List health and arming checks
+            //     Repeater {
+            //         model:      _activeVehicle ? _activeVehicle.healthAndArmingCheckReport.problemsForCurrentMode : null
+            //         delegate:   listdelegate
+            //     }
+            // }
 
             FactPanelController {
                 id: controller

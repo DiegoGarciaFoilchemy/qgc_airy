@@ -40,11 +40,11 @@ PX4FirmwarePlugin::PX4FirmwarePlugin()
     qmlRegisterType<PowerComponentController>           ("QGroundControl.Controllers", 1, 0, "PowerComponentController");
 
     const QString manualFlightModeName = tr("High Speed");
-    const QString acroFlightModeName = tr("Approach");
-    const QString stabilizedFlightModeName = tr("Debug");
-    const QString rattitudeFlightModeName = tr("Low speed");
-    const QString altCtlFlightModeName = tr("Altitude");
-    const QString posCtlFlightModeName = tr("Position");
+    const QString acroFlightModeName = tr("Debug");
+    const QString stabilizedFlightModeName = tr("Stabilized");
+    const QString rattitudeFlightModeName = tr("Rattitude");
+    const QString altCtlFlightModeName = tr("Low speed");
+    const QString posCtlFlightModeName = tr("Approach");
     const QString offboardFlightModeName = tr("Offboard");
     const QString readyFlightModeName = tr("Ready");
     const QString takeoffFlightModeName = tr("Takeoff");
@@ -81,13 +81,13 @@ PX4FirmwarePlugin::PX4FirmwarePlugin()
     static FlightModeList availableFlightModes = {
         // Mode Name                Custom Mode                     CanBeSet  adv
         { manualFlightModeName,     PX4CustomMode::MANUAL,          true,   true },
-        { stabilizedFlightModeName, PX4CustomMode::STABILIZED,      true,   true },
+        // { stabilizedFlightModeName, PX4CustomMode::STABILIZED,      true,   true },
         { acroFlightModeName,       PX4CustomMode::ACRO,            true,   true },
-        { rattitudeFlightModeName,  PX4CustomMode::RATTITUDE,       true,   false},
-        // { altCtlFlightModeName,     PX4CustomMode::ALTCTL,          true,   false},
+        // { rattitudeFlightModeName,  PX4CustomMode::RATTITUDE,       true,   false},
+        { altCtlFlightModeName,     PX4CustomMode::ALTCTL,          true,   false},
         // { offboardFlightModeName,   PX4CustomMode::OFFBOARD,        true,   true },
         // { simpleFlightModeName,     PX4CustomMode::SIMPLE,          false,  false},
-        // { posCtlFlightModeName,     PX4CustomMode::POSCTL_POSCTL,   true,   false},
+        { posCtlFlightModeName,     PX4CustomMode::POSCTL_POSCTL,   true,   false},
         // { orbitFlightModeName,      PX4CustomMode::POSCTL_ORBIT,    false,  true },
         // { holdFlightModeName,       PX4CustomMode::AUTO_LOITER,     true,   true },
         // { missionFlightModeName,    PX4CustomMode::AUTO_MISSION,    true,   true },
@@ -160,6 +160,7 @@ bool PX4FirmwarePlugin::setFlightMode(const QString& flightMode, uint8_t* base_m
 
     if (!found) {
         qWarning() << "Unknown flight Mode" << flightMode;
+        qWarning() << "Base mode" << *base_mode << " Custom mode " << *custom_mode;
     }
 
     return found;
