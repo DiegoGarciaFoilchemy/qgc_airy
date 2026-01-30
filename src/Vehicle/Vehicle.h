@@ -395,6 +395,8 @@ public:
     
     Q_INVOKABLE void forceArm           ();
     Q_INVOKABLE void forceDisarm        ();
+    Q_INVOKABLE void followingSeasOn  ();
+    Q_INVOKABLE void followingSeasOff ();
 
     /// Sends PARAM_MAP_RC message to vehicle
     Q_INVOKABLE void sendParamMapRC(const QString& paramName, double scale, double centerValue, int tuningID, double minValue, double maxValue);

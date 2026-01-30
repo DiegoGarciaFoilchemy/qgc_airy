@@ -52,7 +52,9 @@ VehicleFactGroup::VehicleFactGroup(QObject *parent)
     _addFact(&_acu4AngleFact);
     _addFact(&_acu5AngleFact);
     _addFact(&_acu6AngleFact);
+    _addFact(&_followingSeasFact);
     _hobbsFact.setRawValue(QStringLiteral("0000:00:00"));
+    _followingSeasFact.setRawValue(false);
 }
 
 void VehicleFactGroup::handleMessage(Vehicle *vehicle, const mavlink_message_t &message)

@@ -16,7 +16,7 @@ import QGroundControl.Palette
 
 
 Item {
-    width: 250
+    width: 300
     height: width
     
     property real value: 0 // Current speedometer value (-40 to 40)
@@ -25,6 +25,15 @@ Item {
     property real needleWidth: 4
     property real needleLength: 80
     property real foilAngle: 0
+    property int labelFontSize: 20
+    property real gaugeCenterX: width / 2 + 40
+    property real gaugeCenterY: height / 2
+    property real gaugeCenterYOffset: 4
+    property real gaugeRadius: Math.min(width, height) / 2 - 10
+    property real spanRadians: 80 * Math.PI / 180
+    property real startAngle: Math.PI - spanRadians / 2
+    property real endAngle: Math.PI + spanRadians / 2
+    property real labelRadius: gaugeRadius + 12
     
     // Canvas for drawing the speedometer
     Canvas {
@@ -33,36 +42,22 @@ Item {
         
         onPaint: {
             var ctx = getContext("2d")
-            var centerX = width / 2 + 40
-            var centerY = height / 2
-            var radius = Math.min(width, height) / 2 - 10
-            var spanRadians = 80 * Math.PI / 180
-            var startAngle = Math.PI - spanRadians / 2
-            var endAngle = Math.PI + spanRadians / 2
+            var centerX = gaugeCenterX
+            var centerY = gaugeCenterY + gaugeCenterYOffset
+            var radius = gaugeRadius
             
             // Clear canvas
             ctx.clearRect(0, 0, width, height)
             
-            // Draw outer arc (80°)
-            ctx.strokeStyle = "#ffffff"
-            ctx.lineWidth = 2
-            ctx.beginPath()
-            ctx.arc(centerX, centerY, radius, startAngle, endAngle)
-            ctx.stroke()
-            
             // Draw inner arc (80°)
             ctx.strokeStyle = "#cccccc"
-            ctx.lineWidth = 1
+            ctx.lineWidth = 2
             ctx.beginPath()
             ctx.arc(centerX, centerY, radius - 5, startAngle, endAngle)
             ctx.stroke()
             
-            // Draw scale markings and numbers
-            ctx.fillStyle = "#ffffff"
+            // Draw scale markings
             ctx.strokeStyle = "#ffffff"
-            ctx.font = "12px Arial"
-            ctx.textAlign = "center"
-            ctx.textBaseline = "middle"
             
             var majorValues = [minValue, 0, maxValue]
             for (let i = 0; i < majorValues.length; i++) {
@@ -81,11 +76,38 @@ Item {
                 ctx.lineTo(x2, y2)
                 ctx.stroke()
                 
-                // Draw numbers (outside the arc)
-                var numX = centerX + (radius + 12) * Math.cos(angle)
-                var numY = centerY + (radius + 12) * Math.sin(angle)
-                ctx.fillText(value.toString(), numX, numY)
             }
+            
+            // Draw minor tick marks at -20 and 20 (no labels)
+            var minorValues = [-20, 20]
+            ctx.lineWidth = 1.5
+            for (let i = 0; i < minorValues.length; i++) {
+                var value = minorValues[i]
+                var angle = startAngle + ((value - minValue) / (maxValue - minValue)) * spanRadians
+                
+                var x1 = centerX + (radius - 12) * Math.cos(angle)
+                var y1 = centerY + (radius - 12) * Math.sin(angle)
+                var x2 = centerX + (radius - 5) * Math.cos(angle)
+                var y2 = centerY + (radius - 5) * Math.sin(angle)
+                
+                ctx.beginPath()
+                ctx.moveTo(x1, y1)
+                ctx.lineTo(x2, y2)
+                ctx.stroke()
+            }
+        }
+    }
+    
+    // Labels outside the arc
+    Repeater {
+        model: [minValue, 0, maxValue]
+        delegate: Text {
+            text: modelData.toString() + "º"
+            color: "#ffffff"
+            font.pixelSize: labelFontSize
+            property real angle: startAngle + ((modelData - minValue) / (maxValue - minValue)) * spanRadians
+            x: (gaugeCenterX + labelRadius * Math.cos(angle)) - width / 2
+            y: (gaugeCenterY + gaugeCenterYOffset + labelRadius * Math.sin(angle)) - height / 2
         }
     }
     
@@ -95,20 +117,12 @@ Item {
         source:             "/qmlimages/foil.svg"
         mipmap:             true
         fillMode:           Image.PreserveAspectFit
-        width:120
-        x: parent.width / 2 - width / 2
-        y: parent.height / 2 - height
+        width: 120
+        // Align rotation point with speedometer center
+        x: gaugeCenterX - width
+        y: gaugeCenterY - height / 2
         rotation: foilAngle
-        // width: needleWidth
-        // height: needleLength
-        // radius: needleWidth / 2
-        
-        // transformOrigin: Item.Bottom
-        // rotation: {
-        //     // Convert value to angle: -40 = 0°, 0 = 90°, 40 = 180°
-        //     var normalized = (value - minValue) / (maxValue - minValue)
-        //     return normalized * 180
-        // }
+        transformOrigin: Item.Right
         
         // Behavior on rotation {
         //     SmoothedAnimation {

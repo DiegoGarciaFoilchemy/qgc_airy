@@ -36,17 +36,18 @@ RowLayout {
 
     QGCLabel {
         id:                 mainStatusLabel
-        Layout.fillHeight:  true
-        Layout.preferredWidth: 130//contentWidth + vehicleMessagesIcon.width + control.spacing
+        Layout.fillWidth:  true
+        Layout.preferredHeight: 200//contentWidth + vehicleMessagesIcon.width + control.spacing
         verticalAlignment:  Text.AlignVCenter
         text:               mainStatusText()
-        font.pointSize:     ScreenTools.largeFontPointSize
+        font.pointSize:     ScreenTools.largeFontPointSize * 1.5
+        rotation:           -90
 
         property string _commLostText:      qsTr("Comms Lost")
-        property string _readyToFlyText:    qsTr("    OFF")
-        property string _notReadyToFlyText: qsTr("    OFF")
-        property string _disconnectedText:  qsTr("Disconnected - Click to manually connect")
-        property string _armedText:         qsTr("Running")
+        property string _readyToFlyText:    qsTr("OFF")
+        property string _notReadyToFlyText: qsTr("OFF")
+        property string _disconnectedText:  qsTr("Disconnected")
+        property string _armedText:         qsTr("ON")
         property string _flyingText:        qsTr("Flying")
         property string _landingText:       qsTr("Landing")
 
@@ -146,23 +147,23 @@ RowLayout {
         }
     }
 
-    QGCLabel {
-        id:                 vtolModeLabel
-        Layout.fillHeight:  true
-        verticalAlignment:  Text.AlignVCenter
-        text:               _vtolInFWDFlight ? qsTr("FW(vtol)") : qsTr("MR(vtol)")
-        font.pointSize:     _vehicleInAir ? ScreenTools.largeFontPointSize : ScreenTools.defaultFontPointSize
-        visible:            _activeVehicle && _activeVehicle.vtol
+    // QGCLabel {
+    //     id:                 vtolModeLabel
+    //     Layout.fillHeight:  true
+    //     verticalAlignment:  Text.AlignVCenter
+    //     text:               _vtolInFWDFlight ? qsTr("FW(vtol)") : qsTr("MR(vtol)")
+    //     font.pointSize:     _vehicleInAir ? ScreenTools.largeFontPointSize : ScreenTools.defaultFontPointSize
+    //     visible:            _activeVehicle && _activeVehicle.vtol
 
-        QGCMouseArea {
-            anchors.fill: parent
-            onClicked: {
-                if (_vehicleInAir) {
-                    mainWindow.showIndicatorDrawer(vtolTransitionIndicatorPage)
-                }
-            }
-        }
-    }
+    //     QGCMouseArea {
+    //         anchors.fill: parent
+    //         onClicked: {
+    //             if (_vehicleInAir) {
+    //                 mainWindow.showIndicatorDrawer(vtolTransitionIndicatorPage)
+    //             }
+    //         }
+    //     }
+    // }
 
     Component {
         id: overallStatusOfflineIndicatorPage

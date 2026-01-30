@@ -20,10 +20,9 @@ import QGroundControl.FactSystem
 import QGroundControl.FactControls
 import QGroundControl.AutoPilotPlugin
 
-RowLayout {
+Item {
     id:         control
-    spacing:    0
-
+    // spacing:    0
     property bool   showIndicator:          true
     property var    expandedPageComponent
     property bool   waitForParameters:      false
@@ -33,30 +32,63 @@ RowLayout {
     property bool allowEditMode:    true
     property bool editMode:         false
 
-    RowLayout {
-        Layout.fillWidth: true
+    // Flight mode colors
+    property color colorHighSpeed:  Qt.rgba(1.0, 0.42, 0.0, 0.3)      // orange-red
+    property color colorLowSpeed:   Qt.rgba(0.204, 0.596, 0.859, 0.3)  // blue
+    property color colorTesting:    Qt.rgba(0.953, 0.612, 0.071, 0.3)  // amber
+    property color colorApproach:   Qt.rgba(0.153, 0.682, 0.376, 0.3)  // green
 
-        QGCColoredImage {
-            id:         flightModeIcon
-            width:      ScreenTools.defaultFontPixelWidth * 3
-            height:     ScreenTools.defaultFontPixelHeight
-            fillMode:   Image.PreserveAspectFit
-            mipmap:     true
-            color:      qgcPal.text
-            source:     "/qmlimages/FlightModesComponentIcon.png"
+    function getModeColor(modeName) {
+        if (modeName.toLowerCase().includes("high speed")) {
+            return colorHighSpeed
+        } else if (modeName.toLowerCase().includes("low speed")) {
+            return colorLowSpeed
+        } else if (modeName.toLowerCase().includes("debug")) {
+            return colorTesting
+        } else if (modeName.toLowerCase().includes("approach")) {
+            return colorApproach
+        }
+        return '#ffffff' // default gray
+    }
+
+    property color displayColor: activeVehicle ? getModeColor(activeVehicle.flightMode) : "#ffffff"
+    
+    function showFlightModeDrawer() {
+        mainWindow.showIndicatorDrawer(drawerComponent, control)
+    }
+    
+    Item {
+        Layout.fillWidth: true
+        Layout.preferredHeight: ScreenTools.defaultFontPixelHeight * 8
+
+        QGCLabel {
+            text:                   qsTr("Mode")
+            font.pointSize:         fontPointSize
+            anchors.centerIn:       parent
+            anchors.horizontalCenterOffset: -75
+            // anchors.horizontalCenterOffset: -ScreenTools.defaultFontPixelWidth * 1.5
+            horizontalAlignment:    Text.AlignHCenter
+            rotation:               -90
+            // MouseArea {
+            //     anchors.fill:   parent
+            //     onClicked:      mainWindow.showIndicatorDrawer(drawerComponent, control)
+            // }
         }
 
         QGCLabel {
-            text:               activeVehicle ? activeVehicle.flightMode : qsTr("N/A", "No data to display")
-            font.pointSize:     fontPointSize
-            Layout.alignment:   Qt.AlignCenter
-            Layout.minimumWidth: 130
-
-            MouseArea {
-                anchors.fill:   parent
-                onClicked:      mainWindow.showIndicatorDrawer(drawerComponent, control)
-            }
+            text:                   activeVehicle ? activeVehicle.flightMode : qsTr("N/A", "No data to display")
+            font.pointSize:         fontPointSize
+            anchors.centerIn:       parent
+            anchors.horizontalCenterOffset: -30
+            // anchors.horizontalCenterOffset: ScreenTools.defaultFontPixelWidth * 1.5
+            horizontalAlignment:    Text.AlignHCenter
+            rotation:               -90
+            // MouseArea {
+            //     anchors.fill:   parent
+            //     onClicked:      mainWindow.showIndicatorDrawer(drawerComponent, control)
+            // }
         }
+        
     }
 
     Component {

@@ -15,22 +15,22 @@ import QGroundControl.Toolbar
 
 //-------------------------------------------------------------------------
 //-- Toolbar Indicators
-Row {
+Column {
     id:                 indicatorRow
-    anchors.top:        parent.top
-    anchors.bottom:     parent.bottom
+    anchors.left:       parent.left
+    anchors.right:      parent.right
     anchors.margins:    _toolIndicatorMargins
-    spacing:            ScreenTools.defaultFontPixelWidth * 1.75
+    spacing:            ScreenTools.defaultFontPixelHeight * 1.75
 
     property var  _activeVehicle:           QGroundControl.multiVehicleManager.activeVehicle
-    property real _toolIndicatorMargins:    ScreenTools.defaultFontPixelHeight * 0.66
+    property real _toolIndicatorMargins:    ScreenTools.defaultFontPixelWidth * 0.66
 
     Repeater {
         id:     appRepeater
         model:  QGroundControl.corePlugin.toolBarIndicators
         Loader {
-            anchors.top:        parent.top
-            anchors.bottom:     parent.bottom
+            anchors.left:       parent.left
+            anchors.right:      parent.right
             source:             modelData
             visible:            item.showIndicator
         }
@@ -41,8 +41,8 @@ Row {
         model:  _activeVehicle ? _activeVehicle.toolIndicators : []
 
         Loader {
-            anchors.top:        parent.top
-            anchors.bottom:     parent.bottom
+            anchors.left:       parent.left
+            anchors.right:      parent.right
             source:             modelData
             visible:            item.showIndicator
         }
@@ -51,8 +51,8 @@ Row {
     Repeater {
         model: _activeVehicle ? _activeVehicle.modeIndicators : []
         Loader {
-            anchors.top:        parent.top
-            anchors.bottom:     parent.bottom
+            anchors.left:       parent.left
+            anchors.right:      parent.right
             source:             modelData
             visible:            item.showIndicator
         }

@@ -6,7 +6,7 @@ Item {
     height: parent ? parent.height : 760
     QGCPalette { id: qgcPal; colorGroupEnabled: true }
     property var  vehicle:      globals.activeVehicle
-
+    
     Rectangle {
         anchors.fill: parent
         color: qgcPal.windowShade
@@ -31,14 +31,13 @@ Item {
         Column {
             anchors.right: parent.right
             spacing: 10
-
             Loader {
                 id: foil1
                 source: "qrc:/qml/QGroundControl/FlightMap/Widgets/FoilAngle.qml"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.topMargin: 10
                 onLoaded: {
-                    item.foilAngle = vehicle ? vehicle.pitch.rawValue : 0
+                    item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.pitch.rawValue : 0 })
                 }
             }
         }

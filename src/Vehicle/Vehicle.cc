@@ -1640,6 +1640,22 @@ void Vehicle::forceDisarm(void)
                    21196);  // force disarm
 }
 
+void Vehicle::followingSeasOn(void)
+{
+    // sendMavCommand(_defaultComponentId,
+    //                MAV_CMD_DO_FOLLOW_SEAS_ON,
+    //                true);    // show error if fails
+    _vehicleFactGroup->followingSeas()->setRawValue(true);
+}
+
+void Vehicle::followingSeasOff(void)
+{
+    // sendMavCommand(_defaultComponentId,
+    //                MAV_CMD_DO_FOLLOW_SEAS_OFF,
+    //                true);    // show error if fails
+    _vehicleFactGroup->followingSeas()->setRawValue(false);
+}
+
 bool Vehicle::flightModeSetAvailable()
 {
     return _firmwarePlugin->isCapable(this, FirmwarePlugin::SetFlightModeCapability);

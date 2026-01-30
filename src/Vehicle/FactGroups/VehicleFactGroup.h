@@ -48,6 +48,7 @@ class VehicleFactGroup : public FactGroup
     Q_PROPERTY(Fact *acu4Angle              READ acu4Angle              CONSTANT)
     Q_PROPERTY(Fact *acu5Angle              READ acu5Angle              CONSTANT)
     Q_PROPERTY(Fact *acu6Angle              READ acu6Angle              CONSTANT)
+    Q_PROPERTY(Fact *followingSeas          READ followingSeas          CONSTANT)
 
 public:
     explicit VehicleFactGroup(QObject *parent = nullptr);
@@ -86,7 +87,7 @@ public:
     Fact *acu4Angle() { return &_acu4AngleFact; }
     Fact *acu5Angle() { return &_acu5AngleFact; }
     Fact *acu6Angle() { return &_acu6AngleFact; }
-
+    Fact *followingSeas() { return &_followingSeasFact; }
     void handleMessage(Vehicle *vehicle, const mavlink_message_t &message) override;
 
 protected:
@@ -135,6 +136,7 @@ protected:
     Fact _acu4AngleFact = Fact(0, QStringLiteral("acu4Angle"), FactMetaData::valueTypeDouble);
     Fact _acu5AngleFact = Fact(0, QStringLiteral("acu5Angle"), FactMetaData::valueTypeDouble);
     Fact _acu6AngleFact = Fact(0, QStringLiteral("acu6Angle"), FactMetaData::valueTypeDouble);
+    Fact _followingSeasFact = Fact(0, QStringLiteral("followingSeas"), FactMetaData::valueTypeBool);
     float _altitudeTuningOffset = qQNaN();
 
 protected:

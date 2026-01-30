@@ -493,15 +493,13 @@ ApplicationWindow {
 
         Rectangle {
             id:             toolDrawerToolbar
-            // anchors.left:   parent.left
+            anchors.left:   parent.left
             anchors.right:  parent.right
             anchors.top:    parent.top
-            anchors.bottom: parent.top
-            // height:         ScreenTools.toolbarHeight
-            width: 80
+            height:         ScreenTools.toolbarHeight
             color:          qgcPal.toolbarBackground
 
-            ColumnLayout {
+            RowLayout {
                 id:                 toolDrawerToolbarLayout
                 anchors.leftMargin: ScreenTools.defaultFontPixelWidth
                 anchors.left:       parent.left

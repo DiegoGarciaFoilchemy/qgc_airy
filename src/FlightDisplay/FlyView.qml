@@ -84,13 +84,14 @@ Item {
         id:         toolbar
         visible:    !QGroundControl.videoManager.fullScreen
     }
+    
 
     Item {
         id:                 mapHolder
-        anchors.top:        toolbar.bottom
+        anchors.top:        parent.top
         anchors.bottom:     parent.bottom
         anchors.left:       parent.left
-        anchors.right:      parent.right
+        anchors.right:      toolbar.left
 
         Item {
             id:                     mapControl
@@ -116,7 +117,15 @@ Item {
 
             // Minimal properties expected by code elsewhere
             property bool isSatelliteMap: false
-
+            QGCToolBarButton {
+                id:                     currentButton
+                anchors.top:           parent.top
+                anchors.left:            parent.left
+                Layout.preferredWidth:  50
+                icon.source:            "/res/QGCLogoFull.svg"
+                logo:                   true
+                onClicked:              mainWindow.showToolSelectDialog()
+            }
             // SwipeView for multiple screens
             SwipeView {
                 id: screenSwipeView
