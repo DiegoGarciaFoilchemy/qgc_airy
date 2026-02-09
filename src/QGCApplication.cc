@@ -125,9 +125,9 @@ QGCApplication::QGCApplication(int &argc, char *argv[], bool unitTesting, bool s
     ParseCmdLineOptions(argc, argv, rgCmdLineOptions, std::size(rgCmdLineOptions), false);
 
     // Set up timer for delayed missing fact display
-    _missingParamsDelayedDisplayTimer.setSingleShot(true);
-    _missingParamsDelayedDisplayTimer.setInterval(_missingParamsDelayedDisplayTimerTimeout);
-    (void) connect(&_missingParamsDelayedDisplayTimer, &QTimer::timeout, this, &QGCApplication::_missingParamsDisplay);
+    // _missingParamsDelayedDisplayTimer.setSingleShot(true);
+    // _missingParamsDelayedDisplayTimer.setInterval(_missingParamsDelayedDisplayTimerTimeout);
+    // (void) connect(&_missingParamsDelayedDisplayTimer, &QTimer::timeout, this, &QGCApplication::_missingParamsDisplay);
 
     // Set application information
     QString applicationName;

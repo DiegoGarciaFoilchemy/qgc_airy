@@ -1,21 +1,21 @@
 target_sources(${CMAKE_PROJECT_NAME}
     PRIVATE
-        TerrainFactGroup.cc
-        TerrainFactGroup.h
+        // TerrainFactGroup.cc
+        // TerrainFactGroup.h
         VehicleBatteryFactGroup.cc
         VehicleBatteryFactGroup.h
         VehicleClockFactGroup.cc
         VehicleClockFactGroup.h
         VehicleDistanceSensorFactGroup.cc
         VehicleDistanceSensorFactGroup.h
-        VehicleEFIFactGroup.cc
-        VehicleEFIFactGroup.h
-        VehicleEscStatusFactGroup.cc
-        VehicleEscStatusFactGroup.h
-        VehicleEstimatorStatusFactGroup.cc
-        VehicleEstimatorStatusFactGroup.h
-        VehicleGeneratorFactGroup.cc
-        VehicleGeneratorFactGroup.h
+        // VehicleEFIFactGroup.cc
+        // VehicleEFIFactGroup.h
+        // VehicleEscStatusFactGroup.cc
+        // VehicleEscStatusFactGroup.h
+        // VehicleEstimatorStatusFactGroup.cc
+        // VehicleEstimatorStatusFactGroup.h
+        // VehicleGeneratorFactGroup.cc
+        // VehicleGeneratorFactGroup.h
         VehicleFactGroup.cc
         VehicleFactGroup.h
         VehicleGPS2FactGroup.cc
@@ -26,18 +26,18 @@ target_sources(${CMAKE_PROJECT_NAME}
         VehicleLocalPositionFactGroup.h
         VehicleLocalPositionSetpointFactGroup.cc
         VehicleLocalPositionSetpointFactGroup.h
-        VehicleRPMFactGroup.cc
-        VehicleRPMFactGroup.h
+        // VehicleRPMFactGroup.cc
+        // VehicleRPMFactGroup.h
         VehicleSetpointFactGroup.cc
         VehicleSetpointFactGroup.h
-        VehicleTemperatureFactGroup.cc
-        VehicleTemperatureFactGroup.h
-        VehicleVibrationFactGroup.cc
-        VehicleVibrationFactGroup.h
-        VehicleWindFactGroup.cc
-        VehicleWindFactGroup.h
-        VehicleHygrometerFactGroup.cc
-        VehicleHygrometerFactGroup.h
+        // VehicleTemperatureFactGroup.cc
+        // VehicleTemperatureFactGroup.h
+        // VehicleVibrationFactGroup.cc
+        // VehicleVibrationFactGroup.h
+        // VehicleWindFactGroup.cc
+        // VehicleWindFactGroup.h
+        // VehicleHygrometerFactGroup.cc
+        // VehicleHygrometerFactGroup.h
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

@@ -33,7 +33,7 @@ Item {
     property real _rollDisplay: Math.max(-_max_roll, Math.min(_max_roll, _rollAngle))
 
     property var  vehicle:      globals.activeVehicle
-    property real _rollAngle:   vehicle ? vehicle.acu1Angle.rawValue  : 0
+    property real _rollAngle:   vehicle ? vehicle.roll.rawValue  : 0
     property real _pitchAngle:  vehicle ? vehicle.pitch.rawValue : 0
     property real _rollAngleDisplay: _rollAngle
     property real _pitchAngleDisplay: _pitchAngle

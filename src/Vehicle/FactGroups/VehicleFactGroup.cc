@@ -46,13 +46,62 @@ VehicleFactGroup::VehicleFactGroup(QObject *parent)
     _addFact(&_hobbsFact);
     _addFact(&_throttlePctFact);
     _addFact(&_imuTempFact);
+
     _addFact(&_acu1AngleFact);
+    _addFact(&_acu1SpeedFact);
+    _addFact(&_acu1TargetFact);
+    _addFact(&_acu1StatusFact);
+    _addFact(&_acu1ModeFact);
+    _addFact(&_acu1ValveCmdFact);
+    _addFact(&_acu1ValveFeedbackFact);
+
     _addFact(&_acu2AngleFact);
+    _addFact(&_acu2SpeedFact);
+    _addFact(&_acu2TargetFact);
+    _addFact(&_acu2StatusFact);
+    _addFact(&_acu2ModeFact);
+    _addFact(&_acu2ValveCmdFact);
+    _addFact(&_acu2ValveFeedbackFact);
+
     _addFact(&_acu3AngleFact);
+    _addFact(&_acu3SpeedFact);
+    _addFact(&_acu3TargetFact);
+    _addFact(&_acu3StatusFact);
+    _addFact(&_acu3ModeFact);
+    _addFact(&_acu3ValveCmdFact);
+    _addFact(&_acu3ValveFeedbackFact);
+
     _addFact(&_acu4AngleFact);
+    _addFact(&_acu3SpeedFact);
+    _addFact(&_acu4TargetFact);
+    _addFact(&_acu4StatusFact);
+    _addFact(&_acu4ModeFact);
+    _addFact(&_acu4ValveCmdFact);
+    _addFact(&_acu4ValveFeedbackFact);
+
     _addFact(&_acu5AngleFact);
+    _addFact(&_acu5SpeedFact);
+    _addFact(&_acu5TargetFact);
+    _addFact(&_acu5StatusFact);
+    _addFact(&_acu5ModeFact);
+    _addFact(&_acu5ValveCmdFact);
+    _addFact(&_acu5ValveFeedbackFact);
+
     _addFact(&_acu6AngleFact);
+    _addFact(&_acu6SpeedFact);
+    _addFact(&_acu6TargetFact);
+    _addFact(&_acu6StatusFact);
+    _addFact(&_acu6ModeFact);
+    _addFact(&_acu6ValveCmdFact);
+    _addFact(&_acu6ValveFeedbackFact);
+
     _addFact(&_followingSeasFact);
+    _addFact(&_bowHeightFact);
+    _addFact(&_estimatedDisplacementFact);
+    _addFact(&_controlStateFact);
+    _addFact(&_controlHealthFact);
+    
+
     _hobbsFact.setRawValue(QStringLiteral("0000:00:00"));
     _followingSeasFact.setRawValue(false);
 }
@@ -77,6 +126,15 @@ void VehicleFactGroup::handleMessage(Vehicle *vehicle, const mavlink_message_t &
         break;
     case MAVLINK_MSG_ID_RAW_IMU:
         _handleRawImuTemp(message);
+        break;
+    case MAVLINK_MSG_ID_FCB35_ACTUATOR:
+        _handleMarsunActuator(message);
+        break;
+    case MAVLINK_MSG_ID_FCB35_CONTROL_STATE:
+        _handleMarsunControlState(message);
+        break;
+    case MAVLINK_MSG_ID_FCB35_ACCUMULATOR:
+        _handleAccumulator(message);
         break;
 #ifndef QGC_NO_ARDUPILOT_DIALECT
     case MAVLINK_MSG_ID_RANGEFINDER:
@@ -107,12 +165,12 @@ void VehicleFactGroup::_handleAttitudeWorker(double rollRadians, double pitchRad
     roll()->setRawValue(rollDegrees);
     pitch()->setRawValue(pitchDegrees);
     heading()->setRawValue(yawDegrees);
-    acu1Angle()->setRawValue(rollDegrees);
-    acu2Angle()->setRawValue(pitchDegrees);
-    acu3Angle()->setRawValue(yawDegrees);
-    acu4Angle()->setRawValue(rollDegrees);
-    acu5Angle()->setRawValue(pitchDegrees);
-    acu6Angle()->setRawValue(yawDegrees);
+    // acu1Angle()->setRawValue(rollDegrees);
+    // acu2Angle()->setRawValue(pitchDegrees);
+    // acu3Angle()->setRawValue(yawDegrees);
+    // acu4Angle()->setRawValue(rollDegrees);
+    // acu5Angle()->setRawValue(pitchDegrees);
+    // acu6Angle()->setRawValue(yawDegrees);
 }
 
 void VehicleFactGroup::_handleAttitude(Vehicle *vehicle, const mavlink_message_t &message)
@@ -220,6 +278,94 @@ void VehicleFactGroup::_handleRawImuTemp(const mavlink_message_t &message)
     mavlink_msg_raw_imu_decode(&message, &imuRaw);
 
     imuTemp()->setRawValue((imuRaw.temperature == 0) ? 0 : (imuRaw.temperature * 0.01));
+
+    _setTelemetryAvailable(true);
+}
+
+void VehicleFactGroup::_handleMarsunActuator(const mavlink_message_t &message)
+{
+    mavlink_fcb35_actuator_t msg{};
+    mavlink_msg_fcb35_actuator_decode(&message, &msg);
+
+    switch(msg.actuator_id) {
+        case 0:
+            acu1Angle()->setRawValue(msg.position);
+            acu1Speed()->setRawValue(msg.speed);
+            acu1Target()->setRawValue(msg.target);
+            acu1Status()->setRawValue(msg.status);
+            acu1Mode()->setRawValue(msg.mode);
+            acu1ValveCmd()->setRawValue(msg.valve_cmd);
+            acu1ValveFeedback()->setRawValue(msg.valve_feedback);
+            break;
+        case 1:
+            acu2Angle()->setRawValue(msg.position);
+            acu2Speed()->setRawValue(msg.speed);
+            acu2Target()->setRawValue(msg.target);
+            acu2Status()->setRawValue(msg.status);
+            acu2Mode()->setRawValue(msg.mode);
+            acu2ValveCmd()->setRawValue(msg.valve_cmd);
+            acu2ValveFeedback()->setRawValue(msg.valve_feedback);
+            break;
+        case 2:
+            acu3Angle()->setRawValue(msg.position);
+            acu3Speed()->setRawValue(msg.speed);
+            acu3Target()->setRawValue(msg.target);
+            acu3Status()->setRawValue(msg.status);
+            acu3Mode()->setRawValue(msg.mode);
+            acu3ValveCmd()->setRawValue(msg.valve_cmd);
+            acu3ValveFeedback()->setRawValue(msg.valve_feedback);
+            break;
+        case 3:
+            acu4Angle()->setRawValue(msg.position);
+            acu4Speed()->setRawValue(msg.speed);
+            acu4Target()->setRawValue(msg.target);
+            acu4Status()->setRawValue(msg.status);
+            acu4Mode()->setRawValue(msg.mode);
+            acu4ValveCmd()->setRawValue(msg.valve_cmd);
+            acu4ValveFeedback()->setRawValue(msg.valve_feedback);
+            break;
+        case 4:
+            acu5Angle()->setRawValue(msg.position);
+            acu5Speed()->setRawValue(msg.speed);
+            acu5Target()->setRawValue(msg.target);
+            acu5Status()->setRawValue(msg.status);
+            acu5Mode()->setRawValue(msg.mode);
+            acu5ValveCmd()->setRawValue(msg.valve_cmd);
+            acu5ValveFeedback()->setRawValue(msg.valve_feedback);
+            break;
+        case 5:
+            acu6Angle()->setRawValue(msg.position);
+            acu6Speed()->setRawValue(msg.speed);
+            acu6Target()->setRawValue(msg.target);
+            acu6Status()->setRawValue(msg.status);
+            acu6Mode()->setRawValue(msg.mode);
+            acu6ValveCmd()->setRawValue(msg.valve_cmd);
+            acu6ValveFeedback()->setRawValue(msg.valve_feedback);
+            break;
+        default:
+            break;
+    }
+    _setTelemetryAvailable(true);
+}
+
+void VehicleFactGroup::_handleMarsunControlState(const mavlink_message_t &message)
+{
+    mavlink_fcb35_control_state_t msg{};
+    mavlink_msg_fcb35_control_state_decode(&message, &msg);
+
+    bowHeight()->setRawValue(msg.bow_height);
+    estimatedDisplacement()->setRawValue(msg.estimated_displacement);
+    controlState()->setRawValue(msg.control_state);
+    controlHealth()->setRawValue(msg.control_healt);
+
+    _setTelemetryAvailable(true);
+}
+
+void VehicleFactGroup::_handleAccumulator(const mavlink_message_t &message)
+{
+    mavlink_fcb35_accumulator_t msg{};
+    mavlink_msg_fcb35_accumulator_decode(&message, &msg);
+
 
     _setTelemetryAvailable(true);
 }

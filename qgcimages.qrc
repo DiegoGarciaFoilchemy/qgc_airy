@@ -219,5 +219,6 @@
     <file alias="boat_rear.svg">src/FlightMap/Images/boat_rear.svg</file>
     <file alias="vesselOutline.svg">src/FlightMap/Images/vesselOutline.svg</file>
     <file alias="foil.svg">src/FlightMap/Images/foil.svg</file>
+    <file alias="VesselBow.svg">src/FlightMap/Images/vesselBow.svg</file>
   </qresource>
 </RCC>

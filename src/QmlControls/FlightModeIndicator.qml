@@ -64,11 +64,14 @@ Item {
         QGCLabel {
             text:                   qsTr("Mode")
             font.pointSize:         fontPointSize
-            anchors.centerIn:       parent
-            anchors.horizontalCenterOffset: -75
+            // anchors.centerIn:       parent
+            anchors.horizontalCenterOffset: -90
             // anchors.horizontalCenterOffset: -ScreenTools.defaultFontPixelWidth * 1.5
-            horizontalAlignment:    Text.AlignHCenter
-            rotation:               -90
+            // horizontalAlignment:    Text.AlignHCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: -25
+            // rotation:               -90
             // MouseArea {
             //     anchors.fill:   parent
             //     onClicked:      mainWindow.showIndicatorDrawer(drawerComponent, control)
@@ -78,11 +81,15 @@ Item {
         QGCLabel {
             text:                   activeVehicle ? activeVehicle.flightMode : qsTr("N/A", "No data to display")
             font.pointSize:         fontPointSize
-            anchors.centerIn:       parent
-            anchors.horizontalCenterOffset: -30
+            // anchors.centerIn:       parent
+            anchors.horizontalCenterOffset: -90
             // anchors.horizontalCenterOffset: ScreenTools.defaultFontPixelWidth * 1.5
-            horizontalAlignment:    Text.AlignHCenter
-            rotation:               -90
+            // horizontalAlignment:    Text.AlignHCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: 25
+            visible:                activeVehicle
+            // rotation:               -90
             // MouseArea {
             //     anchors.fill:   parent
             //     onClicked:      mainWindow.showIndicatorDrawer(drawerComponent, control)

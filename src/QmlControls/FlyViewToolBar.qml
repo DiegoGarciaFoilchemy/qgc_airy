@@ -23,7 +23,7 @@ Rectangle {
     id:     _root
     // width:  parent.width
     // height: ScreenTools.toolbarHeight
-    width: 100
+    width: 170
     height: parent.height
     color:  qgcPal.toolbarBackground
     // anchors.topMargin:    10
@@ -33,7 +33,7 @@ Rectangle {
     property var    _activeVehicle:     QGroundControl.multiVehicleManager.activeVehicle
     property bool   _communicationLost: _activeVehicle ? _activeVehicle.vehicleLinkManager.communicationLost : false
     property color  _mainStatusBGColor: qgcPal.brandingPurple
-    property color _followingSeasColor: _activeVehicle && _activeVehicle.followingSeas.rawValue ? Qt.rgba(0, 1, 0, 0.2) : Qt.rgba(1, 0, 0, 0.2)
+    property color _followingSeasColor: _activeVehicle && _activeVehicle.followingSeas.rawValue ? Qt.rgba(0, 1, 0, 0.14) : Qt.rgba(1, 0, 0, 0.14)
 
     function dropMainStatusIndicatorTool() {
         mainStatusIndicator.dropMainStatusIndicator();
@@ -55,19 +55,15 @@ Rectangle {
         id: backgroundGradient
         anchors.fill: viewButtonRow
         anchors.top : parent.top
-        gradient: Gradient {
-            orientation: Gradient.Vertical
-            GradientStop { position: 0.0; color: _root.color }
-            GradientStop { position: 0.2; color: Qt.rgba(_mainStatusBGColor.r, _mainStatusBGColor.g, _mainStatusBGColor.b, 0.6) }
-            GradientStop { position: 0.8; color: Qt.rgba(_mainStatusBGColor.r, _mainStatusBGColor.g, _mainStatusBGColor.b, 0.6) }
-            GradientStop { position: 1.0; color: _root.color }
-        }
+        color: _mainStatusBGColor
+        opacity: 0.5
+        border.color: "white"
+        border.width: 2
     }
 
     ColumnLayout {
         id:                     viewButtonRow
-        anchors.rightMargin:   1
-        anchors.topMargin:     10
+        // anchors.rightMargin:   1
         anchors.left:            parent.left
         anchors.right:         parent.right
         anchors.top:           parent.top
@@ -99,17 +95,15 @@ Rectangle {
 
     Rectangle {
         id: flighModeColor
+        visible: _activeVehicle
         anchors.right: parent.right
         anchors.left: parent.left
-        height: 200
+        height: 150
         anchors.verticalCenter: mainFlightModeIndicator.verticalCenter
-        gradient: Gradient {
-            orientation: Gradient.Vertical
-            GradientStop { position: 0.0; color: _root.color }
-            GradientStop { position: 0.2; color: mainFlightModeIndicator.displayColor }
-            GradientStop { position: 0.8; color: mainFlightModeIndicator.displayColor }
-            GradientStop { position: 1.0; color: _root.color }
-        }
+        color: mainFlightModeIndicator.displayColor
+        opacity: 0.5
+        border.color: "white"
+        border.width: 2
         MouseArea {
                 anchors.fill:   parent
                 onClicked:      mainFlightModeIndicator.showFlightModeDrawer()
@@ -119,54 +113,64 @@ Rectangle {
     FlightModeIndicator {
         id: mainFlightModeIndicator
         anchors.right:      parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: -25
+        anchors.top: parent.top
+        anchors.topMargin: 230
         // anchors.left:     parent.left
     }
 
     Rectangle {
+        id: followingSeasIndicator
         anchors.left:   parent.left
         anchors.right:  parent.right
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 65
-        height:         200
-        
-        
-        gradient: Gradient {
-            orientation: Gradient.Vertical
-            GradientStop { position: 0.0; color: _root.color }
-            GradientStop { position: 0.2; color: _followingSeasColor }
-            GradientStop { position: 0.8; color: _followingSeasColor }
-            GradientStop { position: 1.0; color: _root.color }
-        }
+        anchors.top: parent.top
+        anchors.topMargin: 310
+        height:         150
+        color: _followingSeasColor
+        border.color: Qt.rgba(1, 1, 1, 0.5)
+        border.width: 2
         
         QGCLabel {
-            text: qsTr("Head Seas")
+            text: qsTr("Following Seas")
             color: "white"
             font.pointSize: ScreenTools.largeFontPointSize
-            rotation: -90
-            anchors.left: parent.left
+            // rotation: -90
+            // anchors.top: parent.top
             anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: -20
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenterOffset: -20
         }
         
         QGCLabel {
             text: _activeVehicle ? (_activeVehicle.followingSeas.rawValue ? qsTr("ON") : qsTr("OFF")) : "-"
             color: "white"
             font.pointSize: ScreenTools.largeFontPointSize
-            rotation: -90
-            anchors.right: parent.right
+            // rotation: -90
+            // anchors.bottom: parent.bottom
             anchors.verticalCenter: parent.verticalCenter
-            anchors.rightMargin: 12
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenterOffset: 20
         }
         
         MouseArea {
             anchors.fill:   parent
+            enabled: _activeVehicle
             onClicked: _activeVehicle.followingSeas.rawValue ? _activeVehicle.followingSeasOff() : _activeVehicle.followingSeasOn()
         }
         visible: _activeVehicle
         
     }
+
+    QGCToolBarButton {
+            id:                     currentButton
+            Layout.preferredWidth:  parent.width
+            Layout.preferredHeight: parent.width - 30
+            icon.source:            "/res/QGCLogoFull.svg"
+            logo:                   true 
+            onClicked:              mainWindow.showToolSelectDialog()
+            anchors.bottom:           parent.bottom
+            anchors.bottomMargin: 20
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
     // QGCFlickable {
     //     id:                     toolsFlickable
     //     // anchors.leftMargin:     ScreenTools.defaultFontPixelWidth * ScreenTools.largeFontPointRatio * 1.5

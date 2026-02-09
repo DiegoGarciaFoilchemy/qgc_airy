@@ -37,17 +37,17 @@ RowLayout {
     QGCLabel {
         id:                 mainStatusLabel
         Layout.fillWidth:  true
-        Layout.preferredHeight: 200//contentWidth + vehicleMessagesIcon.width + control.spacing
+        Layout.preferredHeight: 150//contentWidth + vehicleMessagesIcon.width + control.spacing
         verticalAlignment:  Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter
         text:               mainStatusText()
-        font.pointSize:     ScreenTools.largeFontPointSize * 1.5
-        rotation:           -90
+        font.pointSize:     textSize()
 
         property string _commLostText:      qsTr("Comms Lost")
-        property string _readyToFlyText:    qsTr("OFF")
-        property string _notReadyToFlyText: qsTr("OFF")
+        property string _readyToFlyText:    qsTr("  OFF")
+        property string _notReadyToFlyText: qsTr("  OFF")
         property string _disconnectedText:  qsTr("Disconnected")
-        property string _armedText:         qsTr("ON")
+        property string _armedText:         qsTr("  ON")
         property string _flyingText:        qsTr("Flying")
         property string _landingText:       qsTr("Landing")
 
@@ -113,6 +113,14 @@ RowLayout {
             } else {
                 _mainStatusBGColor = qgcPal.brandingPurple
                 return mainStatusLabel._disconnectedText
+            }
+        }
+
+        function textSize() {
+            if (mainStatusLabel.text > 4) {
+                return ScreenTools.largeFontPointSize * 1.2
+            } else {
+                return ScreenTools.largeFontPointSize * 1.5
             }
         }
 

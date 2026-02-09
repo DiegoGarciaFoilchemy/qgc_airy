@@ -25,6 +25,7 @@ qt_add_qml_module(FlightMapModule
         Widgets/HorizontalCompassAttitude.qml
         Widgets/VesselAttitude.qml
         Widgets/FoilAngle.qml
+        Widgets/InterceptorDeploy.qml
         Widgets/IntegratedAttitudeIndicator.qml
         Widgets/IntegratedCompassAttitude.qml
         Widgets/MapFitFunctions.qml
@@ -34,6 +35,7 @@ qt_add_qml_module(FlightMapModule
         Widgets/QGCCompassWidget.qml
         Widgets/QGCPitchIndicator.qml
         Widgets/VerticalCompassAttitude.qml
+        Widgets/VesselSpeed.qml
         FlightMap.qml
         MapScale.qml
     NO_PLUGIN # Required by Qt 6.6.3. TODO: Remove when no longer supported.

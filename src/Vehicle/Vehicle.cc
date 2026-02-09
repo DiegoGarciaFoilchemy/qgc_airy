@@ -102,22 +102,22 @@ Vehicle::Vehicle(LinkInterface*             link,
     , _vehicleFactGroup             (this)
     , _gpsFactGroup                 (this)
     , _gps2FactGroup                (this)
-    , _windFactGroup                (this)
-    , _vibrationFactGroup           (this)
-    , _temperatureFactGroup         (this)
+    // , _windFactGroup                (this)
+    // , _vibrationFactGroup           (this)
+    // , _temperatureFactGroup         (this)
     , _clockFactGroup               (this)
     , _setpointFactGroup            (this)
     , _distanceSensorFactGroup      (this)
     , _localPositionFactGroup       (this)
     , _localPositionSetpointFactGroup(this)
-    , _escStatusFactGroup           (this)
-    , _estimatorStatusFactGroup     (this)
-    , _hygrometerFactGroup          (this)
-    , _generatorFactGroup           (this)
-    , _efiFactGroup                 (this)
-    , _rpmFactGroup                 (this)
-    , _terrainFactGroup             (this)
-    , _terrainProtocolHandler       (new TerrainProtocolHandler(this, &_terrainFactGroup, this))
+    // , _escStatusFactGroup           (this)
+    // , _estimatorStatusFactGroup     (this)
+    // , _hygrometerFactGroup          (this)
+    // , _generatorFactGroup           (this)
+    // , _efiFactGroup                 (this)
+    // , _rpmFactGroup                 (this)
+    // , _terrainFactGroup             (this)
+    // , _terrainProtocolHandler       (new TerrainProtocolHandler(this, &_terrainFactGroup, this))
 {
     connect(JoystickManager::instance(), &JoystickManager::activeJoystickChanged, this, &Vehicle::_loadJoystickSettings);
     connect(MultiVehicleManager::instance(), &MultiVehicleManager::activeVehicleChanged, this, &Vehicle::_activeVehicleChanged);
@@ -213,9 +213,9 @@ Vehicle::Vehicle(MAV_AUTOPILOT              firmwareType,
     , _vehicleFactGroup                 (this)
     , _gpsFactGroup                     (this)
     , _gps2FactGroup                    (this)
-    , _windFactGroup                    (this)
-    , _vibrationFactGroup               (this)
-    , _clockFactGroup                   (this)
+    // , _windFactGroup                    (this)
+    // , _vibrationFactGroup               (this)
+    // , _clockFactGroup                   (this)
     , _distanceSensorFactGroup          (this)
     , _localPositionFactGroup           (this)
     , _localPositionSetpointFactGroup   (this)
@@ -322,22 +322,22 @@ void Vehicle::_commonInit()
 
     // _addFactGroup(_vehicleFactGroup,            _vehicleFactGroupName);
     _addFactGroup(&_gpsFactGroup,               _gpsFactGroupName);
-    _addFactGroup(&_gps2FactGroup,              _gps2FactGroupName);
-    _addFactGroup(&_windFactGroup,              _windFactGroupName);
-    _addFactGroup(&_vibrationFactGroup,         _vibrationFactGroupName);
-    _addFactGroup(&_temperatureFactGroup,       _temperatureFactGroupName);
+    // _addFactGroup(&_gps2FactGroup,              _gps2FactGroupName);
+    // _addFactGroup(&_windFactGroup,              _windFactGroupName);
+    // _addFactGroup(&_vibrationFactGroup,         _vibrationFactGroupName);
+    // _addFactGroup(&_temperatureFactGroup,       _temperatureFactGroupName);
     _addFactGroup(&_clockFactGroup,             _clockFactGroupName);
     _addFactGroup(&_setpointFactGroup,          _setpointFactGroupName);
     _addFactGroup(&_distanceSensorFactGroup,    _distanceSensorFactGroupName);
     _addFactGroup(&_localPositionFactGroup,     _localPositionFactGroupName);
     _addFactGroup(&_localPositionSetpointFactGroup,_localPositionSetpointFactGroupName);
-    _addFactGroup(&_escStatusFactGroup,         _escStatusFactGroupName);
-    _addFactGroup(&_estimatorStatusFactGroup,   _estimatorStatusFactGroupName);
-    _addFactGroup(&_hygrometerFactGroup,        _hygrometerFactGroupName);
-    _addFactGroup(&_generatorFactGroup,         _generatorFactGroupName);
-    _addFactGroup(&_efiFactGroup,               _efiFactGroupName);
-    _addFactGroup(&_rpmFactGroup,               _rpmFactGroupName);
-    _addFactGroup(&_terrainFactGroup,           _terrainFactGroupName);
+    // _addFactGroup(&_escStatusFactGroup,         _escStatusFactGroupName);
+    // _addFactGroup(&_estimatorStatusFactGroup,   _estimatorStatusFactGroupName);
+    // _addFactGroup(&_hygrometerFactGroup,        _hygrometerFactGroupName);
+    // _addFactGroup(&_generatorFactGroup,         _generatorFactGroupName);
+    // _addFactGroup(&_efiFactGroup,               _efiFactGroupName);
+    // _addFactGroup(&_rpmFactGroup,               _rpmFactGroupName);
+    // _addFactGroup(&_terrainFactGroup,           _terrainFactGroupName);
 
     // Add firmware-specific fact groups, if provided
     QMap<QString, FactGroup*>* fwFactGroups = _firmwarePlugin->factGroups();

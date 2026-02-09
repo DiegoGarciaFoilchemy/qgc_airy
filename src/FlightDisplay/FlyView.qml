@@ -40,7 +40,7 @@ Item {
     // Properties of UTM adapter
     property bool utmspSendActTrigger: false
     // Page names for navigation
-    property var pageNames: ["overview", "actuators", "alarms", "debug", "test"]
+    property var pageNames: ["overview", "Approach", "alarms", "debug", "test"]
     // PlanMasterController {
     //     id:                     _planController
     //     flyView:                true
@@ -70,9 +70,9 @@ Item {
         toolstrip.adjustToolInset(newToolInset)
     }
 
-    function dropMainStatusIndicatorTool() {
-        toolbar.dropMainStatusIndicatorTool();
-    }
+    // function dropMainStatusIndicatorTool() {
+    //     toolbar.dropMainStatusIndicatorTool();
+    // }
 
     // QGCToolInsets {
     //     id:                     _toolInsets
@@ -92,10 +92,14 @@ Item {
         anchors.bottom:     parent.bottom
         anchors.left:       parent.left
         anchors.right:      toolbar.left
+        // anchors.right:     parent.right
 
         Item {
             id:                     mapControl
-            anchors.fill:           parent
+            anchors.top:            parent.top
+            anchors.bottom:         parent.bottom
+            anchors.left:           parent.left
+            anchors.right:          parent.right
 
             // Keep these properties so other QML which references `mapControl` still works
             property var    planMasterController
@@ -117,31 +121,41 @@ Item {
 
             // Minimal properties expected by code elsewhere
             property bool isSatelliteMap: false
-            QGCToolBarButton {
-                id:                     currentButton
-                anchors.top:           parent.top
-                anchors.left:            parent.left
-                Layout.preferredWidth:  50
-                icon.source:            "/res/QGCLogoFull.svg"
-                logo:                   true
-                onClicked:              mainWindow.showToolSelectDialog()
-            }
+            // QGCToolBarButton {
+            //     id:                     currentButton
+            //     anchors.top:           parent.top
+            //     anchors.left:            parent.left
+            //     Layout.preferredWidth:  50
+            //     icon.source:            "/res/QGCLogoFull.svg"
+            //     logo:                   true
+            //     onClicked:              mainWindow.showToolSelectDialog()
+            // }
+            
             // SwipeView for multiple screens
             SwipeView {
                 id: screenSwipeView
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.bottom: navBar.top
-                anchors.bottomMargin: 12
+                anchors.bottom: parent.bottom
                 clip: true
 
                 Page1 { width: screenSwipeView.width; height: screenSwipeView.height }
                 Page2 { width: screenSwipeView.width; height: screenSwipeView.height }
                 Page3 { width: screenSwipeView.width; height: screenSwipeView.height }
-                Page4 { width: screenSwipeView.width; height: screenSwipeView.height }
+                Page4 { width: screenSwipeView.width - 400; height: screenSwipeView.height }
                 Page5 { width: screenSwipeView.width; height: screenSwipeView.height }
             }
+            // QGCToolBarButton {
+            //     id:                     currentButton
+            //     Layout.preferredHeight: 80
+            //     Layout.preferredWidth:  80
+            //     icon.source:            "/res/QGCLogoFull.svg"
+            //     logo:                   true 
+            //     onClicked:              mainWindow.showToolSelectDialog()
+            //     anchors.top:           parent.top
+            //     anchors.left:            parent.left
+            // }
 
             // Bottom navigation buttons
             Row {

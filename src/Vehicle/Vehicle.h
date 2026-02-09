@@ -255,20 +255,20 @@ public:
     Q_PROPERTY(FactGroup*           vehicle         READ vehicleFactGroup           CONSTANT)
     Q_PROPERTY(FactGroup*           gps             READ gpsFactGroup               CONSTANT)
     Q_PROPERTY(FactGroup*           gps2            READ gps2FactGroup              CONSTANT)
-    Q_PROPERTY(FactGroup*           wind            READ windFactGroup              CONSTANT)
-    Q_PROPERTY(FactGroup*           vibration       READ vibrationFactGroup         CONSTANT)
-    Q_PROPERTY(FactGroup*           temperature     READ temperatureFactGroup       CONSTANT)
+    // Q_PROPERTY(FactGroup*           wind            READ windFactGroup              CONSTANT)
+    // Q_PROPERTY(FactGroup*           vibration       READ vibrationFactGroup         CONSTANT)
+    // Q_PROPERTY(FactGroup*           temperature     READ temperatureFactGroup       CONSTANT)
     Q_PROPERTY(FactGroup*           clock           READ clockFactGroup             CONSTANT)
     Q_PROPERTY(FactGroup*           setpoint        READ setpointFactGroup          CONSTANT)
-    Q_PROPERTY(FactGroup*           escStatus       READ escStatusFactGroup         CONSTANT)
-    Q_PROPERTY(FactGroup*           estimatorStatus READ estimatorStatusFactGroup   CONSTANT)
-    Q_PROPERTY(FactGroup*           terrain         READ terrainFactGroup           CONSTANT)
+    // Q_PROPERTY(FactGroup*           escStatus       READ escStatusFactGroup         CONSTANT)
+    // Q_PROPERTY(FactGroup*           estimatorStatus READ estimatorStatusFactGroup   CONSTANT)
+    // Q_PROPERTY(FactGroup*           terrain         READ terrainFactGroup           CONSTANT)
     Q_PROPERTY(FactGroup*           distanceSensors READ distanceSensorFactGroup    CONSTANT)
     Q_PROPERTY(FactGroup*           localPosition   READ localPositionFactGroup     CONSTANT)
     Q_PROPERTY(FactGroup*           localPositionSetpoint READ localPositionSetpointFactGroup CONSTANT)
-    Q_PROPERTY(FactGroup*           hygrometer      READ hygrometerFactGroup        CONSTANT)
-    Q_PROPERTY(FactGroup*           generator       READ generatorFactGroup         CONSTANT)
-    Q_PROPERTY(FactGroup*           efi             READ efiFactGroup               CONSTANT)
+    // Q_PROPERTY(FactGroup*           hygrometer      READ hygrometerFactGroup        CONSTANT)
+    // Q_PROPERTY(FactGroup*           generator       READ generatorFactGroup         CONSTANT)
+    // Q_PROPERTY(FactGroup*           efi             READ efiFactGroup               CONSTANT)
     Q_PROPERTY(QmlObjectListModel*  batteries       READ batteries                  CONSTANT)
     Q_PROPERTY(Actuators*           actuators       READ actuators                  CONSTANT)
     Q_PROPERTY(HealthAndArmingCheckReport* healthAndArmingCheckReport READ healthAndArmingCheckReport CONSTANT)
@@ -598,21 +598,21 @@ public:
     FactGroup* vehicleFactGroup             () { return _vehicleFactGroup; }
     FactGroup* gpsFactGroup                 () { return &_gpsFactGroup; }
     FactGroup* gps2FactGroup                () { return &_gps2FactGroup; }
-    FactGroup* windFactGroup                () { return &_windFactGroup; }
-    FactGroup* vibrationFactGroup           () { return &_vibrationFactGroup; }
-    FactGroup* temperatureFactGroup         () { return &_temperatureFactGroup; }
+    // FactGroup* windFactGroup                () { return &_windFactGroup; }
+    // FactGroup* vibrationFactGroup           () { return &_vibrationFactGroup; }
+    // FactGroup* temperatureFactGroup         () { return &_temperatureFactGroup; }
     FactGroup* clockFactGroup               () { return &_clockFactGroup; }
     FactGroup* setpointFactGroup            () { return &_setpointFactGroup; }
     FactGroup* distanceSensorFactGroup      () { return &_distanceSensorFactGroup; }
     FactGroup* localPositionFactGroup       () { return &_localPositionFactGroup; }
     FactGroup* localPositionSetpointFactGroup() { return &_localPositionSetpointFactGroup; }
-    FactGroup* escStatusFactGroup           () { return &_escStatusFactGroup; }
-    FactGroup* estimatorStatusFactGroup     () { return &_estimatorStatusFactGroup; }
-    FactGroup* terrainFactGroup             () { return &_terrainFactGroup; }
-    FactGroup* hygrometerFactGroup          () { return &_hygrometerFactGroup; }
-    FactGroup* generatorFactGroup           () { return &_generatorFactGroup; }
-    FactGroup* efiFactGroup                 () { return &_efiFactGroup; }
-    FactGroup* rpmFactGroup                 () { return &_rpmFactGroup; }
+    // FactGroup* escStatusFactGroup           () { return &_escStatusFactGroup; }
+    // FactGroup* estimatorStatusFactGroup     () { return &_estimatorStatusFactGroup; }
+    // FactGroup* terrainFactGroup             () { return &_terrainFactGroup; }
+    // FactGroup* hygrometerFactGroup          () { return &_hygrometerFactGroup; }
+    // FactGroup* generatorFactGroup           () { return &_generatorFactGroup; }
+    // FactGroup* efiFactGroup                 () { return &_efiFactGroup; }
+    // FactGroup* rpmFactGroup                 () { return &_rpmFactGroup; }
     QmlObjectListModel* batteries           () { return &_batteryFactGroupListModel; }
 
     MissionManager*                 missionManager      () { return _missionManager; }
@@ -1239,40 +1239,40 @@ private:
     const QString _vehicleFactGroupName =            QStringLiteral("vehicle");
     const QString _gpsFactGroupName =                QStringLiteral("gps");
     const QString _gps2FactGroupName =               QStringLiteral("gps2");
-    const QString _windFactGroupName =               QStringLiteral("wind");
-    const QString _vibrationFactGroupName =          QStringLiteral("vibration");
-    const QString _temperatureFactGroupName =        QStringLiteral("temperature");
+    // const QString _windFactGroupName =               QStringLiteral("wind");
+    // const QString _vibrationFactGroupName =          QStringLiteral("vibration");
+    // const QString _temperatureFactGroupName =        QStringLiteral("temperature");
     const QString _clockFactGroupName =              QStringLiteral("clock");
     const QString _setpointFactGroupName =           QStringLiteral("setpoint");
     const QString _distanceSensorFactGroupName =     QStringLiteral("distanceSensor");
     const QString _localPositionFactGroupName =      QStringLiteral("localPosition");
     const QString _localPositionSetpointFactGroupName = QStringLiteral("localPositionSetpoint");
-    const QString _escStatusFactGroupName =          QStringLiteral("escStatus");
-    const QString _estimatorStatusFactGroupName =    QStringLiteral("estimatorStatus");
-    const QString _terrainFactGroupName =            QStringLiteral("terrain");
-    const QString _hygrometerFactGroupName =         QStringLiteral("hygrometer");
-    const QString _generatorFactGroupName =          QStringLiteral("generator");
-    const QString _efiFactGroupName =                QStringLiteral("efi");
-    const QString _rpmFactGroupName =                QStringLiteral("rpm");
+    // const QString _escStatusFactGroupName =          QStringLiteral("escStatus");
+    // const QString _estimatorStatusFactGroupName =    QStringLiteral("estimatorStatus");
+    // const QString _terrainFactGroupName =            QStringLiteral("terrain");
+    // const QString _hygrometerFactGroupName =         QStringLiteral("hygrometer");
+    // const QString _generatorFactGroupName =          QStringLiteral("generator");
+    // const QString _efiFactGroupName =                QStringLiteral("efi");
+    // const QString _rpmFactGroupName =                QStringLiteral("rpm");
 
     VehicleFactGroup*               _vehicleFactGroup;
     VehicleGPSFactGroup             _gpsFactGroup;
     VehicleGPS2FactGroup            _gps2FactGroup;
-    VehicleWindFactGroup            _windFactGroup;
-    VehicleVibrationFactGroup       _vibrationFactGroup;
-    VehicleTemperatureFactGroup     _temperatureFactGroup;
+    // VehicleWindFactGroup            _windFactGroup;
+    // VehicleVibrationFactGroup       _vibrationFactGroup;
+    // VehicleTemperatureFactGroup     _temperatureFactGroup;
     VehicleClockFactGroup           _clockFactGroup;
     VehicleSetpointFactGroup        _setpointFactGroup;
     VehicleDistanceSensorFactGroup  _distanceSensorFactGroup;
     VehicleLocalPositionFactGroup   _localPositionFactGroup;
     VehicleLocalPositionSetpointFactGroup _localPositionSetpointFactGroup;
-    VehicleEscStatusFactGroup       _escStatusFactGroup;
-    VehicleEstimatorStatusFactGroup _estimatorStatusFactGroup;
-    VehicleHygrometerFactGroup      _hygrometerFactGroup;
-    VehicleGeneratorFactGroup       _generatorFactGroup;
-    VehicleEFIFactGroup             _efiFactGroup;
-    VehicleRPMFactGroup             _rpmFactGroup;
-    TerrainFactGroup                _terrainFactGroup;
+    // VehicleEscStatusFactGroup       _escStatusFactGroup;
+    // VehicleEstimatorStatusFactGroup _estimatorStatusFactGroup;
+    // VehicleHygrometerFactGroup      _hygrometerFactGroup;
+    // VehicleGeneratorFactGroup       _generatorFactGroup;
+    // VehicleEFIFactGroup             _efiFactGroup;
+    // VehicleRPMFactGroup             _rpmFactGroup;
+    // TerrainFactGroup                _terrainFactGroup;
     QmlObjectListModel              _batteryFactGroupListModel;
 
     TerrainProtocolHandler* _terrainProtocolHandler = nullptr;
