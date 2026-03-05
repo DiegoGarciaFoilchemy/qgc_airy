@@ -97,10 +97,11 @@ static QObject *mavlinkSingletonFactory(QQmlEngine*, QJSEngine*)
     return new QGCMAVLink();
 }
 
-QGCApplication::QGCApplication(int &argc, char *argv[], bool unitTesting, bool simpleBootTest)
+QGCApplication::QGCApplication(int &argc, char *argv[], bool unitTesting, bool simpleBootTest, bool kioskMode)
     : QApplication(argc, argv)
     , _runningUnitTests(unitTesting)
     , _simpleBootTest(simpleBootTest)
+    , _kioskMode(kioskMode)
 {
     _msecsElapsedTime.start();
 

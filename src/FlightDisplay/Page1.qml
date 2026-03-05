@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 import QGroundControl.Palette
 Item {
     id: root
@@ -50,21 +51,30 @@ Item {
             scale: 0.6
         }
 
-        Column {
-            anchors.centerIn: parent
+        ColumnLayout {
+            anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.topMargin: 150
             spacing: 20
 
-            Loader {
-                id: instrumentLoader
-                source: "qrc:/qml/QGroundControl/FlightMap/Widgets/VesselAttitude.qml"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.topMargin: 10
+            RowLayout {
+                spacing: 30
+                Layout.alignment: Qt.AlignHCenter
+                Loader {
+                    id: pitchLoader
+                    source: "qrc:/qml/QGroundControl/FlightMap/Widgets/VesselPitch.qml"
+                }
+                Loader {
+                    id: rollLoader
+                    source: "qrc:/qml/QGroundControl/FlightMap/Widgets/VesselRoll.qml"
+                }
             }
+            
 
             Loader {
                 id: speedLoader
                 source: "qrc:/qml/QGroundControl/FlightMap/Widgets/VesselSpeed.qml"
-                anchors.horizontalCenter: parent.horizontalCenter
+                Layout.alignment: Qt.AlignHCenter
                 onLoaded: {
                     item.speed = Qt.binding(function() { return vehicle ? vehicle.pitch.rawValue : 0 })
                 }

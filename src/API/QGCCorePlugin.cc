@@ -8,6 +8,7 @@
  ****************************************************************************/
 
 #include "QGCCorePlugin.h"
+#include "QGCApplication.h"
 #include "QGCLogging.h"
 #include "AppSettings.h"
 #include "MavlinkSettings.h"
@@ -275,6 +276,7 @@ QQmlApplicationEngine *QGCCorePlugin::createQmlApplicationEngine(QObject *parent
 
 void QGCCorePlugin::createRootWindow(QQmlApplicationEngine *qmlEngine)
 {
+    qmlEngine->rootContext()->setContextProperty(QStringLiteral("kioskMode"), qgcApp()->kioskMode());
     qmlEngine->load(QUrl(QStringLiteral("qrc:/qml/QGroundControl/MainWindow/MainWindow.qml")));
 }
 

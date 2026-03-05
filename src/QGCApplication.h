@@ -48,7 +48,7 @@ class QGCApplication : public QApplication
     /// Unit Test have access to creating and destroying singletons
     friend class UnitTest;
 public:
-    QGCApplication(int &argc, char *argv[], bool unitTesting, bool simpleBootTest);
+    QGCApplication(int &argc, char *argv[], bool unitTesting, bool simpleBootTest, bool kioskMode = false);
     ~QGCApplication();
 
     /// Sets the persistent flag to delete all settings the next time QGroundControl is started.
@@ -59,6 +59,7 @@ public:
 
     bool runningUnitTests() const { return _runningUnitTests; }
     bool simpleBootTest() const { return _simpleBootTest; }
+    bool kioskMode() const { return _kioskMode; }
 
     /// Returns true if Qt debug output should be logged to a file
     bool logOutput() const { return _logOutput; }
@@ -137,7 +138,8 @@ private:
     void _checkForNewVersion();
 
     bool _runningUnitTests = false;
-    bool _simpleBootTest = false; 
+    bool _simpleBootTest = false;
+    bool _kioskMode = false; 
     static constexpr int _missingParamsDelayedDisplayTimerTimeout = 1000;   ///< Timeout to wait for next missing fact to come in before display
     QTimer _missingParamsDelayedDisplayTimer;                               ///< Timer use to delay missing fact display
     QList<QPair<int,QString>> _missingParams;                               ///< List of missing parameter component id:name

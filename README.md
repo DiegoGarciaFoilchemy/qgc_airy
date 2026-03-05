@@ -60,3 +60,5 @@ With QGroundControl, you're in full command of your UAV, ready to take your miss
 cmake --build build --config Debug
 
 ./build/Debug/QGroundControl
+
+// upload to screen

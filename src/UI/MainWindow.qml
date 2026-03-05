@@ -28,16 +28,18 @@ import QGroundControl.UTMSP
 ApplicationWindow {
     id:             mainWindow
     visible:        true
-    width:          1280
-    height:         800
-    minimumWidth:   1280
-    minimumHeight:  800
-    maximumWidth:   1280
-    maximumHeight:  800
-    flags:          Qt.Window | Qt.WindowTitleBarButtonsHint | Qt.WindowSystemMenuHint
+    width:          kioskMode ? Screen.width : 1280
+    height:         kioskMode ? Screen.height : 800
+    minimumWidth:   kioskMode ? Screen.width : 1280
+    minimumHeight:  kioskMode ? Screen.height : 800
+    maximumWidth:   kioskMode ? Screen.width : 1280
+    maximumHeight:  kioskMode ? Screen.height : 800
+    flags:          kioskMode ? Qt.FramelessWindowHint : (Qt.Window | Qt.WindowTitleBarButtonsHint | Qt.WindowSystemMenuHint)
+    visibility:     kioskMode ? Window.FullScreen : Window.Windowed
 
     property bool   _utmspSendActTrigger
     property bool   _utmspStartTelemetry
+    property bool   _kioskExitRequested: false
 
     Component.onCompleted: {
         // Start the sequence of first run prompt(s)
@@ -99,6 +101,16 @@ ApplicationWindow {
 
     /// Default color palette used throughout the UI
     QGCPalette { id: qgcPal; colorGroupEnabled: true }
+
+    /// Keyboard handling for kiosk mode
+    Keys.onPressed: (event) => {
+        if (kioskMode && event.key === Qt.Key_Q && event.modifiers & Qt.ControlModifier && event.modifiers & Qt.ShiftModifier) {
+            // Ctrl+Shift+Q to exit kiosk mode
+            _kioskExitRequested = true
+            event.accepted = true
+            mainWindow.showAlert(qsTr("Exit Kiosk Mode"), qsTr("Use exit button or close the application to return to normal mode"))
+        }
+    }
 
     //-------------------------------------------------------------------------
     //-- Actions

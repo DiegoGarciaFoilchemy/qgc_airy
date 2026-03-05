@@ -77,6 +77,7 @@ int main(int argc, char *argv[])
     QString systemIdStr = QString();
     bool hasSystemId = false;
     bool bypassRunGuard = false;
+    bool kioskMode = false;
 
     bool stressUnitTests = false;       // Stress test unit tests
     bool quietWindowsAsserts = false;   // Don't let asserts pop dialog boxes
@@ -91,6 +92,7 @@ int main(int argc, char *argv[])
 #endif
         { "--system-id",            &hasSystemId,           &systemIdStr },
         { "--simple-boot-test",     &simpleBootTest,        nullptr },
+        { "--kiosk",                &kioskMode,             nullptr },
         // Add additional command line option flags here
     };
 
@@ -181,7 +183,7 @@ int main(int argc, char *argv[])
 #endif // Q_OS_WIN
 #endif // QT_DEBUG
 
-    QGCApplication app(argc, argv, runUnitTests, simpleBootTest);
+    QGCApplication app(argc, argv, runUnitTests, simpleBootTest, kioskMode);
 
 #ifdef Q_OS_LINUX
 #ifndef Q_OS_ANDROID
