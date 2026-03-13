@@ -98,9 +98,18 @@ VehicleFactGroup::VehicleFactGroup(QObject *parent)
     _addFact(&_followingSeasFact);
     _addFact(&_bowHeightFact);
     _addFact(&_estimatedDisplacementFact);
-    _addFact(&_controlStateFact);
-    _addFact(&_controlHealthFact);
-    
+    _addFact(&_controlModeFact);
+    _addFact(&_attitudeStateFact);
+    _addFact(&_heaveStateFact);
+    _addFact(&_speedStateFact);
+    _addFact(&_commStateFact);
+    _addFact(&_ballastCommandFact);
+    _addFact(&_commandBowSbFact);
+    _addFact(&_commandBowPsFact);
+    _addFact(&_commandMainSbFact);
+    _addFact(&_commandMainPsFact);
+    _addFact(&_commandInterSbFact);
+    _addFact(&_commandInterPsFact);
 
     _hobbsFact.setRawValue(QStringLiteral("0000:00:00"));
     _followingSeasFact.setRawValue(false);
@@ -109,7 +118,7 @@ VehicleFactGroup::VehicleFactGroup(QObject *parent)
 void VehicleFactGroup::handleMessage(Vehicle *vehicle, const mavlink_message_t &message)
 {
     switch (message.msgid) {
-    case MAVLINK_MSG_ID_ATTITUDE:
+    case MAVLINK_MSG_ID_BOAT_ATTITUDE:
         _handleAttitude(vehicle, message);
         break;
     // case MAVLINK_MSG_ID_ATTITUDE_QUATERNION:
@@ -135,6 +144,9 @@ void VehicleFactGroup::handleMessage(Vehicle *vehicle, const mavlink_message_t &
         break;
     case MAVLINK_MSG_ID_FCB35_ACCUMULATOR:
         _handleAccumulator(message);
+        break;
+    case MAVLINK_MSG_ID_BOAT_SPEED:
+        _handleBoatSpeed(message);
         break;
 #ifndef QGC_NO_ARDUPILOT_DIALECT
     case MAVLINK_MSG_ID_RANGEFINDER:
@@ -179,15 +191,17 @@ void VehicleFactGroup::_handleAttitude(Vehicle *vehicle, const mavlink_message_t
         return;
     }
 
-    if (_receivingAttitudeQuaternion) {
-        return;
-    }
 
-    mavlink_attitude_t attitude{};
-    mavlink_msg_attitude_decode(&message, &attitude);
+    mavlink_boat_attitude_t attitude{};
+    mavlink_msg_boat_attitude_decode(&message, &attitude);
 
-    _handleAttitudeWorker(attitude.roll, attitude.pitch, attitude.yaw);
-
+    // _handleAttitudeWorker(attitude.roll, attitude.pitch, attitude.yaw);
+    roll()->setRawValue(attitude.roll);
+    pitch()->setRawValue(attitude.pitch);
+    heading()->setRawValue(attitude.yaw);
+    rollRate()->setRawValue(attitude.roll_rate);
+    pitchRate()->setRawValue(attitude.pitch_rate);
+    yawRate()->setRawValue(attitude.yaw_rate);
     _setTelemetryAvailable(true);
 }
 
@@ -258,7 +272,7 @@ void VehicleFactGroup::_handleVfrHud(const mavlink_message_t &message)
     mavlink_msg_vfr_hud_decode(&message, &vfrHud);
 
     airSpeed()->setRawValue(qIsNaN(vfrHud.airspeed) ? 0 : vfrHud.airspeed);
-    groundSpeed()->setRawValue(qIsNaN(vfrHud.groundspeed) ? 0 : vfrHud.groundspeed);
+    // groundSpeed()->setRawValue(qIsNaN(vfrHud.groundspeed) ? 0 : vfrHud.groundspeed);
     climbRate()->setRawValue(qIsNaN(vfrHud.climb) ? 0 : vfrHud.climb);
     throttlePct()->setRawValue(static_cast<int16_t>(vfrHud.throttle));
     if (qIsNaN(_altitudeTuningOffset)) {
@@ -353,11 +367,21 @@ void VehicleFactGroup::_handleMarsunControlState(const mavlink_message_t &messag
     mavlink_fcb35_control_state_t msg{};
     mavlink_msg_fcb35_control_state_decode(&message, &msg);
 
-    bowHeight()->setRawValue(msg.bow_height);
-    estimatedDisplacement()->setRawValue(msg.estimated_displacement);
-    controlState()->setRawValue(msg.control_state);
-    controlHealth()->setRawValue(msg.control_healt);
-
+    bowHeight()->setRawValue(msg.bow_freeboard);
+    estimatedDisplacement()->setRawValue(msg.average_freeboard);
+    controlMode()->setRawValue(msg.control_mode);
+    attitudeState()->setRawValue(msg.attitude_state);
+    heaveState()->setRawValue(msg.heave_state);
+    speedState()->setRawValue(msg.speed_state);
+    // commState()->setRawValue(msg.comm_state);
+    ballastCommand()->setRawValue(msg.ballast_command);
+    commandBowSb()->setRawValue(msg.aoa_bow_sb);
+    commandBowPs()->setRawValue(msg.aoa_bow_ps);
+    commandMainSb()->setRawValue(msg.aoa_main_sb);
+    commandMainPs()->setRawValue(msg.aoa_main_ps);
+    commandInterSb()->setRawValue(msg.interceptor_sb);
+    commandInterPs()->setRawValue(msg.interceptor_ps);
+    
     _setTelemetryAvailable(true);
 }
 
@@ -366,6 +390,16 @@ void VehicleFactGroup::_handleAccumulator(const mavlink_message_t &message)
     mavlink_fcb35_accumulator_t msg{};
     mavlink_msg_fcb35_accumulator_decode(&message, &msg);
 
+
+    _setTelemetryAvailable(true);
+}
+
+void VehicleFactGroup::_handleBoatSpeed(const mavlink_message_t &message)
+{
+    mavlink_boat_speed_t msg{};
+    mavlink_msg_boat_speed_decode(&message, &msg);
+
+    groundSpeed()->setRawValue(msg.control_speed);
 
     _setTelemetryAvailable(true);
 }

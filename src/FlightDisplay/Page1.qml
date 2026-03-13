@@ -76,7 +76,7 @@ Item {
                 source: "qrc:/qml/QGroundControl/FlightMap/Widgets/VesselSpeed.qml"
                 Layout.alignment: Qt.AlignHCenter
                 onLoaded: {
-                    item.speed = Qt.binding(function() { return vehicle ? vehicle.pitch.rawValue : 0 })
+                    item.speed = Qt.binding(function() { return vehicle ? vehicle.groundSpeed.rawValue : 0 })
                 }
             }
         }
@@ -90,7 +90,7 @@ Item {
                 source: "qrc:/qml/QGroundControl/FlightMap/Widgets/FoilAngle.qml"
                 anchors.horizontalCenter: parent.horizontalCenter
                 onLoaded: {
-                    item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.acu2Angle.rawValue : 0 })
+                    item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.commandBowPs.rawValue : 0 })
                     item.foilName = "BOW PS"
                 }
             }
@@ -100,7 +100,7 @@ Item {
                 source: "qrc:/qml/QGroundControl/FlightMap/Widgets/FoilAngle.qml"
                 anchors.horizontalCenter: parent.horizontalCenter
                 onLoaded: {
-                    item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.acu1Angle.rawValue : 0 })
+                    item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.commandMainPs.rawValue : 0 })
                     item.foilName = "MAIN PS"
                 }
             }
@@ -115,7 +115,7 @@ Item {
                 source: "qrc:/qml/QGroundControl/FlightMap/Widgets/FoilAngle.qml"
                 anchors.horizontalCenter: parent.horizontalCenter
                 onLoaded: {
-                    item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.acu4Angle.rawValue : 0 })
+                    item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.commandBowSb.rawValue : 0 })
                     item.foilName = "BOW SB"
                     item.inverted = true
                 }
@@ -125,7 +125,7 @@ Item {
                 source: "qrc:/qml/QGroundControl/FlightMap/Widgets/FoilAngle.qml"
                 anchors.horizontalCenter: parent.horizontalCenter
                 onLoaded: {
-                    item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.acu3Angle.rawValue : 0 })
+                    item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.commandMainSb.rawValue : 0 })
                     item.foilName = "MAIN SB"
                     item.inverted = true
                 }
@@ -138,8 +138,8 @@ Item {
             anchors.bottomMargin: 70
             source: "qrc:/qml/QGroundControl/FlightMap/Widgets/InterceptorDeploy.qml"
             onLoaded: {
-                item.starboardDeployment = Qt.binding(function() { return vehicle ? -vehicle.acu5Angle.rawValue : 0 })
-                item.portDeployment = Qt.binding(function() { return vehicle ? vehicle.acu6Angle.rawValue : 0 })
+                item.starboardDeployment = Qt.binding(function() { return vehicle ? -vehicle.commandInterSb.rawValue : 0 })
+                item.portDeployment = Qt.binding(function() { return vehicle ? vehicle.commandInterPs.rawValue : 0 })
             }
         }
     }

@@ -39,12 +39,12 @@ PX4FirmwarePlugin::PX4FirmwarePlugin()
     qmlRegisterType<SensorsComponentController>         ("QGroundControl.Controllers", 1, 0, "SensorsComponentController");
     qmlRegisterType<PowerComponentController>           ("QGroundControl.Controllers", 1, 0, "PowerComponentController");
 
-    const QString manualFlightModeName = tr("High Speed");
+    const QString manualFlightModeName = tr("Approach");
     const QString acroFlightModeName = tr("Debug");
     const QString stabilizedFlightModeName = tr("Stabilized");
     const QString rattitudeFlightModeName = tr("Rattitude");
-    const QString altCtlFlightModeName = tr("Low speed");
-    const QString posCtlFlightModeName = tr("Approach");
+    const QString altCtlFlightModeName = tr("Cruise");
+    const QString posCtlFlightModeName = tr("Position Control");
     const QString offboardFlightModeName = tr("Offboard");
     const QString readyFlightModeName = tr("Ready");
     const QString takeoffFlightModeName = tr("Takeoff");
@@ -82,12 +82,12 @@ PX4FirmwarePlugin::PX4FirmwarePlugin()
         // Mode Name                Custom Mode                     CanBeSet  adv
         { manualFlightModeName,     PX4CustomMode::MANUAL,          true,   true },
         // { stabilizedFlightModeName, PX4CustomMode::STABILIZED,      true,   true },
-        { acroFlightModeName,       PX4CustomMode::ACRO,            true,   true },
+        // { acroFlightModeName,       PX4CustomMode::ACRO,            true,   true },
         // { rattitudeFlightModeName,  PX4CustomMode::RATTITUDE,       true,   false},
         { altCtlFlightModeName,     PX4CustomMode::ALTCTL,          true,   false},
         // { offboardFlightModeName,   PX4CustomMode::OFFBOARD,        true,   true },
         // { simpleFlightModeName,     PX4CustomMode::SIMPLE,          false,  false},
-        { posCtlFlightModeName,     PX4CustomMode::POSCTL_POSCTL,   true,   false},
+        // { posCtlFlightModeName,     PX4CustomMode::POSCTL_POSCTL,   true,   false},
         // { orbitFlightModeName,      PX4CustomMode::POSCTL_ORBIT,    false,  true },
         // { holdFlightModeName,       PX4CustomMode::AUTO_LOITER,     true,   true },
         // { missionFlightModeName,    PX4CustomMode::AUTO_MISSION,    true,   true },

@@ -62,3 +62,4 @@ cmake --build build --config Debug
 ./build/Debug/QGroundControl
 
 // upload to screen
+cmake --install . --config Release // cal this from the build folder

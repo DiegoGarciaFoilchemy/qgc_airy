@@ -33,18 +33,12 @@ Item {
     property bool editMode:         false
 
     // Flight mode colors
-    property color colorHighSpeed:  Qt.rgba(1.0, 0.42, 0.0, 0.3)      // orange-red
-    property color colorLowSpeed:   Qt.rgba(0.204, 0.596, 0.859, 0.3)  // blue
-    property color colorTesting:    Qt.rgba(0.953, 0.612, 0.071, 0.3)  // amber
+    property color colorCruise:   Qt.rgba(0.204, 0.596, 0.859, 0.3)  // blue
     property color colorApproach:   Qt.rgba(0.153, 0.682, 0.376, 0.3)  // green
 
     function getModeColor(modeName) {
-        if (modeName.toLowerCase().includes("high speed")) {
-            return colorHighSpeed
-        } else if (modeName.toLowerCase().includes("low speed")) {
-            return colorLowSpeed
-        } else if (modeName.toLowerCase().includes("debug")) {
-            return colorTesting
+        if (modeName.toLowerCase().includes("cruise")) {
+            return colorCruise
         } else if (modeName.toLowerCase().includes("approach")) {
             return colorApproach
         }

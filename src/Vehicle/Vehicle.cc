@@ -813,7 +813,7 @@ void Vehicle::_handleHighLatency(mavlink_message_t& message)
     emit coordinateChanged(_coordinate);
 
     _airSpeedFact.setRawValue((double)highLatency.airspeed / 5.0);
-    _groundSpeedFact.setRawValue((double)highLatency.groundspeed / 5.0);
+    // _groundSpeedFact.setRawValue((double)highLatency.groundspeed / 5.0);
     _climbRateFact.setRawValue((double)highLatency.climb_rate / 10.0);
     _headingFact.setRawValue((double)highLatency.heading * 2.0);
     _altitudeRelativeFact.setRawValue(qQNaN());
@@ -865,7 +865,7 @@ void Vehicle::_handleHighLatency2(mavlink_message_t& message)
     emit coordinateChanged(_coordinate);
 
     _airSpeedFact.setRawValue((double)highLatency2.airspeed / 5.0);
-    _groundSpeedFact.setRawValue((double)highLatency2.groundspeed / 5.0);
+    // _groundSpeedFact.setRawValue((double)highLatency2.groundspeed / 5.0);
     _climbRateFact.setRawValue((double)highLatency2.climb_rate / 10.0);
     _headingFact.setRawValue((double)highLatency2.heading * 2.0);
     _altitudeRelativeFact.setRawValue(qQNaN());

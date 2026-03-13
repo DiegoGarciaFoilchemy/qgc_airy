@@ -94,8 +94,18 @@ class VehicleFactGroup : public FactGroup
     Q_PROPERTY(Fact *followingSeas          READ followingSeas          CONSTANT)
     Q_PROPERTY(Fact *bowHeight              READ bowHeight              CONSTANT)
     Q_PROPERTY(Fact *estimatedDisplacement  READ estimatedDisplacement  CONSTANT)
-    Q_PROPERTY(Fact *controlState           READ controlState           CONSTANT)
-    Q_PROPERTY(Fact *controlHealth          READ controlHealth          CONSTANT)
+    Q_PROPERTY(Fact *controlMode            READ controlMode           CONSTANT)
+    Q_PROPERTY(Fact *attitudeState          READ attitudeState          CONSTANT)
+    Q_PROPERTY(Fact *heaveState             READ heaveState             CONSTANT)
+    Q_PROPERTY(Fact *speedState             READ speedState             CONSTANT)
+    Q_PROPERTY(Fact *commState              READ commState              CONSTANT)
+    Q_PROPERTY(Fact *ballastCommand          READ ballastCommand          CONSTANT)
+    Q_PROPERTY(Fact *commandBowSb           READ commandBowSb           CONSTANT)
+    Q_PROPERTY(Fact *commandBowPs           READ commandBowPs           CONSTANT)
+    Q_PROPERTY(Fact *commandMainSb          READ commandMainSb          CONSTANT)
+    Q_PROPERTY(Fact *commandMainPs          READ commandMainPs          CONSTANT)
+    Q_PROPERTY(Fact *commandInterSb         READ commandInterSb         CONSTANT)
+    Q_PROPERTY(Fact *commandInterPs         READ commandInterPs         CONSTANT)
     
     
 
@@ -182,8 +192,18 @@ public:
     Fact *followingSeas() { return &_followingSeasFact; }
     Fact *bowHeight() { return &_bowHeightFact; }
     Fact *estimatedDisplacement() { return &_estimatedDisplacementFact; }
-    Fact *controlState() { return &_controlStateFact; }
-    Fact *controlHealth() { return &_controlHealthFact; }
+    Fact *controlMode() { return &_controlModeFact; }
+    Fact *attitudeState() { return &_attitudeStateFact; }
+    Fact *heaveState() { return &_heaveStateFact; }
+    Fact *speedState() { return &_speedStateFact; }
+    Fact *commState() { return &_commStateFact; }
+    Fact *ballastCommand() { return &_ballastCommandFact; }
+    Fact *commandBowSb() { return &_commandBowSbFact; }
+    Fact *commandBowPs() { return &_commandBowPsFact; }
+    Fact *commandMainSb() { return &_commandMainSbFact; }
+    Fact *commandMainPs() { return &_commandMainPsFact; }
+    Fact *commandInterSb() { return &_commandInterSbFact; }
+    Fact *commandInterPs() { return &_commandInterPsFact; }
 
     void handleMessage(Vehicle *vehicle, const mavlink_message_t &message) override;
 
@@ -197,6 +217,7 @@ protected:
     void _handleMarsunActuator(const mavlink_message_t &message);
     void _handleMarsunControlState(const mavlink_message_t &message);
     void _handleAccumulator(const mavlink_message_t &message);
+    void _handleBoatSpeed(const mavlink_message_t &message);
 #ifndef QGC_NO_ARDUPILOT_DIALECT
     void _handleRangefinder(const mavlink_message_t &message);
 #endif
@@ -282,8 +303,18 @@ protected:
     Fact _followingSeasFact = Fact(0, QStringLiteral("followingSeas"), FactMetaData::valueTypeBool);
     Fact _bowHeightFact = Fact(0, QStringLiteral("bowHeight"), FactMetaData::valueTypeDouble);
     Fact _estimatedDisplacementFact = Fact(0, QStringLiteral("estimatedDisplacement"), FactMetaData::valueTypeDouble);
-    Fact _controlStateFact = Fact(0, QStringLiteral("controlState"), FactMetaData::valueTypeUint8);
-    Fact _controlHealthFact = Fact(0, QStringLiteral("controlHealth"), FactMetaData::valueTypeUint16);
+    Fact _controlModeFact = Fact(0, QStringLiteral("controlMode"), FactMetaData::valueTypeUint8);
+    Fact _attitudeStateFact = Fact(0, QStringLiteral("attitudeState"), FactMetaData::valueTypeUint8);
+    Fact _heaveStateFact = Fact(0, QStringLiteral("heaveState"), FactMetaData::valueTypeUint8);
+    Fact _speedStateFact = Fact(0, QStringLiteral("speedState"), FactMetaData::valueTypeUint8);
+    Fact _commStateFact = Fact(0, QStringLiteral("commState"), FactMetaData::valueTypeUint8);
+    Fact _ballastCommandFact = Fact(0, QStringLiteral("ballastCommand"), FactMetaData::valueTypeUint8);
+    Fact _commandBowSbFact = Fact(0, QStringLiteral("commandBowSb"), FactMetaData::valueTypeDouble);
+    Fact _commandBowPsFact = Fact(0, QStringLiteral("commandBowPs"), FactMetaData::valueTypeDouble);
+    Fact _commandMainSbFact = Fact(0, QStringLiteral("commandMainSb"), FactMetaData::valueTypeDouble);
+    Fact _commandMainPsFact = Fact(0, QStringLiteral("commandMainPs"), FactMetaData::valueTypeDouble);
+    Fact _commandInterSbFact = Fact(0, QStringLiteral("commandInterSb"), FactMetaData::valueTypeDouble);
+    Fact _commandInterPsFact = Fact(0, QStringLiteral("commandInterPs"), FactMetaData::valueTypeDouble);
     float _altitudeTuningOffset = qQNaN();
 
 protected:

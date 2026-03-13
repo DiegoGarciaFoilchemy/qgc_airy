@@ -164,7 +164,7 @@ Item {
         anchors.bottomMargin: _spacing * 0.2
         anchors.left: boat_roll.left
         anchors.leftMargin: _spacing * 0.5
-        text:            qsTr("Heel").arg(_rollAngleDisplay.toFixed(1))
+        text:            qsTr("Heel")
         color:           qgcPal.text
         font.pixelSize:  ScreenTools.defaultFontPixelHeight * 1.
     }
