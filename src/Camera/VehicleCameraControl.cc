@@ -831,7 +831,7 @@ VehicleCameraControl::_loadCameraDefinitionFile(QByteArray& bytes)
         return false;
     }
     //-- If this is new, cache it
-    if(!_cached) {
+    if(!_cached && !SettingsManager::instance()->appSettings()->disableAllPersistence()->rawValue().toBool()) {
         qCDebug(CameraControlLog) << "Saving camera definition file" << _cacheFile;
         QFile file(_cacheFile);
         if (!file.open(QIODevice::WriteOnly)) {

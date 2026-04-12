@@ -133,7 +133,7 @@ Item {
             Rotation {
                 origin.x: width / 2.35
                 origin.y: 13
-                angle: inverted ? foilAngle : -foilAngle
+                angle:  -foilAngle
             },
             Scale { xScale: inverted ? -1 : 1; yScale: 1 }
         ]
@@ -161,7 +161,7 @@ Item {
     QGCLabel {
         y: gaugeCenterY + labelFontSize * 1.2
         x: inverted ? 2.6 * gaugeRadius : -1. * gaugeRadius
-        text: -foilAngle.toFixed(1) + "º"
+        text: foilAngle.toFixed(1) + "º"
         color: "#ffffff"
         font.pointSize: labelFontSize * 1.
     }

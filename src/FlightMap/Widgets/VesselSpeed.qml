@@ -26,8 +26,8 @@ Item {
     property real speedTreshold1: 8
     property real speedTreshold2: 25
 
-    implicitWidth: 180
-    implicitHeight: 180
+    implicitWidth: 220
+    implicitHeight: 220
 
     readonly property real _center: Math.min(width, height) * 0.5
     readonly property real _radius: _center * 0.88

@@ -61,5 +61,15 @@ cmake --build build --config Debug
 
 ./build/Debug/QGroundControl
 
-// upload to screen
-cmake --install . --config Release // cal this from the build folder
+// vuild for deploy
+cmake --install . --config Release 
+// add kiok to apprun file
+exec "${APPDIR}/usr/bin/QGroundControl" "--kiosk" "$@"
+ssh foil@foil.local
+// mount as read only
+sudo mount -o remount,rw /media/root-ro 
+// copy to special folder
+scp -r AppDir foil@foil.local:/media/root-ro/home/foil/Documents
+// command line where you can touch
+sudo /usr/sbin/overlayroot-chroot 
+

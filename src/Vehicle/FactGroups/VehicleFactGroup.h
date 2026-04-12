@@ -106,6 +106,16 @@ class VehicleFactGroup : public FactGroup
     Q_PROPERTY(Fact *commandMainPs          READ commandMainPs          CONSTANT)
     Q_PROPERTY(Fact *commandInterSb         READ commandInterSb         CONSTANT)
     Q_PROPERTY(Fact *commandInterPs         READ commandInterPs         CONSTANT)
+    Q_PROPERTY(Fact *refillCmd               READ refillCmd               CONSTANT)
+    Q_PROPERTY(Fact *intSbPressure           READ intSbPressure           CONSTANT)
+    Q_PROPERTY(Fact *intPsPressure           READ intPsPressure           CONSTANT)
+    Q_PROPERTY(Fact *mainSbPressure          READ mainSbPressure          CONSTANT)
+    Q_PROPERTY(Fact *mainPsPressure          READ mainPsPressure          CONSTANT)
+    Q_PROPERTY(Fact *bowSbPressure           READ bowSbPressure           CONSTANT)
+    Q_PROPERTY(Fact *bowPsPressure           READ bowPsPressure           CONSTANT)
+
+    Q_PROPERTY(Fact *pitchSp                READ pitchSp           CONSTANT)
+    Q_PROPERTY(Fact *rollSp                 READ rollSp            CONSTANT)
     
     
 
@@ -204,6 +214,16 @@ public:
     Fact *commandMainPs() { return &_commandMainPsFact; }
     Fact *commandInterSb() { return &_commandInterSbFact; }
     Fact *commandInterPs() { return &_commandInterPsFact; }
+    Fact *refillCmd() { return &_refillCmdFact; }
+    Fact *intSbPressure() { return &_intSbPressureFact; }
+    Fact *intPsPressure() { return &_intPsPressureFact; }
+    Fact *mainSbPressure() { return &_mainSbPressureFact; }
+    Fact *mainPsPressure() { return &_mainPsPressureFact; }
+    Fact *bowSbPressure() { return &_bowSbPressureFact; }
+    Fact *bowPsPressure() { return &_bowPsPressureFact; }
+
+    Fact *pitchSp() { return &_pitchSpFact; }
+    Fact *rollSp() { return &_rollSpFact; }
 
     void handleMessage(Vehicle *vehicle, const mavlink_message_t &message) override;
 
@@ -218,6 +238,7 @@ protected:
     void _handleMarsunControlState(const mavlink_message_t &message);
     void _handleAccumulator(const mavlink_message_t &message);
     void _handleBoatSpeed(const mavlink_message_t &message);
+    void _handleBoatSetpoint(const mavlink_message_t &message);
 #ifndef QGC_NO_ARDUPILOT_DIALECT
     void _handleRangefinder(const mavlink_message_t &message);
 #endif
@@ -315,6 +336,16 @@ protected:
     Fact _commandMainPsFact = Fact(0, QStringLiteral("commandMainPs"), FactMetaData::valueTypeDouble);
     Fact _commandInterSbFact = Fact(0, QStringLiteral("commandInterSb"), FactMetaData::valueTypeDouble);
     Fact _commandInterPsFact = Fact(0, QStringLiteral("commandInterPs"), FactMetaData::valueTypeDouble);
+    Fact _refillCmdFact = Fact(0, QStringLiteral("refillCmd"), FactMetaData::valueTypeUint8);
+    Fact _intSbPressureFact = Fact(0, QStringLiteral("intSbPressure"), FactMetaData::valueTypeDouble);
+    Fact _intPsPressureFact = Fact(0, QStringLiteral("intPsPressure"), FactMetaData::valueTypeDouble);
+    Fact _mainSbPressureFact = Fact(0, QStringLiteral("mainSbPressure"), FactMetaData::valueTypeDouble);
+    Fact _mainPsPressureFact = Fact(0, QStringLiteral("mainPsPressure"), FactMetaData::valueTypeDouble);
+    Fact _bowSbPressureFact = Fact(0, QStringLiteral("bowSbPressure"), FactMetaData::valueTypeDouble);
+    Fact _bowPsPressureFact = Fact(0, QStringLiteral("bowPsPressure"), FactMetaData::valueTypeDouble);
+    
+    Fact _pitchSpFact = Fact(0, QStringLiteral("pitchSp"), FactMetaData::valueTypeDouble);
+    Fact _rollSpFact = Fact(0, QStringLiteral("rollSp"), FactMetaData::valueTypeDouble);
     float _altitudeTuningOffset = qQNaN();
 
 protected:

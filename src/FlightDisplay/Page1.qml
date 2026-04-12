@@ -40,7 +40,7 @@ Item {
     
     Rectangle {
         anchors.fill: parent
-        color: qgcPal.windowShade
+        color: "black"
 
         Image {
             anchors.centerIn: parent
@@ -51,18 +51,29 @@ Item {
             scale: 0.6
         }
 
-        ColumnLayout {
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.topMargin: 150
-            spacing: 20
+        // ColumnLayout {
+        //     anchors.top: parent.top
+        //     anchors.horizontalCenter: parent.horizontalCenter
+        //     anchors.topMargin: 150
+        //     spacing: 20
 
             RowLayout {
-                spacing: 30
+                anchors.top: parent.top
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.topMargin: 270
+                spacing: 150
                 Layout.alignment: Qt.AlignHCenter
                 Loader {
                     id: pitchLoader
                     source: "qrc:/qml/QGroundControl/FlightMap/Widgets/VesselPitch.qml"
+                }
+                 Loader {
+                    id: speedLoader
+                    source: "qrc:/qml/QGroundControl/FlightMap/Widgets/VesselSpeed.qml"
+                    Layout.alignment: Qt.AlignHCenter
+                    onLoaded: {
+                        item.speed = Qt.binding(function() { return vehicle ? vehicle.groundSpeed.rawValue : 0 })
+                    }
                 }
                 Loader {
                     id: rollLoader
@@ -71,20 +82,13 @@ Item {
             }
             
 
-            Loader {
-                id: speedLoader
-                source: "qrc:/qml/QGroundControl/FlightMap/Widgets/VesselSpeed.qml"
-                Layout.alignment: Qt.AlignHCenter
-                onLoaded: {
-                    item.speed = Qt.binding(function() { return vehicle ? vehicle.groundSpeed.rawValue : 0 })
-                }
-            }
-        }
+        //    
+        // }
         Column {
             anchors.left: parent.left
-            anchors.leftMargin: 200
+            anchors.leftMargin: 150
             anchors.top: parent.top
-            spacing: 130
+            spacing: 230
             Loader {
                 id: foil1
                 source: "qrc:/qml/QGroundControl/FlightMap/Widgets/FoilAngle.qml"
@@ -107,9 +111,9 @@ Item {
         }
         Column {
             anchors.right: parent.right
-            anchors.rightMargin: 200
+            anchors.rightMargin: 150
             anchors.top: parent.top
-            spacing: 130
+            spacing: 230
             Loader {
                 id: foil3
                 source: "qrc:/qml/QGroundControl/FlightMap/Widgets/FoilAngle.qml"
@@ -138,8 +142,8 @@ Item {
             anchors.bottomMargin: 70
             source: "qrc:/qml/QGroundControl/FlightMap/Widgets/InterceptorDeploy.qml"
             onLoaded: {
-                item.starboardDeployment = Qt.binding(function() { return vehicle ? -vehicle.commandInterSb.rawValue : 0 })
-                item.portDeployment = Qt.binding(function() { return vehicle ? vehicle.commandInterPs.rawValue : 0 })
+                item.starboardDeployment = Qt.binding(function() { return vehicle ? vehicle.commandInterSb.rawValue * 2 : 0 })
+                item.portDeployment = Qt.binding(function() { return vehicle ? vehicle.commandInterPs.rawValue * 2 : 0 })
             }
         }
     }

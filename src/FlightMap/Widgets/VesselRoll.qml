@@ -32,6 +32,9 @@ Item {
     property var  vehicle:      globals.activeVehicle
     property real _rollAngle:   vehicle ? vehicle.roll.rawValue  : 0
     property real _rollAngleDisplay: _rollAngle
+    property real _rollSetpoint: vehicle ? vehicle.rollSp.rawValue : 0
+    property real _rollSetpointDisplay: Math.max(-_max_roll, Math.min(_max_roll, _rollSetpoint))
+
     QGCPalette { id: qgcPal; colorGroupEnabled: true }
 
     Timer {
@@ -134,6 +137,17 @@ Item {
             anchors.horizontalCenter: rollTrack.horizontalCenter
             anchors.verticalCenter:   rollTrack.verticalCenter
             anchors.horizontalCenterOffset: (_rollDisplay / _max_roll) * (rollScale.trackWidth / 2)
+        }
+
+        Rectangle {
+            id:                     rollSetpointPointer
+            height:                  rollTrack.height + ScreenTools.defaultFontPixelHeight * 0.8
+            width:                 2
+            radius:                 1
+            color:                  "green"
+            anchors.horizontalCenter: rollTrack.horizontalCenter
+            anchors.verticalCenter:   rollTrack.verticalCenter
+            anchors.horizontalCenterOffset: (_rollSetpointDisplay / _max_roll) * (rollScale.trackWidth / 2)
         }
     }
 

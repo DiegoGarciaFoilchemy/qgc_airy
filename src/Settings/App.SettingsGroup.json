@@ -235,7 +235,7 @@
     "shortDesc": "Disable all data persistence",
     "longDesc":  "If this option is set, nothing will be saved to disk.",
     "type":             "bool",
-    "default":     false
+    "default":     true
 },
 {
     "name":             "firstRunPromptIdsShown",

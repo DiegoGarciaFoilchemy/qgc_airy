@@ -16,10 +16,12 @@
 #include "FactValueSliderListModel.h"
 #include "FirmwarePlugin.h"
 #include "FTPManager.h"
+#include "AppSettings.h"
 #include "MAVLinkProtocol.h"
 #include "QGC.h"
 #include "QGCApplication.h"
 #include "QGCLoggingCategory.h"
+#include "SettingsManager.h"
 #include "Vehicle.h"
 
 #include <QtCore/QEasingCurve>
@@ -54,8 +56,10 @@ ParameterManager::ParameterManager(Vehicle *vehicle)
     _waitingParamTimeoutTimer.setInterval(3000);
     (void) connect(&_waitingParamTimeoutTimer, &QTimer::timeout, this, &ParameterManager::_waitingParamTimeout);
 
-    // Ensure the cache directory exists
-    (void) QFileInfo(QSettings().fileName()).dir().mkdir("ParamCache");
+    // Ensure the cache directory exists (skip on write-protected deployments)
+    if (!SettingsManager::instance()->appSettings()->disableAllPersistence()->rawValue().toBool()) {
+        (void) QFileInfo(QSettings().fileName()).dir().mkdir("ParamCache");
+    }
 }
 
 ParameterManager::~ParameterManager()
@@ -812,6 +816,10 @@ void ParameterManager::_writeLocalParamCache(int vehicleId, int componentId)
     for (const QString &paramName: _mapCompId2FactMap[componentId].keys()) {
         const Fact *const fact = _mapCompId2FactMap[componentId][paramName];
         cacheMap[paramName] = ParamTypeVal(fact->type(), fact->rawValue());
+    }
+
+    if (SettingsManager::instance()->appSettings()->disableAllPersistence()->rawValue().toBool()) {
+        return;
     }
 
     QFile cacheFile(parameterCacheFile(vehicleId, componentId));

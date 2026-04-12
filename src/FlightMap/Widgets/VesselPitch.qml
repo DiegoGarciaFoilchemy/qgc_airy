@@ -33,7 +33,7 @@ Item {
     property var  vehicle:      globals.activeVehicle
     property real _pitchAngle:  vehicle ? vehicle.pitch.rawValue : 0
     property real _pitchAngleDisplay: _pitchAngle
-    property real _pitchSetpoint: 2// vehicle ? vehicle.pitch.setpointRawValue : 0
+    property real _pitchSetpoint: vehicle ? vehicle.pitchSp.rawValue : -5
     QGCPalette { id: qgcPal; colorGroupEnabled: true }
 
     Timer {

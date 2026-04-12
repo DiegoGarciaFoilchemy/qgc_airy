@@ -111,6 +111,17 @@ VehicleFactGroup::VehicleFactGroup(QObject *parent)
     _addFact(&_commandInterSbFact);
     _addFact(&_commandInterPsFact);
 
+    _addFact(&_refillCmdFact);
+    _addFact(&_intSbPressureFact);
+    _addFact(&_intPsPressureFact);
+    _addFact(&_mainSbPressureFact);
+    _addFact(&_mainPsPressureFact);
+    _addFact(&_bowSbPressureFact);
+    _addFact(&_bowPsPressureFact);
+
+    _addFact(&_pitchSpFact);
+    _addFact(&_rollSpFact);
+
     _hobbsFact.setRawValue(QStringLiteral("0000:00:00"));
     _followingSeasFact.setRawValue(false);
 }
@@ -147,6 +158,9 @@ void VehicleFactGroup::handleMessage(Vehicle *vehicle, const mavlink_message_t &
         break;
     case MAVLINK_MSG_ID_BOAT_SPEED:
         _handleBoatSpeed(message);
+        break;
+    case MAVLINK_MSG_ID_BOAT_SETPOINT:
+        _handleBoatSetpoint(message);
         break;
 #ifndef QGC_NO_ARDUPILOT_DIALECT
     case MAVLINK_MSG_ID_RANGEFINDER:
@@ -339,18 +353,18 @@ void VehicleFactGroup::_handleMarsunActuator(const mavlink_message_t &message)
             acu4ValveFeedback()->setRawValue(msg.valve_feedback);
             break;
         case 4:
-            acu5Angle()->setRawValue(msg.position);
-            acu5Speed()->setRawValue(msg.speed);
-            acu5Target()->setRawValue(msg.target);
+            acu5Angle()->setRawValue(msg.position * 180.0 / M_PI);
+            acu5Speed()->setRawValue(msg.speed * 180.0 / M_PI);
+            acu5Target()->setRawValue(msg.target * 180.0 / M_PI);
             acu5Status()->setRawValue(msg.status);
             acu5Mode()->setRawValue(msg.mode);
             acu5ValveCmd()->setRawValue(msg.valve_cmd);
             acu5ValveFeedback()->setRawValue(msg.valve_feedback);
             break;
         case 5:
-            acu6Angle()->setRawValue(msg.position);
-            acu6Speed()->setRawValue(msg.speed);
-            acu6Target()->setRawValue(msg.target);
+            acu6Angle()->setRawValue(msg.position * 180.0 / M_PI);
+            acu6Speed()->setRawValue(msg.speed * 180.0 / M_PI);
+            acu6Target()->setRawValue(msg.target * 180.0 / M_PI);
             acu6Status()->setRawValue(msg.status);
             acu6Mode()->setRawValue(msg.mode);
             acu6ValveCmd()->setRawValue(msg.valve_cmd);
@@ -362,6 +376,16 @@ void VehicleFactGroup::_handleMarsunActuator(const mavlink_message_t &message)
     _setTelemetryAvailable(true);
 }
 
+void VehicleFactGroup::_handleBoatSetpoint(const mavlink_message_t &message)
+{
+    mavlink_boat_setpoint_t msg{};
+    mavlink_msg_boat_setpoint_decode(&message, &msg);
+
+    // TODO: add pitch and roll setpoings
+    pitchSp()->setRawValue(msg.pitch_sp);
+    rollSp()->setRawValue(msg.roll_sp);
+    _setTelemetryAvailable(true);
+}
 void VehicleFactGroup::_handleMarsunControlState(const mavlink_message_t &message)
 {
     mavlink_fcb35_control_state_t msg{};
@@ -389,8 +413,13 @@ void VehicleFactGroup::_handleAccumulator(const mavlink_message_t &message)
 {
     mavlink_fcb35_accumulator_t msg{};
     mavlink_msg_fcb35_accumulator_decode(&message, &msg);
-
-
+    intSbPressure()->setRawValue(msg.pressure[0]);
+    intPsPressure()->setRawValue(msg.pressure[1]);
+    mainSbPressure()->setRawValue(msg.pressure[2]);
+    mainPsPressure()->setRawValue(msg.pressure[3]);
+    bowSbPressure()->setRawValue(msg.pressure[4]);
+    bowPsPressure()->setRawValue(msg.pressure[5]);
+    refillCmd()->setRawValue(msg.filling_command);
     _setTelemetryAvailable(true);
 }
 

@@ -88,7 +88,15 @@ Item {
                                 {label: "Status", value: vehicle ? vehicle.acu6Status.rawValue : ""},
                                 {label: "Mode", value: vehicle ? vehicle.acu6Mode.rawValue : ""}
                             ] },
-            { title: "refill system", entries: [] },
+                        { title: "refill system", entries: [
+                                {label: "Bow PS pressure", value: vehicle ? vehicle.bowPsPressure.rawValue.toFixed(0) : "-" + " bar"},
+                                {label: "Bow SB pressure", value: vehicle ? vehicle.bowSbPressure.rawValue.toFixed(0) : "-" + " bar"},
+                                {label: "Main PS pressure", value: vehicle ? vehicle.mainPsPressure.rawValue.toFixed(0) : "-" + " bar"},
+                                {label: "Main SB pressure", value: vehicle ? vehicle.mainSbPressure.rawValue.toFixed(0) : "-" + " bar"},
+                                {label: "Int PS pressure", value: vehicle ? vehicle.intPsPressure.rawValue.toFixed(0) : "-" + " bar"},
+                                {label: "Int SB pressure", value: vehicle ? vehicle.intSbPressure.rawValue.toFixed(0) : "-" + " bar"},
+                                {label: "Refill cmd", value: vehicle ? vehicle.refillCmd.rawValue.toFixed(0) : "-" + " %"}
+                            ] },
             {
                 title: "boat",
                 entries: [
