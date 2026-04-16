@@ -1642,19 +1642,50 @@ void Vehicle::forceDisarm(void)
 
 void Vehicle::followingSeasOn(void)
 {
-    // sendMavCommand(_defaultComponentId,
-    //                MAV_CMD_DO_FOLLOW_SEAS_ON,
-    //                true);    // show error if fails
-    _vehicleFactGroup->followingSeas()->setRawValue(true);
+    uint8_t current_state = _vehicleFactGroup->followingSeas()->rawValue().toUInt();
+    float new_state;
+    if(current_state == 0) {
+        new_state = 1.0f;
+    } else if (current_state == 1) {
+        new_state = 2.0f;
+    } else {
+        new_state = 0.0f;
+    }
+    sendMavCommand(_defaultComponentId,
+                   MAV_CMD_FOLLOWING_SEAS,
+                   true,
+                    new_state,
+                    0);    // show error if fails
+    // _vehicleFactGroup->followingSeas()->setRawValue(true);
 }
 
-void Vehicle::followingSeasOff(void)
+void Vehicle::sendManualFoils(QVariantList angles)
 {
-    // sendMavCommand(_defaultComponentId,
-    //                MAV_CMD_DO_FOLLOW_SEAS_OFF,
-    //                true);    // show error if fails
-    _vehicleFactGroup->followingSeas()->setRawValue(false);
+    SharedLinkInterfacePtr sharedLink = vehicleLinkManager()->primaryLink().lock();
+    if (!sharedLink) {
+        qCDebug(VehicleLog) << "sendManualFoils: primary link gone!";
+        return;
+    }
+
+    float anglesF[6] = {};
+    for (int i = 0; i < 6 && i < angles.size(); i++) {
+        anglesF[i] = angles[i].toFloat();
+    }
+    // Indices 2-5 are angular foils that expect radians
+    for (int i = 2; i < 6; i++) {
+        anglesF[i] = anglesF[i] * M_PIf / 180.0f;
+    }
+
+    mavlink_message_t msg;
+    mavlink_msg_actuators_offboard_control_pack_chan(MAVLinkProtocol::instance()->getSystemId(),
+                                                    MAVLinkProtocol::getComponentId(),
+                                                    sharedLink->mavlinkChannel(),
+                                                    &msg,
+                                                    anglesF,
+                                                    0);
+    sendMessageOnLinkThreadSafe(sharedLink.get(), msg);
 }
+
 
 bool Vehicle::flightModeSetAvailable()
 {

@@ -197,11 +197,24 @@ RowLayout {
             id:         mainLayout
             spacing:    _spacing
 
+            QGCLabel {
+                text:               _armed ? qsTr("⚠ Actuators may still move and will go back to zero") : qsTr("⚠ Hydraulics will move. Make sure engine is running")
+                color:              qgcPal.colorOrange
+                font.pointSize:     ScreenTools.mediumFontPointSize
+                font.bold:          true
+                Layout.alignment:   Qt.AlignHCenter
+                wrapMode:           Text.WordWrap
+                Layout.maximumWidth: ScreenTools.defaultFontPixelWidth * 40
+            }
+
             QGCButton {
                 // FIXME: forceArm is not possible anymore if _healthAndArmingChecksSupported == true
                 enabled:            _armed || !_healthAndArmingChecksSupported || _activeVehicle.healthAndArmingCheckReport.canArm
                 text:               _armed ?  qsTr("STOP") : qsTr("START")
-                Layout.alignment:   Qt.AlignLeft
+                Layout.alignment:   Qt.AlignHCenter
+                Layout.preferredWidth:  ScreenTools.defaultFontPixelWidth * 20
+                Layout.preferredHeight: ScreenTools.defaultFontPixelHeight * 4
+                font.pointSize:     ScreenTools.largeFontPointSize
 
                 property bool forceArm: false
 

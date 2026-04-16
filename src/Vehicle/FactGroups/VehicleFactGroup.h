@@ -321,7 +321,7 @@ protected:
     Fact _acu6ValveCmdFact = Fact(0, QStringLiteral("acu6ValveCmd"), FactMetaData::valueTypeDouble);
     Fact _acu6ValveFeedbackFact = Fact(0, QStringLiteral("acu6ValveFeedback"), FactMetaData::valueTypeDouble);
 
-    Fact _followingSeasFact = Fact(0, QStringLiteral("followingSeas"), FactMetaData::valueTypeBool);
+    Fact _followingSeasFact = Fact(0, QStringLiteral("followingSeas"), FactMetaData::valueTypeUint8);
     Fact _bowHeightFact = Fact(0, QStringLiteral("bowHeight"), FactMetaData::valueTypeDouble);
     Fact _estimatedDisplacementFact = Fact(0, QStringLiteral("estimatedDisplacement"), FactMetaData::valueTypeDouble);
     Fact _controlModeFact = Fact(0, QStringLiteral("controlMode"), FactMetaData::valueTypeUint8);

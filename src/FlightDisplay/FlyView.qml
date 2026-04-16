@@ -40,7 +40,7 @@ Item {
     // Properties of UTM adapter
     property bool utmspSendActTrigger: false
     // Page names for navigation
-    property var pageNames: ["overview", "Approach", "alarms", "debug", "test"]
+    property var pageNames: ["OVERVIEW", "FREEBOARD", "ACTUATOR", "DEBUG", "TEST"]
     // PlanMasterController {
     //     id:                     _planController
     //     flyView:                true

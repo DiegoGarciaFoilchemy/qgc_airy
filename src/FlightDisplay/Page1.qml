@@ -7,7 +7,7 @@ Item {
     height: parent ? parent.height : 760
     QGCPalette { id: qgcPal; colorGroupEnabled: true }
     property var  vehicle:      globals.activeVehicle
-    property var acuModeLabels: ["RUNNING", "RUNNING", "CALIBRATING", "IDLE", "IDLE", "OFF", "ERROR"]
+    property var acuModeLabels: ["RUNNING", "RUNNING", "CALIBRATING", "IDLE", "ZERO", "OFF", "ERROR"]
 
     function updateFoilStatus(loader, modeValue) {
         if (!loader.item) {
@@ -95,6 +95,8 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 onLoaded: {
                     item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.commandBowPs.rawValue : 0 })
+                    item.highSpeed = Qt.binding(function() { return vehicle ? vehicle.groundSpeed.rawValue > 20 : false })
+                    item.showFoil = Qt.binding(function() { return vehicle ? vehicle.armed : false })
                     item.foilName = "BOW PS"
                 }
             }
@@ -105,7 +107,9 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 onLoaded: {
                     item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.commandMainPs.rawValue : 0 })
-                    item.foilName = "MAIN PS"
+                    item.highSpeed = Qt.binding(function() { return vehicle ? vehicle.groundSpeed.rawValue > 20 : false })
+                    item.showFoil = Qt.binding(function() { return vehicle ? vehicle.armed : false })
+                    item.foilName = "AFT PS"
                 }
             }
         }
@@ -120,6 +124,8 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 onLoaded: {
                     item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.commandBowSb.rawValue : 0 })
+                    item.highSpeed = Qt.binding(function() { return vehicle ? vehicle.groundSpeed.rawValue > 20 : false })
+                    item.showFoil = Qt.binding(function() { return vehicle ? vehicle.armed : false })
                     item.foilName = "BOW SB"
                     item.inverted = true
                 }
@@ -130,7 +136,9 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 onLoaded: {
                     item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.commandMainSb.rawValue : 0 })
-                    item.foilName = "MAIN SB"
+                    item.highSpeed = Qt.binding(function() { return vehicle ? vehicle.groundSpeed.rawValue > 20 : false })
+                    item.showFoil = Qt.binding(function() { return vehicle ? vehicle.armed : false })
+                    item.foilName = "AFT SB"
                     item.inverted = true
                 }
             }
@@ -144,6 +152,7 @@ Item {
             onLoaded: {
                 item.starboardDeployment = Qt.binding(function() { return vehicle ? vehicle.commandInterSb.rawValue * 2 : 0 })
                 item.portDeployment = Qt.binding(function() { return vehicle ? vehicle.commandInterPs.rawValue * 2 : 0 })
+                item.showInterceptor = Qt.binding(function() { return vehicle ? vehicle.armed : false })
             }
         }
     }

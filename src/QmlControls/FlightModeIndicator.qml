@@ -116,6 +116,7 @@ Item {
         ColumnLayout {
             id:         modeColumn
             spacing:    ScreenTools.defaultFontPixelWidth / 2
+            Layout.fillWidth: true
 
             property var    activeVehicle:            QGroundControl.multiVehicleManager.activeVehicle
             property var    flightModeSettings:       QGroundControl.settingsManager.flightModeSettings
@@ -166,13 +167,22 @@ Item {
                 model:  activeVehicle ? activeVehicle.flightModes : []
 
                 RowLayout {
+                    Layout.fillWidth: true
                     spacing: ScreenTools.defaultFontPixelWidth
                     visible: editMode || !hiddenFlightModesList.find(item => { return item === modelData } )
 
                     QGCButton {
                         id:                 modeButton
                         text:               modelData
+                        Layout.alignment:   Qt.AlignHCenter
                         Layout.fillWidth:   true
+                        Layout.preferredWidth:  ScreenTools.defaultFontPixelWidth * 22
+                        Layout.preferredHeight: ScreenTools.defaultFontPixelHeight * 4
+                        pointSize:          ScreenTools.largeFontPointSize
+                        backgroundColor:    control.getModeColor(modelData)
+                        textColor:          "white"
+                        showBorder:         true
+                        backRadius:         ScreenTools.defaultFontPixelHeight
 
                         onClicked: {
                                 console.log("Flight Mode:", modelData);
@@ -201,14 +211,17 @@ Item {
 
             QGCLabel {
                 id:                     hiddenModesLabel
-                text:                   qsTr("Some Modes Hidden")
+                text:                   qsTr("Warning: Modes are managed automatically in normal conditions")
                 Layout.fillWidth:       true
+                Layout.alignment:       Qt.AlignHCenter
                 font.pointSize:         ScreenTools.smallFontPointSize
+                font.bold:              true
+                color:                  qgcPal.colorOrange
                 horizontalAlignment:    Text.AlignHCenter
-                visible:                false
+                visible:                true
 
                 function calcVisible() {
-                    hiddenModesLabel.visible = hiddenFlightModesList.length > 0
+                    hiddenModesLabel.visible = true
                 }
             }
         }

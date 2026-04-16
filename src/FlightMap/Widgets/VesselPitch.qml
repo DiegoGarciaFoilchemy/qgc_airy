@@ -27,13 +27,27 @@ Item {
     property real   _spacing:           ScreenTools.defaultFontPixelHeight * 0.33
     property real _pitch_scale: 4.0
     property real _max_pitch: 5.0
-    property real _pitchDisplay: Math.max(-_max_pitch, Math.min(_max_pitch, _pitchAngle))
-    property real _pitchSetpointDisplay: Math.max(-_max_pitch, Math.min(_max_pitch, _pitchSetpoint))
+    property real _min_pitch: -2.0
+    property real _pitchRange: _max_pitch - _min_pitch
+    property real _pitchDisplay: Math.max(_min_pitch, Math.min(_max_pitch, _pitchAngle))
+    property real _pitchSetpointDisplay: Math.max(_min_pitch, Math.min(_max_pitch, _pitchSetpoint))
 
     property var  vehicle:      globals.activeVehicle
     property real _pitchAngle:  vehicle ? vehicle.pitch.rawValue : 0
     property real _pitchAngleDisplay: _pitchAngle
     property real _pitchSetpoint: vehicle ? vehicle.pitchSp.rawValue : -5
+
+    function pitchToTrackOffset(pitchValue, trackHeight) {
+        const clampedPitch = Math.max(_min_pitch, Math.min(_max_pitch, pitchValue))
+        const ratio = (clampedPitch - _min_pitch) / _pitchRange
+        return (0.5 - ratio) * trackHeight
+    }
+
+    function pitchToTrackY(pitchValue, trackTop, trackHeight) {
+        const clampedPitch = Math.max(_min_pitch, Math.min(_max_pitch, pitchValue))
+        return trackTop + ((_max_pitch - clampedPitch) / _pitchRange) * trackHeight
+    }
+
     QGCPalette { id: qgcPal; colorGroupEnabled: true }
 
     Timer {
@@ -104,7 +118,7 @@ Item {
                 anchors.left: parent.right
                 anchors.leftMargin: ScreenTools.defaultFontPixelHeight * 0.2
                 anchors.bottom: parent.bottom
-                text:          (-_max_pitch).toFixed(0) + "°"
+                text:          _min_pitch.toFixed(0) + "°"
                 color:         qgcPal.text
                 font.pixelSize:ScreenTools.defaultFontPixelHeight * 1.2
             }
@@ -116,7 +130,7 @@ Item {
             height:         1
             color:          qgcPal.text
             x:              track.x - width/2 + track.width / 2
-            y:              track.y + pitchScale.trackHeight / 2
+            y:              root.pitchToTrackY(0, track.y, pitchScale.trackHeight)
 
             Text {
                 anchors.left: parent.right
@@ -136,7 +150,7 @@ Item {
             color:                  "green"
             anchors.horizontalCenter: track.horizontalCenter
             anchors.verticalCenter:   track.verticalCenter
-            anchors.verticalCenterOffset: -(_pitchSetpoint / _max_pitch) * (pitchScale.trackHeight / 2)
+            anchors.verticalCenterOffset: root.pitchToTrackOffset(_pitchSetpointDisplay, pitchScale.trackHeight)
             opacity:               0.7
         }
 
@@ -148,7 +162,7 @@ Item {
             color:                  qgcPal.text
             anchors.horizontalCenter: track.horizontalCenter
             anchors.verticalCenter:   track.verticalCenter
-            anchors.verticalCenterOffset: -(_pitchDisplay / _max_pitch) * (pitchScale.trackHeight / 2)
+            anchors.verticalCenterOffset: root.pitchToTrackOffset(_pitchDisplay, pitchScale.trackHeight)
         }
     }
 

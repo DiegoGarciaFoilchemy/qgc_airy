@@ -33,7 +33,7 @@ Rectangle {
     property var    _activeVehicle:     QGroundControl.multiVehicleManager.activeVehicle
     property bool   _communicationLost: _activeVehicle ? _activeVehicle.vehicleLinkManager.communicationLost : false
     property color  _mainStatusBGColor: qgcPal.brandingPurple
-    property color _followingSeasColor: _activeVehicle && _activeVehicle.followingSeas.rawValue ? Qt.rgba(0, 1, 0, 0.14) : Qt.rgba(1, 0, 0, 0.14)
+    property color _followingSeasColor: !_activeVehicle ? Qt.rgba(1, 0, 0, 0.14) : (_activeVehicle.followingSeas.rawValue === 2 ? Qt.rgba(0, 1, 0, 0.14) : (_activeVehicle.followingSeas.rawValue === 1 ? Qt.rgba(1, 0.85, 0, 0.14) : Qt.rgba(1, 0, 0, 0.14)))
 
     function dropMainStatusIndicatorTool() {
         mainStatusIndicator.dropMainStatusIndicator();
@@ -141,7 +141,7 @@ Rectangle {
         }
         
         QGCLabel {
-            text: _activeVehicle ? (_activeVehicle.followingSeas.rawValue ? qsTr("ON") : qsTr("OFF")) : "-"
+            text: !_activeVehicle ? "-" : (_activeVehicle.followingSeas.rawValue === 2 ? qsTr("HIGH") : (_activeVehicle.followingSeas.rawValue === 1 ? qsTr("NORMAL") : qsTr("OFF")))
             color: "white"
             font.pointSize: ScreenTools.largeFontPointSize
             // rotation: -90
@@ -154,7 +154,7 @@ Rectangle {
         MouseArea {
             anchors.fill:   parent
             enabled: _activeVehicle
-            onClicked: _activeVehicle.followingSeas.rawValue ? _activeVehicle.followingSeasOff() : _activeVehicle.followingSeasOn()
+            onClicked: _activeVehicle.followingSeasOn()
         }
         visible: _activeVehicle
         

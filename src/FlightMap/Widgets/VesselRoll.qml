@@ -26,12 +26,12 @@ Item {
     property real   _spacing:           ScreenTools.defaultFontPixelHeight * 0.33
     property real _max_pitch: 5.0
     property real _roll_scale: 3
-    property real _max_roll: 10.0
+    property real _max_roll: 7.0
     property real _rollDisplay: Math.max(-_max_roll, Math.min(_max_roll, _rollAngle))
 
     property var  vehicle:      globals.activeVehicle
     property real _rollAngle:   vehicle ? vehicle.roll.rawValue  : 0
-    property real _rollAngleDisplay: _rollAngle
+    property real _rollAngleDisplay: _rollAngle * 1.4
     property real _rollSetpoint: vehicle ? vehicle.rollSp.rawValue : 0
     property real _rollSetpointDisplay: Math.max(-_max_roll, Math.min(_max_roll, _rollSetpoint))
 

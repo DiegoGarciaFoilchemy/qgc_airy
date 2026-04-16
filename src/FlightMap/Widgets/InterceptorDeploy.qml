@@ -18,10 +18,12 @@ import QGroundControl.Palette
 Item {
     width: 110
     height: width * 0.6
+    visible: showInterceptor
 
     property real portDeployment: 0
     property real starboardDeployment: 0
     property real labelPointSize: 10
+    property bool showInterceptor: true
 
     readonly property real _lineThickness: 4
     readonly property real _sideMargin: 16
@@ -70,7 +72,7 @@ Item {
         anchors.right: centerLine.left
         anchors.rightMargin: _sideMargin
         anchors.verticalCenter: centerLine.verticalCenter
-        visible: portDeployment !== 0
+        // visible: portDeployment !== 0
     }
 
     Text {
@@ -80,7 +82,7 @@ Item {
         anchors.left: centerLine.right
         anchors.leftMargin: _sideMargin
         anchors.verticalCenter: centerLine.verticalCenter
-        visible: starboardDeployment !== 0
+        // visible: starboardDeployment !== 0
     }
 
     Rectangle {

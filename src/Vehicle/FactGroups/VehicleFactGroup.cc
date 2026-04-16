@@ -123,7 +123,7 @@ VehicleFactGroup::VehicleFactGroup(QObject *parent)
     _addFact(&_rollSpFact);
 
     _hobbsFact.setRawValue(QStringLiteral("0000:00:00"));
-    _followingSeasFact.setRawValue(false);
+    _followingSeasFact.setRawValue(0);
 }
 
 void VehicleFactGroup::handleMessage(Vehicle *vehicle, const mavlink_message_t &message)
@@ -405,6 +405,7 @@ void VehicleFactGroup::_handleMarsunControlState(const mavlink_message_t &messag
     commandMainPs()->setRawValue(msg.aoa_main_ps);
     commandInterSb()->setRawValue(msg.interceptor_sb);
     commandInterPs()->setRawValue(msg.interceptor_ps);
+    followingSeas()->setRawValue(msg.following_seas);
     
     _setTelemetryAvailable(true);
 }
