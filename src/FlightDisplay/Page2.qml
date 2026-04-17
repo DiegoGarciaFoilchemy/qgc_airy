@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import QGroundControl.Palette
 
 Item {
@@ -9,6 +10,7 @@ Item {
     property var  vehicle:      globals.activeVehicle
     property var bowHeight: vehicle ? vehicle.bowHeight.rawValue : 3000
     property int overlayHeight: 435 - 50
+    property int _labelPixelSize: 16
 
     // overlay height of 0 means main deck 6 meters above water line
     // overlay height of 435 means main deck at water line
@@ -115,17 +117,17 @@ Item {
                 spacing: 2
                 width: Math.max(freeboardText.implicitWidth, bowHeightText.implicitWidth)
 
-                Text {
+                Label {
                     id: freeboardText
                     color: qgcPal.text
-                    font.pixelSize: 16
+                    font.pixelSize: _labelPixelSize
                     text: "Freeboard"
                 }
 
-                Text {
+                Label {
                     id: bowHeightText
                     color: qgcPal.text
-                    font.pixelSize: 18
+                    font.pixelSize: _labelPixelSize
                     text: bowHeight.toFixed(1) + " m"
                     width: parent.width
                     horizontalAlignment: Text.AlignHCenter

@@ -22,6 +22,8 @@
 #include <QtCore/QThread>
 #include <QtCore/QTimer>
 
+#include <cmath>
+
 QGC_LOGGING_CATEGORY(MockLinkLog, "qgc.comms.mocklink.mocklink")
 QGC_LOGGING_CATEGORY(MockLinkVerboseLog, "qgc.comms.mocklink.mocklink:verbose")
 
@@ -178,14 +180,10 @@ void MockLink::run10HzTasks()
 
     if (_mavlinkStarted && _connected) {
         _sendHeartBeat();
-        if (_sendGPSPositionDelayCount > 0) {
-            // We delay gps position for better testing
-            _sendGPSPositionDelayCount--;
-        } else {
-            _sendGpsRawInt();
-            _sendGlobalPositionInt();
-            _sendExtendedSysState();
-        }
+        _sendAttitudeEuler();
+        _sendBoatSpeed();
+        _sendFcb35ControlState();
+        
     }
 }
 
@@ -332,6 +330,98 @@ void MockLink::_sendHeartBeat()
         _mavBaseMode,       // MAV_MODE
         _mavCustomMode,     // custom mode
         _mavState           // MAV_STATE
+    );
+    respondWithMavlinkMessage(msg);
+}
+
+void MockLink::_sendAttitudeEuler()
+{
+    static float phase = 0.0f;
+    constexpr float amplitude = 2.0f;
+    constexpr float phaseStep = 0.12f;
+
+    const float roll = amplitude * std::sin(phase);
+    constexpr float quarterTurn = 1.57079632679f;
+    const float pitch = amplitude * std::sin(phase + quarterTurn);
+    phase += phaseStep;
+
+    const float accBody[3] = {0.0f, 0.0f, 0.0f};
+
+    mavlink_message_t msg{};
+    (void) mavlink_msg_boat_attitude_pack_chan(
+        _vehicleSystemId,
+        _vehicleComponentId,
+        mavlinkChannel(),
+        &msg,
+        roll,
+        pitch,
+        0.0f,   // yaw
+        0.0f,   // pitch_rate
+        0.0f,   // roll_rate
+        0.0f,   // yaw_rate
+        0.0f,   // heave_speed
+        &accBody[0]
+    );
+    respondWithMavlinkMessage(msg);
+}
+
+void MockLink::_sendBoatSpeed()
+{
+    static float phase = 0.0f;
+    constexpr float amplitude = 3.0f;
+    constexpr float phaseStep = 0.1f;
+
+    const float speed = amplitude * std::sin(phase) + 25.0f; // Speed oscillates between 4 and 6 m/s
+    phase += phaseStep;
+
+    mavlink_message_t msg{};
+    (void) mavlink_msg_boat_speed_pack_chan(
+        _vehicleSystemId,
+        _vehicleComponentId,
+        mavlinkChannel(),
+        &msg,
+        speed,      // speed over ground
+        speed,      // speed through water
+        speed,       // control speed
+        0.0f, 0.0f, 0.0f      // vs vy vz
+    );
+    respondWithMavlinkMessage(msg);
+}
+
+void MockLink::_sendFcb35ControlState()
+{
+    static float phase = 0.0f;
+    constexpr float amplitudeDeg = 10.0f;
+    constexpr float phaseStep = 0.08f;
+    constexpr float quarterTurn = 1.57079632679f;
+
+    const float aoaBowSb = amplitudeDeg * std::sin(phase);
+    const float aoaBowPs = amplitudeDeg * std::sin(phase + quarterTurn);
+    const float aoaMainSb = amplitudeDeg * std::sin(phase + (2.0f * quarterTurn));
+    const float aoaMainPs = amplitudeDeg * std::sin(phase + (3.0f * quarterTurn));
+    phase += phaseStep;
+
+    mavlink_message_t msg{};
+    (void) mavlink_msg_fcb35_control_state_pack_chan(
+        _vehicleSystemId,
+        _vehicleComponentId,
+        mavlinkChannel(),
+        &msg,
+        aoaBowSb,
+        aoaBowPs,
+        aoaMainSb,
+        aoaMainPs,
+        0.0f, // interceptor_sb
+        0.0f, // interceptor_ps
+        0.0f, // bow_freeboard
+        0.0f, // average_freeboard
+        0,    // control_mode
+        0,    // following_seas
+        0,    // attitude_state
+        0,    // heave_state
+        0,    // speed_state
+        0,    // actuators_state
+        0     // ballast_command
     );
     respondWithMavlinkMessage(msg);
 }
@@ -1457,6 +1547,11 @@ MockLink *MockLink::startAPMArduSubMockLink(bool sendStatusText, MockConfigurati
 MockLink *MockLink::startAPMArduRoverMockLink(bool sendStatusText, MockConfiguration::FailureMode_t failureMode)
 {
     return _startMockLinkWorker(QStringLiteral("ArduRover MockLink"), MAV_AUTOPILOT_ARDUPILOTMEGA, MAV_TYPE_GROUND_ROVER, sendStatusText, failureMode);
+}
+
+MockLink *MockLink::startBoatMockLink(bool sendStatusText, MockConfiguration::FailureMode_t failureMode)
+{
+    return _startMockLinkWorker(QStringLiteral("Boat MockLink"), MAV_AUTOPILOT_PX4, MAV_TYPE_SURFACE_BOAT, sendStatusText, failureMode);
 }
 
 void MockLink::_sendRCChannels()

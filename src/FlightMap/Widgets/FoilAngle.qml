@@ -8,10 +8,10 @@
  ****************************************************************************/
 
 import QtQuick
+import QtQuick.Controls
 
 import QGroundControl
 import QGroundControl.Controls
-import QGroundControl.ScreenTools
 import QGroundControl.Palette
 
 
@@ -156,30 +156,73 @@ Item {
     }
     
     // Redraw canvas when needed
-    QGCLabel {
-        y: gaugeCenterY - labelFontSize * 3.
-        x: inverted ? 2.5 * gaugeRadius : - 1. * gaugeRadius
+    Label {
+        y: foilAngleValue.y - labelFontSize * 0.6
+        property real statusCenterX: inverted ? gaugeCenterX + gaugeRadius * 1.7 : gaugeCenterX - gaugeRadius * 1.7
+        x: statusCenterX - width / 2
         text: foilName
         color: "#ffffff"
-        font.pointSize: labelFontSize * 0.7
+        font: Qt.font({ pixelSize: labelFontSize * 1.2 })
     }
 
-    QGCLabel {
-        y: gaugeCenterY - labelFontSize * 0.8
+    Label {
+        y: foilAngleValue.y + labelFontSize * 2.5
         width: gaugeRadius * 2.2
         property real statusCenterX: inverted ? gaugeCenterX + gaugeRadius * 1.7 : gaugeCenterX - gaugeRadius * 1.7
         x: statusCenterX - width / 2
         text: foilStatus
         color: "#ffffff"
-        font.pointSize: labelFontSize * 0.7
+        font: Qt.font({ pixelSize: labelFontSize * 1.2 })
         horizontalAlignment: Text.AlignHCenter
     }
-    QGCLabel {
+    Item {
+        id: foilAngleValue
         visible: showFoil
-        y: gaugeCenterY + labelFontSize * 1.2
-        x: inverted ? 2.6 * gaugeRadius : -1. * gaugeRadius
-        text: foilAngle.toFixed(1) + "º"
-        color: "#ffffff"
-        font.pointSize: labelFontSize * 1.
+        y: gaugeCenterY - labelFontSize * 1.3
+        width: gaugeRadius * 1.3
+        height: labelFontSize * 1.8
+        property real valueCenterX: inverted ? gaugeCenterX - gaugeRadius * 0.55 : gaugeCenterX + gaugeRadius * 0.55
+        x: valueCenterX - width / 1.8
+
+        readonly property string absFormatted: Math.abs(foilAngle).toFixed(1)
+        readonly property string integerPart: {
+            const parts = absFormatted.split(".")
+            return parts[0].length < 2 ? (" " + parts[0]) : parts[0]
+        }
+        readonly property string decimalPart: absFormatted.split(".")[1]
+        readonly property bool twoDigitAbs: Math.abs(foilAngle) >= 10
+
+        Row {
+            anchors.centerIn: parent
+            spacing: foilAngle < 0 ? (foilAngleValue.twoDigitAbs ? labelFontSize * 0.18 : labelFontSize * 0.12) : labelFontSize * 0.06
+
+            Text {
+                width: foilAngle < 0 ? (foilAngleValue.twoDigitAbs ? labelFontSize * 1.25 : labelFontSize * 1.05) : labelFontSize * 0.95
+                horizontalAlignment: Text.AlignRight
+                text: foilAngle < 0 ? "-" : " "
+                color: "#ffffff"
+                font.pixelSize: labelFontSize * 1.6
+            }
+
+            Text {
+                width: labelFontSize * 1.55
+                horizontalAlignment: Text.AlignRight
+                text: foilAngleValue.integerPart
+                color: "#ffffff"
+                font.pixelSize: labelFontSize * 1.6
+            }
+
+            Text {
+                text: "." + foilAngleValue.decimalPart
+                color: "#ffffff"
+                font.pixelSize: labelFontSize * 1.6
+            }
+
+            Text {
+                text: "º"
+                color: "#ffffff"
+                font.pixelSize: labelFontSize * 1.6
+            }
+        }
     }
 }

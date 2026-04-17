@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 
 import QGroundControl
@@ -15,12 +16,26 @@ Item {
 
     QGCPalette { id: qgcPal; colorGroupEnabled: true }
 
-    property real _outerMargin: ScreenTools.defaultFontPixelWidth * 2.5
-    property real _cardWidth: ScreenTools.defaultFontPixelWidth * 30
-    property real _cardMinHeight: ScreenTools.defaultFontPixelWidth * 11
-    property real _rowSpacing: ScreenTools.defaultFontPixelHeight * 0.2
-    property real _titlePointSize: ScreenTools.defaultFontPointSize * 0.95
-    property real _rowPointSize: ScreenTools.defaultFontPointSize * 0.9
+    property int _outerMarginX: 4
+    property int _outerMarginY: 14
+    property int _columnGap: 8
+    property int _cardWidth: 290
+    property int _cardMinHeight: 170
+    property int _rowSpacing: 4
+    property int _titlePixelSize: 18
+    property int _rowPixelSize: 16
+    property int _rowInlineSpacing: 8
+    property int _contentMarginX: 2
+    property int _contentMarginY: 6
+    property int _cardCornerRadius: 6
+    property int _cardBottomPadding: 8
+    property int _refillIndicatorSize: 14
+    property int _refillPanelHeight: 46
+    property int _manualSliderWidth: 44
+    property int _foilIndicatorWidth: 72
+    property int _manualSliderGap: 8
+    property bool _manualControlExpanded: false
+    property var _manualFoilAngles: [0, 0, 0, 0, 0, 0]
 
     property var foilCards: _buildFoilCards()
 
@@ -64,7 +79,63 @@ Item {
         return value >= 1 ? "Open" : "Closed"
     }
 
-    function _buildCard(title, row, column, angleFact, speedFact, targetFact, valveCmdFact, valveFeedbackFact, statusFact, modeFact, pressureFact) {
+    function _refillValveActive(value) {
+        return value >= 1
+    }
+
+    function _manualControlActive() {
+        if (!vehicle) {
+            return false
+        }
+
+        var modeFacts = [
+            vehicle.acu1Mode,
+            vehicle.acu2Mode,
+            vehicle.acu3Mode,
+            vehicle.acu4Mode,
+            vehicle.acu5Mode,
+            vehicle.acu6Mode,
+        ]
+
+        for (var index = 0; index < modeFacts.length; index++) {
+            var fact = modeFacts[index]
+            if (fact && fact.rawValue === 1) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    function _factNumberValue(fact, fallbackValue) {
+        if (!fact || fact.rawValue === undefined || fact.rawValue === null || isNaN(fact.rawValue)) {
+            return fallbackValue
+        }
+
+        return Number(fact.rawValue)
+    }
+
+    function _syncManualFoilAngles() {
+        _manualFoilAngles = [
+            _factNumberValue(vehicle ? vehicle.acu5Angle : null, 0),
+            _factNumberValue(vehicle ? vehicle.acu6Angle : null, 0),
+            _factNumberValue(vehicle ? vehicle.acu3Angle : null, 0),
+            _factNumberValue(vehicle ? vehicle.acu4Angle : null, 0),
+            _factNumberValue(vehicle ? vehicle.acu1Angle : null, 0),
+            _factNumberValue(vehicle ? vehicle.acu2Angle : null, 0)
+        ]
+    }
+
+    function _toggleManualControlExpanded() {
+        _manualControlExpanded = !_manualControlExpanded
+        if (_manualControlExpanded) {
+            _syncManualFoilAngles()
+        } else {
+            _manualFoilAngles = [0, 0, 0, 0, 0, 0]
+        }
+    }
+
+    function _buildCard(title, row, column, angleFact, speedFact, targetFact, valveCmdFact, valveFeedbackFact, statusFact, modeFact, pressureFact, manualFrom, manualTo, manualUnit, manualIndex) {
         var modeValue = modeFact && modeFact.rawValue !== undefined && modeFact.rawValue !== null ? modeFact.rawValue : null
         var refillValue = vehicle && vehicle.refillCmd ? vehicle.refillCmd.rawValue : 0
 
@@ -74,6 +145,10 @@ Item {
             column: column,
             refillValue: refillValue,
             refillActive: refillValue >= 1,
+            manualFrom: manualFrom,
+            manualTo: manualTo,
+            manualUnit: manualUnit,
+            manualIndex: manualIndex,
             entries: [
                 { label: "Position", value: _factValue(angleFact, 1, "deg") },
                 { label: "Speed", value: _factValue(speedFact, 1, "deg/sec") },
@@ -90,34 +165,42 @@ Item {
     function _buildFoilCards() {
         return [
             _buildCard(
-                "INTERCEPTOR SB",
+                "BOW FLAP SB",
                 0,
-                0,
-                vehicle ? vehicle.acu5Angle : null,
-                vehicle ? vehicle.acu5Speed : null,
-                vehicle ? vehicle.acu5Target : null,
-                vehicle ? vehicle.acu5ValveCmd : null,
-                vehicle ? vehicle.acu5ValveFeedback : null,
-                vehicle ? vehicle.acu5Status : null,
-                vehicle ? vehicle.acu5Mode : null,
-                vehicle ? vehicle.intSbPressure : null
-            ),
-            _buildCard(
-                "INTERCEPTOR PS",
                 1,
-                0,
-                vehicle ? vehicle.acu6Angle : null,
-                vehicle ? vehicle.acu6Speed : null,
-                vehicle ? vehicle.acu6Target : null,
-                vehicle ? vehicle.acu6ValveCmd : null,
-                vehicle ? vehicle.acu6ValveFeedback : null,
-                vehicle ? vehicle.acu6Status : null,
-                vehicle ? vehicle.acu6Mode : null,
-                vehicle ? vehicle.intPsPressure : null
+                vehicle ? vehicle.acu1Angle : null,
+                vehicle ? vehicle.acu1Speed : null,
+                vehicle ? vehicle.acu1Target : null,
+                vehicle ? vehicle.acu1ValveCmd : null,
+                vehicle ? vehicle.acu1ValveFeedback : null,
+                vehicle ? vehicle.acu1Status : null,
+                vehicle ? vehicle.acu1Mode : null,
+                vehicle ? vehicle.bowSbPressure : null,
+                -35,
+                35,
+                "\u00b0",
+                4
             ),
             _buildCard(
-                "MAIN SB FOIL",
+                "BOW FLAP PS",
                 0,
+                0,
+                vehicle ? vehicle.acu2Angle : null,
+                vehicle ? vehicle.acu2Speed : null,
+                vehicle ? vehicle.acu2Target : null,
+                vehicle ? vehicle.acu2ValveCmd : null,
+                vehicle ? vehicle.acu2ValveFeedback : null,
+                vehicle ? vehicle.acu2Status : null,
+                vehicle ? vehicle.acu2Mode : null,
+                vehicle ? vehicle.bowPsPressure : null,
+                -35,
+                35,
+                "\u00b0",
+                5
+            ),
+            _buildCard(
+                "AFT FLAP SB",
+                1,
                 1,
                 vehicle ? vehicle.acu3Angle : null,
                 vehicle ? vehicle.acu3Speed : null,
@@ -126,12 +209,16 @@ Item {
                 vehicle ? vehicle.acu3ValveFeedback : null,
                 vehicle ? vehicle.acu3Status : null,
                 vehicle ? vehicle.acu3Mode : null,
-                vehicle ? vehicle.mainSbPressure : null
+                vehicle ? vehicle.mainSbPressure : null,
+                -35,
+                35,
+                "\u00b0",
+                2
             ),
             _buildCard(
-                "MAIN PS FOIL",
+                "AFT FLAP PS",
                 1,
-                1,
+                0,
                 vehicle ? vehicle.acu4Angle : null,
                 vehicle ? vehicle.acu4Speed : null,
                 vehicle ? vehicle.acu4Target : null,
@@ -139,33 +226,45 @@ Item {
                 vehicle ? vehicle.acu4ValveFeedback : null,
                 vehicle ? vehicle.acu4Status : null,
                 vehicle ? vehicle.acu4Mode : null,
-                vehicle ? vehicle.mainPsPressure : null
+                vehicle ? vehicle.mainPsPressure : null,
+                -35,
+                35,
+                "\u00b0",
+                3
             ),
             _buildCard(
-                "BOW SB FOIL",
-                0,
+                "INTERCEPTOR SB",
                 2,
-                vehicle ? vehicle.acu1Angle : null,
-                vehicle ? vehicle.acu1Speed : null,
-                vehicle ? vehicle.acu1Target : null,
-                vehicle ? vehicle.acu1ValveCmd : null,
-                vehicle ? vehicle.acu1ValveFeedback : null,
-                vehicle ? vehicle.acu1Status : null,
-                vehicle ? vehicle.acu1Mode : null,
-                vehicle ? vehicle.bowSbPressure : null
-            ),
-            _buildCard(
-                "BOW PS FOIL",
                 1,
+                vehicle ? vehicle.acu5Angle : null,
+                vehicle ? vehicle.acu5Speed : null,
+                vehicle ? vehicle.acu5Target : null,
+                vehicle ? vehicle.acu5ValveCmd : null,
+                vehicle ? vehicle.acu5ValveFeedback : null,
+                vehicle ? vehicle.acu5Status : null,
+                vehicle ? vehicle.acu5Mode : null,
+                vehicle ? vehicle.intSbPressure : null,
+                -10,
+                50,
+                "mm",
+                0
+            ),
+            _buildCard(
+                "INTERCEPTOR PS",
                 2,
-                vehicle ? vehicle.acu2Angle : null,
-                vehicle ? vehicle.acu2Speed : null,
-                vehicle ? vehicle.acu2Target : null,
-                vehicle ? vehicle.acu2ValveCmd : null,
-                vehicle ? vehicle.acu2ValveFeedback : null,
-                vehicle ? vehicle.acu2Status : null,
-                vehicle ? vehicle.acu2Mode : null,
-                vehicle ? vehicle.bowPsPressure : null
+                0,
+                vehicle ? vehicle.acu6Angle : null,
+                vehicle ? vehicle.acu6Speed : null,
+                vehicle ? vehicle.acu6Target : null,
+                vehicle ? vehicle.acu6ValveCmd : null,
+                vehicle ? vehicle.acu6ValveFeedback : null,
+                vehicle ? vehicle.acu6Status : null,
+                vehicle ? vehicle.acu6Mode : null,
+                vehicle ? vehicle.intPsPressure : null,
+                -10,
+                50,
+                "mm",
+                1
             )
         ]
     }
@@ -175,105 +274,210 @@ Item {
         color: qgcPal.windowShade
     }
 
+    Timer {
+        interval: 300
+        running: root._manualControlExpanded && vehicle
+        repeat: true
+        onTriggered: vehicle.sendManualFoils(root._manualFoilAngles)
+    }
+
     Flickable {
         id: flickable
         anchors.fill: parent
         contentWidth: width
-        contentHeight: gridLayout.implicitHeight + manualFoilPanel.height + (_outerMargin * 3)
+        contentHeight: Math.max(refillValvePanel.y + refillValvePanel.height, manualControlPanel.y + manualControlPanel.height) + _outerMarginY
         clip: true
 
         GridLayout {
             id: gridLayout
-            x: _outerMargin
-            y: _outerMargin
-            width: flickable.width - (_outerMargin * 2)
-            columns: 3
-            columnSpacing: _outerMargin
-            rowSpacing: _outerMargin
+            x: Math.max(_outerMarginX, (flickable.width - implicitWidth) / 2)
+            y: _outerMarginY
+            columns: 2
+            columnSpacing: _columnGap
+            rowSpacing: _outerMarginY
 
             Repeater {
                 model: foilCards
 
-                Rectangle {
+                Item {
                     Layout.row: modelData.row
                     Layout.column: modelData.column
-                    color: qgcPal.window
-                    border.color: qgcPal.text
-                    border.width: 1
-                    radius: ScreenTools.defaultFontPixelWidth / 2
                     Layout.preferredWidth: _cardWidth
-                    Layout.preferredHeight: contentLayout.implicitHeight + ScreenTools.defaultFontPixelWidth
+                    Layout.preferredHeight: cardContentLayout.implicitHeight + _cardBottomPadding
                     Layout.minimumHeight: _cardMinHeight
+                    z: 1
 
-                    ColumnLayout {
-                        id: contentLayout
+                    Rectangle {
+                        id: infoCard
                         anchors.fill: parent
-                        anchors.margins: ScreenTools.defaultFontPixelWidth * 0.7
-                        spacing: _rowSpacing
-
-                        QGCLabel {
-                            text: modelData.title
-                            font.bold: true
-                            font.pointSize: _titlePointSize
-                            color: qgcPal.text
-                            Layout.fillWidth: true
-                        }
+                        color: qgcPal.window
+                        border.color: qgcPal.text
+                        border.width: 1
+                        radius: _cardCornerRadius
 
                         ColumnLayout {
-                            Layout.fillWidth: true
+                            id: cardContentLayout
+                            anchors.fill: parent
+                            anchors.leftMargin: _contentMarginX
+                            anchors.rightMargin: _contentMarginX
+                            anchors.topMargin: _contentMarginY
+                            anchors.bottomMargin: _contentMarginY
                             spacing: _rowSpacing
 
-                            Repeater {
-                                model: modelData.entries
-
-                                RowLayout {
-                                    Layout.fillWidth: true
-                                    spacing: ScreenTools.defaultFontPixelWidth * 0.6
-
-                                    QGCLabel {
-                                        text: modelData.label
-                                        font.pointSize: _rowPointSize
-                                        color: qgcPal.text
-                                        Layout.fillWidth: true
-                                    }
-
-                                    QGCLabel {
-                                        text: modelData.value
-                                        font.pointSize: _rowPointSize
-                                        color: qgcPal.text
-                                        horizontalAlignment: Text.AlignRight
-                                        Layout.alignment: Qt.AlignRight
-                                    }
-                                }
-                            }
-                        }
-
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: ScreenTools.defaultFontPixelWidth * 0.6
-
-                            QGCLabel {
-                                text: "Refill valve"
-                                font.pointSize: _rowPointSize
+                            Label {
+                                text: modelData.title
+                                font.bold: true
+                                font.pixelSize: _titlePixelSize
                                 color: qgcPal.text
                                 Layout.fillWidth: true
                             }
 
-                            Rectangle {
-                                Layout.preferredWidth: ScreenTools.defaultFontPixelWidth * 1.4
-                                Layout.preferredHeight: ScreenTools.defaultFontPixelWidth * 1.4
-                                radius: width / 2
-                                color: modelData.refillActive ? "#2fb34a" : qgcPal.windowShadeDark
-                                border.color: qgcPal.text
-                                border.width: 1
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                spacing: _rowSpacing
+
+                                Repeater {
+                                    model: modelData.entries
+
+                                    RowLayout {
+                                        Layout.fillWidth: true
+                                        spacing: _rowInlineSpacing
+
+                                        Label {
+                                            text: modelData.label
+                                            font.pixelSize: _rowPixelSize
+                                            color: qgcPal.text
+                                            Layout.fillWidth: true
+                                        }
+
+                                        Label {
+                                            text: modelData.value
+                                            font.pixelSize: _rowPixelSize
+                                            color: qgcPal.text
+                                            horizontalAlignment: Text.AlignRight
+                                            Layout.alignment: Qt.AlignRight
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        id: sliderPanel
+                        visible: root._manualControlExpanded
+                        property bool isFlapCard: modelData.manualUnit === "\u00b0"
+                        width: isFlapCard ? _manualSliderWidth + _foilIndicatorWidth : _manualSliderWidth
+                        height: parent.height
+                        x: modelData.column === 0 ? -width - _manualSliderGap : parent.width + _manualSliderGap
+                        y: 0
+                        color: qgcPal.window
+                        border.color: "#4aa3ff"
+                        border.width: 1
+                        radius: _cardCornerRadius
+                        z: 2
+
+                        RowLayout {
+                            anchors.fill: parent
+                            spacing: 0
+
+                            // Left foil indicator — PS cards (column 0)
+                            Item {
+                                Layout.preferredWidth: (sliderPanel.isFlapCard && modelData.column === 0) ? _foilIndicatorWidth : 0
+                                Layout.fillHeight: true
+                                visible: sliderPanel.isFlapCard && modelData.column === 0
+
+                                Image {
+                                    id: foilImgLeft
+                                    source: "/qmlimages/foil.svg"
+                                    width: parent.width - 6
+                                    height: width / 6.3
+                                    anchors.centerIn: parent
+                                    smooth: true
+                                    mipmap: true
+                                    mirror: true
+                                    transform: Rotation {
+                                        origin.x: foilImgLeft.width * 0.18
+                                        origin.y: foilImgLeft.height / 2
+                                        angle: sliderControl.value
+                                    }
+                                }
                             }
 
-                            QGCLabel {
-                                text: _refillValveStateText(vehicle && vehicle.refillCmd ? vehicle.refillCmd.rawValue : 0)
-                                font.pointSize: _rowPointSize
-                                color: qgcPal.text
-                                horizontalAlignment: Text.AlignRight
-                                Layout.alignment: Qt.AlignRight
+                            // Slider column
+                            ColumnLayout {
+                                Layout.preferredWidth: _manualSliderWidth
+                                Layout.fillHeight: true
+                                Layout.topMargin: 8
+                                Layout.bottomMargin: 8
+                                spacing: 2
+
+                                Label {
+                                    Layout.alignment: Qt.AlignHCenter
+                                    text: Number(sliderControl.value).toFixed(0) + modelData.manualUnit
+                                    color: "#4aa3ff"
+                                    font.bold: true
+                                    font.pixelSize: _rowPixelSize - 1
+                                }
+
+                                Label {
+                                    Layout.alignment: Qt.AlignHCenter
+                                    text: modelData.manualFrom + modelData.manualUnit
+                                    color: qgcPal.text
+                                    font.pixelSize: _rowPixelSize - 4
+                                }
+
+                                QGCSlider {
+                                    id: sliderControl
+                                    Layout.alignment: Qt.AlignHCenter
+                                    Layout.fillHeight: true
+                                    orientation: Qt.Vertical
+                                    from: modelData.manualTo
+                                    to: modelData.manualFrom
+                                    stepSize: 1
+
+                                    Component.onCompleted: value = root._manualFoilAngles[modelData.manualIndex]
+                                    onVisibleChanged: {
+                                        if (visible) {
+                                            value = root._manualFoilAngles[modelData.manualIndex]
+                                        }
+                                    }
+
+                                    onValueChanged: {
+                                        var values = root._manualFoilAngles.slice()
+                                        values[modelData.manualIndex] = value
+                                        root._manualFoilAngles = values
+                                    }
+                                }
+
+                                Label {
+                                    Layout.alignment: Qt.AlignHCenter
+                                    text: modelData.manualTo + modelData.manualUnit
+                                    color: qgcPal.text
+                                    font.pixelSize: _rowPixelSize - 4
+                                }
+                            }
+
+                            // Right foil indicator — SB cards (column 1)
+                            Item {
+                                Layout.preferredWidth: (sliderPanel.isFlapCard && modelData.column === 1) ? _foilIndicatorWidth : 0
+                                Layout.fillHeight: true
+                                visible: sliderPanel.isFlapCard && modelData.column === 1
+
+                                Image {
+                                    id: foilImgRight
+                                    source: "/qmlimages/foil.svg"
+                                    width: parent.width - 6
+                                    height: width / 6.3
+                                    anchors.centerIn: parent
+                                    smooth: true
+                                    mipmap: true
+                                    transform: Rotation {
+                                        origin.x: foilImgRight.width * 0.82
+                                        origin.y: foilImgRight.height / 2
+                                        angle: -sliderControl.value
+                                    }
+                                }
                             }
                         }
                     }
@@ -282,11 +486,119 @@ Item {
         }
 
         Rectangle {
+            id: refillValvePanel
+            x: gridLayout.x
+            y: gridLayout.y + gridLayout.implicitHeight + _outerMarginY
+            width: _cardWidth
+            height: _refillPanelHeight
+            color: qgcPal.window
+            border.color: _refillValveActive(vehicle && vehicle.refillCmd ? vehicle.refillCmd.rawValue : 0) ? "#4fe06b" : "#7a7a7a"
+            border.width: 2
+            radius: _cardCornerRadius
+
+            property bool refillOpen: _refillValveActive(vehicle && vehicle.refillCmd ? vehicle.refillCmd.rawValue : 0)
+
+            RowLayout {
+                anchors.fill: parent
+                anchors.leftMargin: 10
+                anchors.rightMargin: 10
+                anchors.topMargin: 6
+                anchors.bottomMargin: 6
+                spacing: 10
+
+                Rectangle {
+                    Layout.preferredWidth: 18
+                    Layout.preferredHeight: 18
+                    radius: 9
+                    color: refillValvePanel.refillOpen ? "#4fe06b" : "#5a5a5a"
+                    border.color: refillValvePanel.refillOpen ? "#a8ffb8" : "#9a9a9a"
+                    border.width: 2
+                }
+
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 2
+
+                    Label {
+                        text: "REFILL VALVE"
+                        color: qgcPal.text
+                        font.bold: true
+                        font.pixelSize: _rowPixelSize - 1
+                    }
+
+                    Label {
+                        text: refillValvePanel.refillOpen ? "OPEN" : "CLOSED"
+                        color: refillValvePanel.refillOpen ? "#4fe06b" : "#c8c8c8"
+                        font.bold: true
+                        font.pixelSize: _titlePixelSize + 1
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            id: manualControlPanel
+            x: gridLayout.x + _cardWidth + _columnGap
+            y: gridLayout.y + gridLayout.implicitHeight + _outerMarginY
+            width: _cardWidth
+            height: _refillPanelHeight
+            color: qgcPal.window
+            border.color: root._manualControlExpanded || _manualControlActive() ? "#4aa3ff" : "#7a7a7a"
+            border.width: 2
+            radius: _cardCornerRadius
+
+            property bool manualControlOn: root._manualControlExpanded || _manualControlActive()
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: root._toggleManualControlExpanded()
+            }
+
+            RowLayout {
+                anchors.fill: parent
+                anchors.leftMargin: 10
+                anchors.rightMargin: 10
+                anchors.topMargin: 6
+                anchors.bottomMargin: 6
+                spacing: 10
+
+                Rectangle {
+                    Layout.preferredWidth: 18
+                    Layout.preferredHeight: 18
+                    radius: 9
+                    color: manualControlPanel.manualControlOn ? "#4aa3ff" : "#5a5a5a"
+                    border.color: manualControlPanel.manualControlOn ? "#a9d1ff" : "#9a9a9a"
+                    border.width: 2
+                }
+
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 2
+
+                    Label {
+                        text: "MANUAL CONTROL"
+                        color: qgcPal.text
+                        font.bold: true
+                        font.pixelSize: _rowPixelSize - 1
+                    }
+
+                    Label {
+                        text: manualControlPanel.manualControlOn ? "ON" : "OFF"
+                        color: manualControlPanel.manualControlOn ? "#4aa3ff" : "#c8c8c8"
+                        font.bold: true
+                        font.pixelSize: _titlePixelSize + 1
+                    }
+                }
+            }
+        }
+
+        /*
+        Rectangle {
             id:           manualFoilPanel
             x:            0
-            y:            gridLayout.y + gridLayout.implicitHeight + _outerMargin
+            y:            gridLayout.y + gridLayout.implicitHeight + _outerMarginY
             width:        flickable.width
-            height:       panelContent.implicitHeight + ScreenTools.defaultFontPixelWidth
+            height:       panelContent.implicitHeight + _cardBottomPadding
         color:        qgcPal.window
         border.color: qgcPal.text
         border.width: 1
@@ -306,9 +618,12 @@ Item {
                 top:     parent.top
                 left:    parent.left
                 right:   parent.right
-                margins: ScreenTools.defaultFontPixelWidth * 0.5
+                leftMargin: _contentMarginX
+                rightMargin: _contentMarginX
+                topMargin: _contentMarginY
+                bottomMargin: _contentMarginY
             }
-            spacing: ScreenTools.defaultFontPixelHeight * 0.3
+            spacing: _rowSpacing
 
             QGCButton {
                 id:               manualFoilToggle
@@ -323,17 +638,17 @@ Item {
                 visible:          manualFoilToggle.checked
                 Layout.fillWidth: true
                 columns:          3
-                columnSpacing:    ScreenTools.defaultFontPixelWidth
-                rowSpacing:       ScreenTools.defaultFontPixelHeight * 0.8
+                columnSpacing:    _outerMarginX
+                rowSpacing:       _rowInlineSpacing
 
                 Repeater {
                     model: [
-                        { label: "INT SB",  from: -10, to: 50, unit: "mm",     foilIndex: 0 },
-                        { label: "AFT SB",  from: -35, to: 35, unit: "\u00b0", foilIndex: 2 },
-                        { label: "BOW SB",  from: -35, to: 35, unit: "\u00b0", foilIndex: 4 },
-                        { label: "INT PS",  from: -10, to: 50, unit: "mm",     foilIndex: 1 },
-                        { label: "AFT PS",  from: -35, to: 35, unit: "\u00b0", foilIndex: 3 },
-                        { label: "BOW PS",  from: -35, to: 35, unit: "\u00b0", foilIndex: 5 }
+                        { label: "INTERCEPTOR SB",  from: -10, to: 50, unit: "mm",     foilIndex: 0 },
+                        { label: "AFT FLAP SB",  from: -35, to: 35, unit: "\u00b0", foilIndex: 2 },
+                        { label: "BOW FLAP SB",  from: -35, to: 35, unit: "\u00b0", foilIndex: 4 },
+                        { label: "INTERCEPTOR PS",  from: -10, to: 50, unit: "mm",     foilIndex: 1 },
+                        { label: "AFT FLAP PS",  from: -35, to: 35, unit: "\u00b0", foilIndex: 3 },
+                        { label: "BOW FLAP PS",  from: -35, to: 35, unit: "\u00b0", foilIndex: 5 }
                     ]
 
                     ColumnLayout {
@@ -342,21 +657,21 @@ Item {
 
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing:          ScreenTools.defaultFontPixelWidth * 0.4
+                            spacing:          _rowInlineSpacing
 
-                            QGCLabel {
+                            Label {
                                 text:             modelData.label
-                                font.pointSize:   _titlePointSize
+                                font.pixelSize:   _titlePixelSize
                                 font.bold:        true
                                 color:            qgcPal.text
                             }
 
                             Item { Layout.fillWidth: true }
 
-                            QGCLabel {
+                            Label {
                                 id:               _valueLabel
                                 text:             "0" + modelData.unit
-                                font.pointSize:   _titlePointSize
+                                font.pixelSize:   _titlePixelSize
                                 font.bold:        true
                                 color:            qgcPal.text
                             }
@@ -382,5 +697,6 @@ Item {
             }
         }
         }
+        */
     }
 }

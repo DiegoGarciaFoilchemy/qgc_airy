@@ -99,6 +99,7 @@ public:
     static MockLink *startAPMArduPlaneMockLink(bool sendStatusText, MockConfiguration::FailureMode_t failureMode = MockConfiguration::FailNone);
     static MockLink *startAPMArduSubMockLink(bool sendStatusText, MockConfiguration::FailureMode_t failureMode = MockConfiguration::FailNone);
     static MockLink *startAPMArduRoverMockLink(bool sendStatusText, MockConfiguration::FailureMode_t failureMode = MockConfiguration::FailNone);
+    static MockLink *startBoatMockLink(bool sendStatusText, MockConfiguration::FailureMode_t failureMode = MockConfiguration::FailNone);
 
     // Special commands for testing Vehicle::sendMavCommandWithHandler
     static constexpr MAV_CMD MAV_CMD_MOCKLINK_ALWAYS_RESULT_ACCEPTED = MAV_CMD_USER_1;
@@ -164,6 +165,9 @@ private:
     bool _handleRequestMessage(const mavlink_command_long_t &request, bool &noAck);
 
     void _sendHeartBeat();
+    void _sendAttitudeEuler();
+    void _sendBoatSpeed();
+    void _sendFcb35ControlState();
     void _sendHighLatency2();
     void _sendHomePosition();
     void _sendGpsRawInt();

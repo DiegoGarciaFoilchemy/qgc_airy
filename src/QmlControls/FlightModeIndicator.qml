@@ -27,6 +27,9 @@ Item {
     property var    expandedPageComponent
     property bool   waitForParameters:      false
 
+    property bool useFixedPixels:   false
+    property real fixedPanelHeightPx: 80
+    property real fixedLabelPixelSize: 22
     property real fontPointSize:    ScreenTools.largeFontPointSize
     property var  activeVehicle:    QGroundControl.multiVehicleManager.activeVehicle
     property bool allowEditMode:    true
@@ -53,11 +56,12 @@ Item {
     
     Item {
         Layout.fillWidth: true
-        Layout.preferredHeight: ScreenTools.defaultFontPixelHeight * 8
+        Layout.preferredHeight: useFixedPixels ? fixedPanelHeightPx : (ScreenTools.defaultFontPixelHeight * 8)
 
-        QGCLabel {
+        Label {
             text:                   qsTr("Mode")
-            font.pointSize:         fontPointSize
+            color:                  "white"
+            font:                   useFixedPixels ? Qt.font({ pixelSize: fixedLabelPixelSize }) : Qt.font({ pointSize: fontPointSize })
             // anchors.centerIn:       parent
             anchors.horizontalCenterOffset: -90
             // anchors.horizontalCenterOffset: -ScreenTools.defaultFontPixelWidth * 1.5
@@ -72,9 +76,10 @@ Item {
             // }
         }
 
-        QGCLabel {
+        Label {
             text:                   activeVehicle ? activeVehicle.flightMode : qsTr("N/A", "No data to display")
-            font.pointSize:         fontPointSize
+            color:                  "white"
+            font:                   useFixedPixels ? Qt.font({ pixelSize: fixedLabelPixelSize }) : Qt.font({ pointSize: fontPointSize })
             // anchors.centerIn:       parent
             anchors.horizontalCenterOffset: -90
             // anchors.horizontalCenterOffset: ScreenTools.defaultFontPixelWidth * 1.5
@@ -209,7 +214,7 @@ Item {
                 }
             }
 
-            QGCLabel {
+            Label {
                 id:                     hiddenModesLabel
                 text:                   qsTr("Warning: Modes are managed automatically in normal conditions")
                 Layout.fillWidth:       true
@@ -248,7 +253,7 @@ Item {
                     Layout.fillWidth:   true
                     enabled:            control.allowEditMode
 
-                    QGCLabel {
+                    Label {
                         Layout.fillWidth:   true
                         text:               qsTr("Edit Displayed Flight Modes")
                     }

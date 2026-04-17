@@ -20,14 +20,18 @@ import QGroundControl.ScreenTools
 
 Button {
     id:                 button
-    height:             ScreenTools.defaultFontPixelHeight * 5
+    height:             useFixedPixels ? fixedHeightPx : (ScreenTools.defaultFontPixelHeight * 5)
     leftPadding:        _horizontalMargin
     rightPadding:       _horizontalMargin
     checkable:          false
 
     property bool logo: false
+    property bool useFixedPixels: false
+    property real fixedHeightPx: 50
+    property real fixedHorizontalMarginPx: 10
+    property real fixedContentSpacingPx: 10
 
-    property real _horizontalMargin: ScreenTools.defaultFontPixelWidth
+    property real _horizontalMargin: useFixedPixels ? fixedHorizontalMarginPx : ScreenTools.defaultFontPixelWidth
 
     onCheckedChanged: checkable = false
 
@@ -39,7 +43,7 @@ Button {
     }
 
     contentItem: Row {
-        spacing:                ScreenTools.defaultFontPixelWidth
+        spacing:                useFixedPixels ? fixedContentSpacingPx : ScreenTools.defaultFontPixelWidth
         anchors.verticalCenter: button.verticalCenter
         QGCColoredImage {
             id:                     _icon

@@ -1659,6 +1659,25 @@ void Vehicle::followingSeasOn(void)
     // _vehicleFactGroup->followingSeas()->setRawValue(true);
 }
 
+void Vehicle::waveStateOn(void)
+{
+    // uint8_t current_state = _vehicleFactGroup->followingSeas()->rawValue().toUInt();
+    // float new_state;
+    // if(current_state == 0) {
+    //     new_state = 1.0f;
+    // } else if (current_state == 1) {
+    //     new_state = 2.0f;
+    // } else {
+    //     new_state = 0.0f;
+    // }
+    // sendMavCommand(_defaultComponentId,
+    //                MAV_CMD_FOLLOWING_SEAS,
+    //                true,
+    //                 new_state,
+    //                 0);    // show error if fails
+    // _vehicleFactGroup->followingSeas()->setRawValue(true);
+}
+
 void Vehicle::sendManualFoils(QVariantList angles)
 {
     SharedLinkInterfacePtr sharedLink = vehicleLinkManager()->primaryLink().lock();

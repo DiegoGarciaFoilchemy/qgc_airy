@@ -11,7 +11,6 @@ import QtQuick
 
 import QGroundControl
 import QGroundControl.Controls
-import QGroundControl.ScreenTools
 import QGroundControl.Palette
 
 
@@ -68,7 +67,7 @@ Item {
     Text {
         text: Math.round(portDeployment) + "%"
         color: "white"
-        font.pointSize: labelPointSize * 1.7
+        font.pixelSize: labelPointSize * 1.7
         anchors.right: centerLine.left
         anchors.rightMargin: _sideMargin
         anchors.verticalCenter: centerLine.verticalCenter
@@ -78,7 +77,7 @@ Item {
     Text {
         text: Math.round(starboardDeployment) + "%"
         color: "white"
-        font.pointSize: labelPointSize * 1.7
+        font.pixelSize: labelPointSize * 1.7
         anchors.left: centerLine.right
         anchors.leftMargin: _sideMargin
         anchors.verticalCenter: centerLine.verticalCenter

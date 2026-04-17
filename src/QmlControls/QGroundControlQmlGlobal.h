@@ -139,6 +139,7 @@ public:
     Q_INVOKABLE void    startAPMArduPlaneMockLink   (bool sendStatusText);
     Q_INVOKABLE void    startAPMArduSubMockLink     (bool sendStatusText);
     Q_INVOKABLE void    startAPMArduRoverMockLink   (bool sendStatusText);
+    Q_INVOKABLE void    startBoatMockLink           (bool sendStatusText);
     Q_INVOKABLE void    stopOneMockLink             (void);
 
     /// Returns the list of available logging category names.

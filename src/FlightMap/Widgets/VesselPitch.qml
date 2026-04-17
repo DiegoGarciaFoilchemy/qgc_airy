@@ -11,20 +11,22 @@ import QtQuick
 
 import QGroundControl
 import QGroundControl.Controls
-import QGroundControl.ScreenTools
 import QGroundControl.Palette
 
 
 Item {
     id:     root
-    width:  200
-    height: width
+    width:  350
+    height: 200
     clip:   true
     // color:  "transparent"
 
     property real extraInset:           0
+    property bool useFixedPixels:       false
+    property real fixedUnitPx:          12
+    readonly property real _unitPx:     useFixedPixels ? fixedUnitPx : ScreenTools.defaultFontPixelHeight
 
-    property real   _spacing:           ScreenTools.defaultFontPixelHeight * 0.33
+    property real   _spacing:           _unitPx * 0.33
     property real _pitch_scale: 4.0
     property real _max_pitch: 5.0
     property real _min_pitch: -2.0
@@ -51,7 +53,7 @@ Item {
     QGCPalette { id: qgcPal; colorGroupEnabled: true }
 
     Timer {
-        interval: 300
+        interval: 350
         running: true
         repeat: true
         onTriggered: {
@@ -65,19 +67,22 @@ Item {
     // Pitch scale on the left, showing unclamped pitch range
     Rectangle {
         id:                 pitchScale
-        width:              ScreenTools.defaultFontPixelHeight * 3
+        width:              _unitPx * 3
         height:             parent.height - (_spacing * 4)
         color:              "transparent"
         anchors.verticalCenter: parent.verticalCenter
         anchors.right:      parent.right
-        anchors.rightMargin: _maxPitch.width + ScreenTools.defaultFontPixelHeight * 0.5
+        anchors.rightMargin: _unitPx * 10
 
-        readonly property real trackHeight: height - ScreenTools.defaultFontPixelHeight * 0.6
+        readonly property real trackHeight: height - _unitPx * 0.6
         readonly property real trackTop:    (height - trackHeight) / 2
+        readonly property int _tickStart:   Math.ceil(root._min_pitch)
+        readonly property int _tickEnd:     Math.floor(root._max_pitch)
+        readonly property int _tickCount:   Math.max(0, (_tickEnd - _tickStart + 1))
 
         Rectangle {
             id:             track
-            width:          ScreenTools.defaultFontPixelHeight * 0.6
+            width:          _unitPx * 0.9
             height:         pitchScale.trackHeight
             radius:         width / 2
             color:          qgcPal.windowShade
@@ -89,74 +94,88 @@ Item {
 
         Rectangle {
             id:  _maxPitch
-            width:          ScreenTools.defaultFontPixelHeight * 0.4
-            height:         1
+            width:          _unitPx * 1.5
+            height:         2
             color:          qgcPal.text
-            x:              track.x + width
+            x:              track.x  - width/2 + track.width / 2
             y:              track.y 
 
             Text {
                 anchors.left: parent.right
-                anchors.leftMargin: ScreenTools.defaultFontPixelHeight * 0.2
+                anchors.leftMargin: _unitPx * 0.4
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: ScreenTools.defaultFontPixelHeight  / 2
                 text:          _max_pitch.toFixed(0) + "°"
                 color:         qgcPal.text
-                font.pixelSize:ScreenTools.defaultFontPixelHeight * 1.2
+                font.pixelSize: _unitPx * 2.4
             }
         }
 
         Rectangle {
             id:  _minPitch
-            width:          ScreenTools.defaultFontPixelHeight * 0.4
-            height:         1
+            width:          _unitPx * 1.5
+            height:         2
             color:          qgcPal.text
-            x:              track.x + width
+            x:              track.x  - width/2 + track.width / 2
             y:              track.y + pitchScale.trackHeight
 
             Text {
                 anchors.left: parent.right
-                anchors.leftMargin: ScreenTools.defaultFontPixelHeight * 0.2
-                anchors.bottom: parent.bottom
+                anchors.leftMargin: _unitPx * 0.4
+                anchors.verticalCenter: parent.verticalCenter
                 text:          _min_pitch.toFixed(0) + "°"
                 color:         qgcPal.text
-                font.pixelSize:ScreenTools.defaultFontPixelHeight * 1.2
+                font.pixelSize: _unitPx * 2.4
             }
         }
 
         Rectangle {
             id:  _zeroPitch
-            width:          ScreenTools.defaultFontPixelHeight * 1.
-            height:         1
+            width:          _unitPx * 1.5
+            height:         2
             color:          qgcPal.text
             x:              track.x - width/2 + track.width / 2
             y:              root.pitchToTrackY(0, track.y, pitchScale.trackHeight)
 
             Text {
                 anchors.left: parent.right
-                anchors.leftMargin: ScreenTools.defaultFontPixelHeight * 0.2
+                anchors.leftMargin: _unitPx * 0.4
                 anchors.verticalCenter: parent.verticalCenter
                 text:          (0).toFixed(0) + "°"
                 color:         qgcPal.text
-                font.pixelSize:ScreenTools.defaultFontPixelHeight * 1.2
+                font.pixelSize: _unitPx * 2.4
+            }
+        }
+
+        Repeater {
+            model: pitchScale._tickCount
+
+            Rectangle {
+                property int tickValue: pitchScale._tickStart + index
+                visible: tickValue !== 0 && tickValue !== pitchScale._tickStart && tickValue !== pitchScale._tickEnd
+                width: _unitPx * 1.2
+                height: 1
+                color: qgcPal.text
+                opacity: 0.35
+                x: track.x - width / 2 + track.width / 2
+                y: root.pitchToTrackY(tickValue, track.y, pitchScale.trackHeight)
             }
         }
 
         Rectangle {
             id:                     pitchSetpoint
-            width:                  track.width + ScreenTools.defaultFontPixelHeight * 0.8
-            height:                 3
-            radius:                 1
+            width:                  track.width + _unitPx * 1.2
+            height:                 4
+            radius:                 2
             color:                  "green"
             anchors.horizontalCenter: track.horizontalCenter
             anchors.verticalCenter:   track.verticalCenter
             anchors.verticalCenterOffset: root.pitchToTrackOffset(_pitchSetpointDisplay, pitchScale.trackHeight)
-            opacity:               0.7
+            opacity:               1.0
         }
 
         Rectangle {
             id:                     pitchPointer
-            width:                  track.width + ScreenTools.defaultFontPixelHeight * 0.8
+            width:                  track.width + _unitPx * 1.2
             height:                 2
             radius:                 1
             color:                  qgcPal.text
@@ -176,27 +195,27 @@ Item {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: pitchScale.left
-        anchors.rightMargin: ScreenTools.defaultFontPixelHeight * 0.4
+        anchors.rightMargin: _unitPx * 1.
         // sourceSize.height:  parent.height * 0.35
         rotation:           -_pitchDisplay * _pitch_scale
     }
     Text {
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: _spacing * 4
-        anchors.horizontalCenter: boat_pitch.horizontalCenter
-        anchors.horizontalCenterOffset: -0.6 *_spacing
-        text:            qsTr("%1 °").arg(_pitchAngleDisplay.toFixed(1))
+        anchors.left: pitchScale.right
+        anchors.leftMargin: _unitPx * 2
+        anchors.verticalCenter: pitchScale.verticalCenter
+        // Reserve a sign column so positive/negative values render at a stable x-position.
+        text:            qsTr("%1 °").arg((_pitchAngleDisplay < 0 ? "-" : " ") + Math.abs(_pitchAngleDisplay).toFixed(1))
         color:           qgcPal.text
-        font.pixelSize:  ScreenTools.defaultFontPixelHeight * 1.3
+        font.pixelSize:  _unitPx * 3.
     }
 
     Text {
         anchors.top: parent.top
-        anchors.topMargin: _spacing * 4
+        anchors.topMargin: _spacing * 2
         anchors.horizontalCenter: boat_pitch.horizontalCenter
         anchors.horizontalCenterOffset: -0.6 *_spacing
         text:            qsTr("Trim")
         color:           qgcPal.text
-        font.pixelSize:  ScreenTools.defaultFontPixelHeight * 1.
+        font.pixelSize:  _unitPx * 2.3
     }
 }

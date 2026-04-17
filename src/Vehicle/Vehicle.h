@@ -396,6 +396,7 @@ public:
     Q_INVOKABLE void forceArm           ();
     Q_INVOKABLE void forceDisarm        ();
     Q_INVOKABLE void followingSeasOn  ();
+    Q_INVOKABLE void waveStateOn  ();
     Q_INVOKABLE void sendManualFoils(QVariantList angles);
 
     /// Sends PARAM_MAP_RC message to vehicle

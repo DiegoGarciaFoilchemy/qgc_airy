@@ -9,6 +9,22 @@ Item {
     property var  vehicle:      globals.activeVehicle
     property var acuModeLabels: ["RUNNING", "RUNNING", "CALIBRATING", "IDLE", "ZERO", "OFF", "ERROR"]
 
+    // Fixed-pixel layout tokens for this page.
+    property real _vesselImageCenterOffsetYPx:   -60
+    property real _topRowTopMarginPx:            270
+    property real _topRowSpacingPx:              120
+    property real _foilColumnSideMarginPx:       150
+    property real _foilColumnSpacingPx:          230
+    property real _interceptorBottomMarginPx:    70
+
+    property real _pitchWidthPx:                 300
+    property real _pitchHeightPx:                200
+    property real _speedSizePx:                  220
+    property real _rollWidthPx:                  300
+    property real _rollHeightPx:                 200
+    property real _foilSizePx:                   260
+    property real _interceptorWidthPx:           110
+
     function updateFoilStatus(loader, modeValue) {
         if (!loader.item) {
             return
@@ -44,7 +60,7 @@ Item {
 
         Image {
             anchors.centerIn: parent
-            anchors.verticalCenterOffset: -60
+            anchors.verticalCenterOffset: _vesselImageCenterOffsetYPx
             source: "/qmlimages/vesselOutline.svg"
             fillMode: Image.PreserveAspectFit
             rotation: -90
@@ -60,16 +76,23 @@ Item {
             RowLayout {
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.topMargin: 270
-                spacing: 150
+                anchors.topMargin: _topRowTopMarginPx
+                spacing: _topRowSpacingPx
                 Layout.alignment: Qt.AlignHCenter
                 Loader {
                     id: pitchLoader
                     source: "qrc:/qml/QGroundControl/FlightMap/Widgets/VesselPitch.qml"
+                    width: _pitchWidthPx
+                    height: _pitchHeightPx
+                    onLoaded: {
+                        item.useFixedPixels = true
+                    }
                 }
                  Loader {
                     id: speedLoader
                     source: "qrc:/qml/QGroundControl/FlightMap/Widgets/VesselSpeed.qml"
+                    width: _speedSizePx
+                    height: _speedSizePx
                     Layout.alignment: Qt.AlignHCenter
                     onLoaded: {
                         item.speed = Qt.binding(function() { return vehicle ? vehicle.groundSpeed.rawValue : 0 })
@@ -78,6 +101,11 @@ Item {
                 Loader {
                     id: rollLoader
                     source: "qrc:/qml/QGroundControl/FlightMap/Widgets/VesselRoll.qml"
+                    width: _rollWidthPx
+                    height: _rollHeightPx
+                    onLoaded: {
+                        item.useFixedPixels = true
+                    }
                 }
             }
             
@@ -86,12 +114,14 @@ Item {
         // }
         Column {
             anchors.left: parent.left
-            anchors.leftMargin: 150
+            anchors.leftMargin: _foilColumnSideMarginPx
             anchors.top: parent.top
-            spacing: 230
+            spacing: _foilColumnSpacingPx
             Loader {
                 id: foil1
                 source: "qrc:/qml/QGroundControl/FlightMap/Widgets/FoilAngle.qml"
+                width: _foilSizePx
+                height: _foilSizePx
                 anchors.horizontalCenter: parent.horizontalCenter
                 onLoaded: {
                     item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.commandBowPs.rawValue : 0 })
@@ -104,6 +134,8 @@ Item {
              Loader {
                 id: foil2
                 source: "qrc:/qml/QGroundControl/FlightMap/Widgets/FoilAngle.qml"
+                     width: _foilSizePx
+                     height: _foilSizePx
                 anchors.horizontalCenter: parent.horizontalCenter
                 onLoaded: {
                     item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.commandMainPs.rawValue : 0 })
@@ -115,12 +147,14 @@ Item {
         }
         Column {
             anchors.right: parent.right
-            anchors.rightMargin: 150
+            anchors.rightMargin: _foilColumnSideMarginPx
             anchors.top: parent.top
-            spacing: 230
+            spacing: _foilColumnSpacingPx
             Loader {
                 id: foil3
                 source: "qrc:/qml/QGroundControl/FlightMap/Widgets/FoilAngle.qml"
+                width: _foilSizePx
+                height: _foilSizePx
                 anchors.horizontalCenter: parent.horizontalCenter
                 onLoaded: {
                     item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.commandBowSb.rawValue : 0 })
@@ -133,6 +167,8 @@ Item {
              Loader {
                 id: foil4
                 source: "qrc:/qml/QGroundControl/FlightMap/Widgets/FoilAngle.qml"
+                     width: _foilSizePx
+                     height: _foilSizePx
                 anchors.horizontalCenter: parent.horizontalCenter
                 onLoaded: {
                     item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.commandMainSb.rawValue : 0 })
@@ -147,8 +183,10 @@ Item {
             id: interceptorDeploy
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 70
+            anchors.bottomMargin: _interceptorBottomMarginPx
             source: "qrc:/qml/QGroundControl/FlightMap/Widgets/InterceptorDeploy.qml"
+            width: _interceptorWidthPx
+            height: _interceptorWidthPx * 0.6
             onLoaded: {
                 item.starboardDeployment = Qt.binding(function() { return vehicle ? vehicle.commandInterSb.rawValue * 2 : 0 })
                 item.portDeployment = Qt.binding(function() { return vehicle ? vehicle.commandInterPs.rawValue * 2 : 0 })

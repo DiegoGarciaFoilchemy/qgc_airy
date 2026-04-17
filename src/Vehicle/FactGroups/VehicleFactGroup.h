@@ -92,6 +92,7 @@ class VehicleFactGroup : public FactGroup
     Q_PROPERTY(Fact *acu6ValveFeedback      READ acu6ValveFeedback      CONSTANT)
 
     Q_PROPERTY(Fact *followingSeas          READ followingSeas          CONSTANT)
+    Q_PROPERTY(Fact *waveState             READ waveState             CONSTANT)
     Q_PROPERTY(Fact *bowHeight              READ bowHeight              CONSTANT)
     Q_PROPERTY(Fact *estimatedDisplacement  READ estimatedDisplacement  CONSTANT)
     Q_PROPERTY(Fact *controlMode            READ controlMode           CONSTANT)
@@ -200,6 +201,7 @@ public:
     Fact *acu6ValveFeedback() { return &_acu6ValveFeedbackFact; }
 
     Fact *followingSeas() { return &_followingSeasFact; }
+    Fact *waveState() { return &_waveStateFact; }
     Fact *bowHeight() { return &_bowHeightFact; }
     Fact *estimatedDisplacement() { return &_estimatedDisplacementFact; }
     Fact *controlMode() { return &_controlModeFact; }
@@ -322,6 +324,7 @@ protected:
     Fact _acu6ValveFeedbackFact = Fact(0, QStringLiteral("acu6ValveFeedback"), FactMetaData::valueTypeDouble);
 
     Fact _followingSeasFact = Fact(0, QStringLiteral("followingSeas"), FactMetaData::valueTypeUint8);
+    Fact _waveStateFact = Fact(0, QStringLiteral("waveState"), FactMetaData::valueTypeUint8);
     Fact _bowHeightFact = Fact(0, QStringLiteral("bowHeight"), FactMetaData::valueTypeDouble);
     Fact _estimatedDisplacementFact = Fact(0, QStringLiteral("estimatedDisplacement"), FactMetaData::valueTypeDouble);
     Fact _controlModeFact = Fact(0, QStringLiteral("controlMode"), FactMetaData::valueTypeUint8);

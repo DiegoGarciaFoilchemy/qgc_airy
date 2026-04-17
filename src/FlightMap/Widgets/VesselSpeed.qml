@@ -8,10 +8,10 @@
  ****************************************************************************/
 
 import QtQuick
+import QtQuick.Controls
 
 import QGroundControl
 import QGroundControl.Controls
-import QGroundControl.ScreenTools
 import QGroundControl.Palette
 
 
@@ -116,50 +116,49 @@ Item {
         text: "88"
     }
 
-    QGCLabel {
+    Label {
         id: speedLabel
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: -root._radius * 0.1
         anchors.right: unitsLabel.left
         anchors.rightMargin: root._radius * 0.07
         text: Math.round(root._clampSpeed(root.speed)) + ""
-        font.pointSize: Math.round(root._radius * 0.35)
-        font.bold: true
+        font: Qt.font({ pixelSize: Math.round(root._radius * 0.35), bold: true })
         color: "#ffffff"
         horizontalAlignment: Text.AlignRight
         width: speedMetrics.width
     }
 
-    QGCLabel {
+    Label {
         id: unitsLabel
         text: "kn"
         anchors.verticalCenter: speedLabel.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: speedMetrics.width * 0.5 + root._radius * 0.04
-        font.pointSize: Math.round(root._radius * 0.18)
+        font: Qt.font({ pixelSize: Math.round(root._radius * 0.18) })
         color: "#ffffff"
     }
 
 
-    QGCLabel {
+    Label {
         id: modeLabel1
         text: root._modeLabel1
         anchors.top: speedLabel.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: root._radius * 0.005
-        font.pointSize: Math.round(root._radius * 0.18)
+        font: Qt.font({ pixelSize: Math.round(root._radius * 0.18) })
         color: "#ffffff"
         horizontalAlignment: Text.AlignHCenter
         width: parent.width
     }
     
-    QGCLabel {
+    Label {
         id: modeLabel2
         text: root._modeLabel2
         anchors.top: modeLabel1.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: root._radius * 0.005
-        font.pointSize: Math.round(root._radius * 0.18)
+        font: Qt.font({ pixelSize: Math.round(root._radius * 0.18) })
         color: "#ffffff"
         horizontalAlignment: Text.AlignHCenter
         width: parent.width

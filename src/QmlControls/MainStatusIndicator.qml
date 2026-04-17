@@ -8,6 +8,7 @@
  ****************************************************************************/
 
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 
 import QGroundControl
@@ -19,14 +20,17 @@ import QGroundControl.FactSystem
 
 RowLayout {
     id:         control
-    spacing:    ScreenTools.defaultFontPixelWidth
+    spacing:    useFixedPixels ? fixedSpacingPx : ScreenTools.defaultFontPixelWidth
 
     property var    _activeVehicle:     QGroundControl.multiVehicleManager.activeVehicle
     property var    _vehicleInAir:      _activeVehicle ? _activeVehicle.flying || _activeVehicle.landing : false
     property bool   _vtolInFWDFlight:   _activeVehicle ? _activeVehicle.vtolInFwdFlight : false
     property bool   _armed:             _activeVehicle ? _activeVehicle.armed : false
-    property real   _margins:           ScreenTools.defaultFontPixelWidth
-    property real   _spacing:           ScreenTools.defaultFontPixelWidth / 2
+    property bool   useFixedPixels:     false
+    property real   fixedSpacingPx:     6
+    property real   fixedMainLabelPixelSize: 26
+    property real   _margins:           useFixedPixels ? fixedSpacingPx : ScreenTools.defaultFontPixelWidth
+    property real   _spacing:           useFixedPixels ? (fixedSpacingPx / 2) : (ScreenTools.defaultFontPixelWidth / 2)
     property bool   _healthAndArmingChecksSupported: _activeVehicle ? _activeVehicle.healthAndArmingCheckReport.supported : false
     property var  vehicle:      globals.activeVehicle
     function dropMainStatusIndicator() {
@@ -34,14 +38,15 @@ RowLayout {
         mainWindow.showIndicatorDrawer(overallStatusComponent, control)
     }
 
-    QGCLabel {
+    Label {
         id:                 mainStatusLabel
         Layout.fillWidth:  true
         Layout.preferredHeight: 150//contentWidth + vehicleMessagesIcon.width + control.spacing
         verticalAlignment:  Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         text:               mainStatusText()
-        font.pointSize:     textSize()
+        color:              "white"
+        font:               useFixedPixels ? Qt.font({ pixelSize: textPixelSize() }) : Qt.font({ pointSize: textPointSize() })
 
         property string _commLostText:      qsTr("Comms Lost")
         property string _readyToFlyText:    qsTr("  OFF")
@@ -116,12 +121,16 @@ RowLayout {
             }
         }
 
-        function textSize() {
-            if (mainStatusLabel.text > 4) {
+        function textPointSize() {
+            if (mainStatusLabel.text.length > 4) {
                 return ScreenTools.largeFontPointSize * 1.2
             } else {
                 return ScreenTools.largeFontPointSize * 1.5
             }
+        }
+
+        function textPixelSize() {
+            return mainStatusLabel.text.length > 4 ? fixedMainLabelPixelSize * 0.85 : fixedMainLabelPixelSize
         }
 
         // QGCColoredImage {
@@ -197,7 +206,7 @@ RowLayout {
             id:         mainLayout
             spacing:    _spacing
 
-            QGCLabel {
+            Label {
                 text:               _armed ? qsTr("⚠ Actuators may still move and will go back to zero") : qsTr("⚠ Hydraulics will move. Make sure engine is running")
                 color:              qgcPal.colorOrange
                 font.pointSize:     ScreenTools.mediumFontPointSize
@@ -287,7 +296,7 @@ RowLayout {
                     Row {
                         spacing: ScreenTools.defaultFontPixelHeight
 
-                        QGCLabel {
+                        Label {
                             id:           message
                             text:         object.message
                             textFormat:   TextEdit.RichText
@@ -316,7 +325,7 @@ RowLayout {
                         }
                     }
 
-                    QGCLabel {
+                    Label {
                         id:                 description
                         text:               object.description
                         textFormat:         TextEdit.RichText
@@ -375,7 +384,7 @@ RowLayout {
                     columnSpacing:      ScreenTools.defaultFontPixelWidth *2
                     Layout.fillWidth:   true
 
-                    QGCLabel { Layout.fillWidth: true; text: qsTr("Vehicle Parameters") }
+                    Label { Layout.fillWidth: true; text: qsTr("Vehicle Parameters") }
                     QGCButton {
                         text: qsTr("Configure")
                         onClicked: {                            
@@ -384,7 +393,7 @@ RowLayout {
                         }
                     }
 
-                    QGCLabel { Layout.fillWidth: true; text: qsTr("Vehicle Configuration") }
+                    Label { Layout.fillWidth: true; text: qsTr("Vehicle Configuration") }
                     QGCButton {
                         text: qsTr("Configure")
                         onClicked: {                            

@@ -72,6 +72,11 @@ Rectangle {
                 onClicked:          QGroundControl.startAPMArduRoverMockLink(sendStatusText.checked)
             }
             QGCButton {
+                text:               qsTr("Foil Boat")
+                Layout.fillWidth:   true
+                onClicked:          QGroundControl.startBoatMockLink(sendStatusText.checked)
+            }
+            QGCButton {
                 text:               qsTr("Generic Vehicle")
                 Layout.fillWidth:   true
                 onClicked:          QGroundControl.startGenericMockLink(sendStatusText.checked)
