@@ -1642,6 +1642,7 @@ void Vehicle::forceDisarm(void)
 
 void Vehicle::followingSeasOn(void)
 {
+    float wave_state = (float)_vehicleFactGroup->waveState()->rawValue().toUInt();
     uint8_t current_state = _vehicleFactGroup->followingSeas()->rawValue().toUInt();
     float new_state;
     if(current_state == 0) {
@@ -1655,27 +1656,27 @@ void Vehicle::followingSeasOn(void)
                    MAV_CMD_FOLLOWING_SEAS,
                    true,
                     new_state,
-                    0);    // show error if fails
+                    wave_state);    // show error if fails
     // _vehicleFactGroup->followingSeas()->setRawValue(true);
 }
 
 void Vehicle::waveStateOn(void)
 {
-    // uint8_t current_state = _vehicleFactGroup->followingSeas()->rawValue().toUInt();
-    // float new_state;
-    // if(current_state == 0) {
-    //     new_state = 1.0f;
-    // } else if (current_state == 1) {
-    //     new_state = 2.0f;
-    // } else {
-    //     new_state = 0.0f;
-    // }
-    // sendMavCommand(_defaultComponentId,
-    //                MAV_CMD_FOLLOWING_SEAS,
-    //                true,
-    //                 new_state,
-    //                 0);    // show error if fails
-    // _vehicleFactGroup->followingSeas()->setRawValue(true);
+   float following_seas = (float)_vehicleFactGroup->followingSeas()->rawValue().toUInt();
+    uint8_t current_state = _vehicleFactGroup->waveState()->rawValue().toUInt();
+    float new_state;
+    if(current_state == 0) {
+        new_state = 1.0f;
+    } else if (current_state == 1) {
+        new_state = 2.0f;
+    } else {
+        new_state = 0.0f;
+    }
+    sendMavCommand(_defaultComponentId,
+                   MAV_CMD_FOLLOWING_SEAS,
+                   true,
+                    following_seas,
+                    new_state);    // show error if fails
 }
 
 void Vehicle::sendManualFoils(QVariantList angles)

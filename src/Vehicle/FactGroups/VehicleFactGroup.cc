@@ -165,6 +165,9 @@ void VehicleFactGroup::handleMessage(Vehicle *vehicle, const mavlink_message_t &
     case MAVLINK_MSG_ID_BOAT_SETPOINT:
         _handleBoatSetpoint(message);
         break;
+    case MAVLINK_MSG_ID_JOYSTICK:
+        _handleJoystick(message);
+        break;
 #ifndef QGC_NO_ARDUPILOT_DIALECT
     case MAVLINK_MSG_ID_RANGEFINDER:
         _handleRangefinder(message);
@@ -389,6 +392,20 @@ void VehicleFactGroup::_handleBoatSetpoint(const mavlink_message_t &message)
     rollSp()->setRawValue(msg.roll_sp);
     _setTelemetryAvailable(true);
 }
+
+void VehicleFactGroup::_handleJoystick(const mavlink_message_t &message)
+{
+    mavlink_joystick_t msg{};
+    mavlink_msg_joystick_decode(&message, &msg);
+    if(msg.z == 0) {
+        ballastCommand()->setRawValue(0);
+    } else {
+        ballastCommand()->setRawValue(1);
+    }
+    
+
+    _setTelemetryAvailable(true);
+}
 void VehicleFactGroup::_handleMarsunControlState(const mavlink_message_t &message)
 {
     mavlink_fcb35_control_state_t msg{};
@@ -401,7 +418,7 @@ void VehicleFactGroup::_handleMarsunControlState(const mavlink_message_t &messag
     heaveState()->setRawValue(msg.heave_state);
     speedState()->setRawValue(msg.speed_state);
     // commState()->setRawValue(msg.comm_state);
-    ballastCommand()->setRawValue(msg.ballast_command);
+    // ballastCommand()->setRawValue(msg.ballast_command);
     commandBowSb()->setRawValue(msg.aoa_bow_sb);
     commandBowPs()->setRawValue(msg.aoa_bow_ps);
     commandMainSb()->setRawValue(msg.aoa_main_sb);
@@ -409,7 +426,7 @@ void VehicleFactGroup::_handleMarsunControlState(const mavlink_message_t &messag
     commandInterSb()->setRawValue(msg.interceptor_sb);
     commandInterPs()->setRawValue(msg.interceptor_ps);
     followingSeas()->setRawValue(msg.following_seas);
-    // waveState()->setRawValue(msg.wave_state);
+    waveState()->setRawValue(msg.wave_state);
     _setTelemetryAvailable(true);
 }
 

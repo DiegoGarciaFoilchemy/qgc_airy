@@ -67,6 +67,15 @@ Item {
             scale: 0.6
         }
 
+        Image {
+            anchors.centerIn: parent
+            anchors.verticalCenterOffset: 146
+            source: "/res/WindLogoDark.svg"
+            fillMode: Image.PreserveAspectFit
+            rotation: -90
+            scale: 0.61
+        }
+
         // ColumnLayout {
         //     anchors.top: parent.top
         //     anchors.horizontalCenter: parent.horizontalCenter
@@ -94,6 +103,7 @@ Item {
                     width: _speedSizePx
                     height: _speedSizePx
                     Layout.alignment: Qt.AlignHCenter
+                    Layout.topMargin: -80
                     onLoaded: {
                         item.speed = Qt.binding(function() { return vehicle ? vehicle.groundSpeed.rawValue : 0 })
                     }

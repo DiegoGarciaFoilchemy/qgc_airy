@@ -63,6 +63,7 @@
         <file alias="qgroundcontrol.ico">resources/icons/qgroundcontrol.ico</file>
         <file alias="FoilchemyLogo">resources/FoilchemyLogo.svg</file>
         <file alias="LogoFoilchemy.svg">resources/LogoFoilchemy.svg</file>
+        <file alias="WindLogoDark.svg">resources/WindLogoDark.svg</file>
     </qresource>
     <qresource prefix="/res/firmware">
         <file alias="3drradio.png">resources/firmware/3drradio.png</file>

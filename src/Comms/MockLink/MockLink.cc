@@ -392,6 +392,7 @@ void MockLink::_sendFcb35ControlState()
 {
     static float phase = 0.0f;
     constexpr float amplitudeDeg = 10.0f;
+    constexpr float amplitudemm = 25.f;
     constexpr float phaseStep = 0.08f;
     constexpr float quarterTurn = 1.57079632679f;
 
@@ -399,6 +400,8 @@ void MockLink::_sendFcb35ControlState()
     const float aoaBowPs = amplitudeDeg * std::sin(phase + quarterTurn);
     const float aoaMainSb = amplitudeDeg * std::sin(phase + (2.0f * quarterTurn));
     const float aoaMainPs = amplitudeDeg * std::sin(phase + (3.0f * quarterTurn));
+    const float interceptorSb = amplitudemm * std::sin(phase + (4.0f * quarterTurn)) + 25.f;
+    const float interceptorPs = amplitudemm * std::sin(phase + (5.0f * quarterTurn)) + 25.f;
     phase += phaseStep;
 
     mavlink_message_t msg{};
@@ -411,8 +414,8 @@ void MockLink::_sendFcb35ControlState()
         aoaBowPs,
         aoaMainSb,
         aoaMainPs,
-        0.0f, // interceptor_sb
-        0.0f, // interceptor_ps
+        interceptorSb, // interceptor_sb
+        interceptorPs, // interceptor_ps
         0.0f, // bow_freeboard
         0.0f, // average_freeboard
         0,    // control_mode
