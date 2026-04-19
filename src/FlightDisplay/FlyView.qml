@@ -40,7 +40,7 @@ Item {
     // Properties of UTM adapter
     property bool utmspSendActTrigger: false
     // Page names for navigation
-    property var pageNames: ["OVERVIEW", "FREEBOARD", "ACTUATOR", "DEBUG", "TEST"]
+    property var pageNames: ["OVERVIEW", "FREEBOARD", "ACTUATOR", "STATUS"]
     // PlanMasterController {
     //     id:                     _planController
     //     flyView:                true
@@ -143,8 +143,8 @@ Item {
                 Page1 { width: screenSwipeView.width; height: screenSwipeView.height }
                 Page2 { width: screenSwipeView.width; height: screenSwipeView.height }
                 Page3 { width: screenSwipeView.width; height: screenSwipeView.height }
-                Page4 { width: screenSwipeView.width - 400; height: screenSwipeView.height }
-                Page5 { width: screenSwipeView.width; height: screenSwipeView.height }
+                Page4 { width: screenSwipeView.width; height: screenSwipeView.height }
+                // Page5 { width: screenSwipeView.width; height: screenSwipeView.height }
             }
             // QGCToolBarButton {
             //     id:                     currentButton
@@ -162,17 +162,75 @@ Item {
                 id: navBar
                 anchors.bottom: parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottomMargin: 12
-                spacing: 12
+                spacing: 0
 
                 Repeater {
                     model: pageNames
                     delegate: Button {
-                        text: modelData
-                        checkable: true
-                        checked: screenSwipeView.currentIndex === index
-                        onClicked: screenSwipeView.currentIndex = index
+                        text:       modelData
+                        width:      160
+                        height:     44
+                        font.pixelSize: 16
+                        font.bold:  checked
+                        checkable:  true
+                        checked:    screenSwipeView.currentIndex === index
+                        onClicked:  screenSwipeView.currentIndex = index
+
+                        palette.buttonText: checked ? "#ffffff" : "#aaaaaa"
+
+                        background: Rectangle {
+                            color:   parent.checked ? "#2a4a72"
+                                   : parent.pressed  ? "#2a2a2a"
+                                   :                   "#1a1a1a"
+                            radius:  height / 2
+
+                            // left-side separator line between buttons
+                            Rectangle {
+                                visible: index > 0
+                                anchors.left:   parent.left
+                                anchors.top:    parent.top
+                                anchors.bottom: parent.bottom
+                                anchors.topMargin:    8
+                                anchors.bottomMargin: 8
+                                width: 1
+                                color: "#444444"
+                            }
+                        }
                     }
+                }
+            }
+
+            Button {
+                text:       qsTr("☀  DAY MODE")
+                width:      160
+                height:     44
+                font.pixelSize: 16
+                font.bold:  true
+                palette.buttonText: "#3a2a00"
+                visible:    NightLightController.isSupported
+                anchors.bottom: parent.bottom
+                x:          (navBar.x - width) / 2
+                onClicked:  NightLightController.increase(1000)
+                background: Rectangle {
+                    color:        parent.pressed ? "#c47f00" : "#f5a800"
+                    radius:       4
+                }
+            }
+
+            Button {
+                text:       qsTr("🌙  NIGHT MODE")
+                width:      160
+                height:     44
+                font.pixelSize: 16
+                font.bold:  true
+                palette.buttonText: "#c8d8ff"
+                visible:    NightLightController.isSupported
+                anchors.bottom: parent.bottom
+                x:          navBar.x + navBar.width + (parent.width - navBar.x - navBar.width - width) / 2
+                onClicked:  NightLightController.decrease(1000)
+                background: Rectangle {
+                    color:        parent.pressed ? "#0d1a3a" : "#1a2a5e"
+                    radius:       4
                 }
             }
         }
@@ -181,6 +239,8 @@ Item {
         //     id:         videoControl
         //     pipView:    _pipView
         // }
+
+
 
         // PipView {
         //     id:                     _pipView

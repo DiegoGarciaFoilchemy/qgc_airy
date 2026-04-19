@@ -38,6 +38,8 @@ target_sources(${CMAKE_PROJECT_NAME}
         QGCPalette.h
         QGCQGeoCoordinate.cc
         QGCQGeoCoordinate.h
+        NightLightController.cc
+        NightLightController.h
         QGroundControlQmlGlobal.cc
         QGroundControlQmlGlobal.h
         QmlObjectListModel.cc

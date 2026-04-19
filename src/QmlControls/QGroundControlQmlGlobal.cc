@@ -33,6 +33,7 @@
 #include "ParameterEditorController.h"
 #include "QGCFileDialogController.h"
 #include "RCChannelMonitorController.h"
+#include "NightLightController.h"
 #include "ScreenToolsController.h"
 #include "QGCMapPalette.h"
 #include "QGCPalette.h"
@@ -72,6 +73,11 @@ static QObject* screenToolsControllerSingletonFactory(QQmlEngine*, QJSEngine*)
     return screenToolsController;
 }
 
+static QObject* nightLightControllerSingletonFactory(QQmlEngine*, QJSEngine*)
+{
+    return new NightLightController();
+}
+
 static QObject* qgroundcontrolQmlGlobalSingletonFactory(QQmlEngine*, QJSEngine*)
 {
     QGroundControlQmlGlobal *const qmlGlobal = new QGroundControlQmlGlobal();
@@ -105,6 +111,7 @@ void QGroundControlQmlGlobal::registerQmlTypes()
 
     qmlRegisterSingletonType<QGroundControlQmlGlobal>   ("QGroundControl",                       1, 0, "QGroundControl",         qgroundcontrolQmlGlobalSingletonFactory);
     qmlRegisterSingletonType<ScreenToolsController>     ("QGroundControl.ScreenToolsController", 1, 0, "ScreenToolsController",  screenToolsControllerSingletonFactory);
+    qmlRegisterSingletonType<NightLightController>      ("QGroundControl.Controllers",           1, 0, "NightLightController",    nightLightControllerSingletonFactory);
 }
 
 QGroundControlQmlGlobal::QGroundControlQmlGlobal(QObject *parent)

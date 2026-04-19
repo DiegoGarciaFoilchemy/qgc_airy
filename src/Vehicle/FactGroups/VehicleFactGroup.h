@@ -117,7 +117,7 @@ class VehicleFactGroup : public FactGroup
 
     Q_PROPERTY(Fact *pitchSp                READ pitchSp           CONSTANT)
     Q_PROPERTY(Fact *rollSp                 READ rollSp            CONSTANT)
-    
+    Q_PROPERTY(Fact *heaveSp                READ heaveSp            CONSTANT)
     
 
 public:
@@ -226,6 +226,7 @@ public:
 
     Fact *pitchSp() { return &_pitchSpFact; }
     Fact *rollSp() { return &_rollSpFact; }
+    Fact *heaveSp() { return &_heaveSpFact; }
 
     void handleMessage(Vehicle *vehicle, const mavlink_message_t &message) override;
 
@@ -350,6 +351,7 @@ protected:
     
     Fact _pitchSpFact = Fact(0, QStringLiteral("pitchSp"), FactMetaData::valueTypeDouble);
     Fact _rollSpFact = Fact(0, QStringLiteral("rollSp"), FactMetaData::valueTypeDouble);
+    Fact _heaveSpFact = Fact(0, QStringLiteral("heaveSp"), FactMetaData::valueTypeDouble);
     float _altitudeTuningOffset = qQNaN();
 
 protected:

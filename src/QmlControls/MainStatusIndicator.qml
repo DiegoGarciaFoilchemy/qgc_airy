@@ -46,13 +46,14 @@ RowLayout {
         horizontalAlignment: Text.AlignHCenter
         text:               mainStatusText()
         color:              "white"
-        font:               useFixedPixels ? Qt.font({ pixelSize: textPixelSize() }) : Qt.font({ pointSize: textPointSize() })
+        font.pixelSize:     48
+        font.bold:          true
 
         property string _commLostText:      qsTr("Comms Lost")
-        property string _readyToFlyText:    qsTr("  OFF")
-        property string _notReadyToFlyText: qsTr("  OFF")
+        property string _readyToFlyText:    qsTr(" OFF")
+        property string _notReadyToFlyText: qsTr(" OFF")
         property string _disconnectedText:  qsTr("Disconnected")
-        property string _armedText:         qsTr("  ON")
+        property string _armedText:         qsTr(" ON")
         property string _flyingText:        qsTr("Flying")
         property string _landingText:       qsTr("Landing")
 

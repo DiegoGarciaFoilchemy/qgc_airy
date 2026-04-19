@@ -110,58 +110,36 @@ Item {
         }
     }
 
+    Column {
+        anchors.centerIn: parent
+        anchors.verticalCenterOffset: 16
+        spacing: 2
+
+        Label {
+            id: speedLabel
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: root._clampSpeed(root.speed).toFixed(1)
+            font.pixelSize: 54
+            font.bold: true
+            color: "#ffffff"
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        Label {
+            id: unitsLabel
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "kn"
+            font.pixelSize: 25
+            color: "#ffffff"
+            horizontalAlignment: Text.AlignHCenter
+        }
+    }
+
     TextMetrics {
         id: speedMetrics
-        font: speedLabel.font
-        text: "88"
-    }
-
-    Label {
-        id: speedLabel
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: -root._radius * 0.1
-        anchors.right: unitsLabel.left
-        anchors.rightMargin: root._radius * 0.07
-        text: Math.round(root._clampSpeed(root.speed)) + ""
-        font: Qt.font({ pixelSize: Math.round(root._radius * 0.35), bold: true })
-        color: "#ffffff"
-        horizontalAlignment: Text.AlignRight
-        width: speedMetrics.width
-    }
-
-    Label {
-        id: unitsLabel
-        text: "kn"
-        anchors.verticalCenter: speedLabel.verticalCenter
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: speedMetrics.width * 0.5 + root._radius * 0.04
-        font: Qt.font({ pixelSize: Math.round(root._radius * 0.18) })
-        color: "#ffffff"
-    }
-
-
-    Label {
-        id: modeLabel1
-        text: root._modeLabel1
-        anchors.top: speedLabel.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: root._radius * 0.005
-        font: Qt.font({ pixelSize: Math.round(root._radius * 0.18) })
-        color: "#ffffff"
-        horizontalAlignment: Text.AlignHCenter
-        width: parent.width
-    }
-    
-    Label {
-        id: modeLabel2
-        text: root._modeLabel2
-        anchors.top: modeLabel1.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: root._radius * 0.005
-        font: Qt.font({ pixelSize: Math.round(root._radius * 0.18) })
-        color: "#ffffff"
-        horizontalAlignment: Text.AlignHCenter
-        width: parent.width
+        font.pixelSize: 64
+        font.bold: true
+        text: "88.8"
     }
 
     onSpeedChanged: {

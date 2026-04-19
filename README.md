@@ -59,12 +59,12 @@ With QGroundControl, you're in full command of your UAV, ready to take your miss
 
 cmake --build build --config Debug
 
-./build/Debug/QGroundControl
+./build/Debug/Foilchemy
 
 // vuild for deploy
 cmake --install . --config Release 
 // add kiok to apprun file
-exec "${APPDIR}/usr/bin/QGroundControl" "--kiosk" "$@"
+exec "${APPDIR}/usr/bin/Foilchemy" "--kiosk" "$@"
 ssh foil@foil.local
 // mount as read only
 sudo mount -o remount,rw /media/root-ro 

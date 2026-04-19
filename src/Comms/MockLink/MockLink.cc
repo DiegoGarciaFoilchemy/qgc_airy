@@ -183,6 +183,8 @@ void MockLink::run10HzTasks()
         _sendAttitudeEuler();
         _sendBoatSpeed();
         _sendFcb35ControlState();
+        _sendFcb35Actuator();
+        
         
     }
 }
@@ -365,6 +367,28 @@ void MockLink::_sendAttitudeEuler()
     respondWithMavlinkMessage(msg);
 }
 
+void MockLink::_sendFcb35Actuator()
+{
+    mavlink_message_t msg{};
+    for (int i = 0; i < 6; ++i) {
+        (void)mavlink_msg_fcb35_actuator_pack_chan(
+            _vehicleSystemId,
+            _vehicleComponentId,
+            mavlinkChannel(),
+            &msg,
+            i, //id
+            0.0f,//pos
+            0.0f,//speed
+            0.0f,//target
+            0, //valve_cmd
+            0, //valve_feedback
+            0, //status
+            i  //mode
+        );
+        respondWithMavlinkMessage(msg);
+    }
+}
+
 void MockLink::_sendBoatSpeed()
 {
     static float phase = 0.0f;
@@ -393,6 +417,7 @@ void MockLink::_sendFcb35ControlState()
     static float phase = 0.0f;
     constexpr float amplitudeDeg = 10.0f;
     constexpr float amplitudemm = 25.f;
+    constexpr float amplitudeHeave = 0.3f;
     constexpr float phaseStep = 0.08f;
     constexpr float quarterTurn = 1.57079632679f;
 
@@ -403,7 +428,7 @@ void MockLink::_sendFcb35ControlState()
     const float interceptorSb = amplitudemm * std::sin(phase + (4.0f * quarterTurn)) + 25.f;
     const float interceptorPs = amplitudemm * std::sin(phase + (5.0f * quarterTurn)) + 25.f;
     phase += phaseStep;
-
+    const float heave = amplitudeHeave * std::sin(phase) + 4.5f; 
     mavlink_message_t msg{};
     (void) mavlink_msg_fcb35_control_state_pack_chan(
         _vehicleSystemId,
@@ -416,15 +441,15 @@ void MockLink::_sendFcb35ControlState()
         aoaMainPs,
         interceptorSb, // interceptor_sb
         interceptorPs, // interceptor_ps
-        0.0f, // bow_freeboard
+        heave, // bow_freeboard
         0.0f, // average_freeboard
         0,    // control_mode
         0,    // following_seas
+        0,    // wave_state
         0,    // attitude_state
         0,    // heave_state
         0,    // speed_state
-        0,    // actuators_state
-        0     // ballast_command
+        0    // actuators_state
     );
     respondWithMavlinkMessage(msg);
 }

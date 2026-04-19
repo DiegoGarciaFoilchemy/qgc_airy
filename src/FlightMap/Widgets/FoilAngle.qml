@@ -149,7 +149,7 @@ Item {
             Rotation {
                 origin.x: width / 2.35
                 origin.y: 13
-                angle: foilToNeedleAngle(foilAngle)
+                angle: -foilToNeedleAngle(foilAngle)
             },
             Scale { xScale: inverted ? -1 : 1; yScale: 1 }
         ]

@@ -70,10 +70,12 @@ Item {
         Image {
             anchors.centerIn: parent
             anchors.verticalCenterOffset: 146
+            anchors.horizontalCenterOffset: 10
             source: "/res/WindLogoDark.svg"
             fillMode: Image.PreserveAspectFit
             rotation: -90
-            scale: 0.61
+            scale: 0.57
+            opacity: 0.6
         }
 
         // ColumnLayout {

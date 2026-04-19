@@ -39,7 +39,7 @@ Rectangle {
     property real   _panelHeightPx:                 150
     property real   _flightModeTopMarginPx:         230
     property real   _followingSeasTopMarginPx:      310
-    property real   _waveStateTopMarginPx:          460
+    property real   _waveStateTopMarginPx:          465
     property real   _logoBottomMarginPx:            20
     property real   _logoInsetPx:                   10
     property real   _borderWidthPx:                 2
@@ -155,25 +155,24 @@ Rectangle {
         border.width: _borderWidthPx
         
         Label {
-            text: qsTr("Following Seas")
+            text: qsTr("FOLLOWING\nSEAS")
             color: "white"
-            font: Qt.font({ pixelSize: _labelPixelSize })
-            // rotation: -90
-            // anchors.top: parent.top
+            font.pixelSize: 24
+            font.bold: true
+            horizontalAlignment: Text.AlignHCenter
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenterOffset: -_followingSeasOffsetPx
+            anchors.verticalCenterOffset: -24
         }
         
         Label {
             text: !_activeVehicle ? "-" : (_activeVehicle.followingSeas.rawValue === 2 ? qsTr("HIGH") : (_activeVehicle.followingSeas.rawValue === 1 ? qsTr("NORMAL") : qsTr("OFF")))
             color: "white"
-            font: Qt.font({ pixelSize: _labelPixelSize })
-            // rotation: -90
-            // anchors.bottom: parent.bottom
+            font.pixelSize: 24
+            font.bold: true
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenterOffset: _followingSeasOffsetPx
+            anchors.verticalCenterOffset: 32
         }
         
         MouseArea {
@@ -199,7 +198,8 @@ Rectangle {
         Label {
             text: qsTr("WAVES")
             color: "white"
-            font: Qt.font({ pixelSize: _labelPixelSize })
+            font.pixelSize: 24
+            font.bold: true
             // rotation: -90
             // anchors.top: parent.top
             anchors.verticalCenter: parent.verticalCenter
@@ -210,7 +210,8 @@ Rectangle {
         Label {
             text: !_activeVehicle ? "-" : (_activeVehicle.waveState.rawValue === 2 ? qsTr("HIGH") : (_activeVehicle.waveState.rawValue === 1 ? qsTr("MID") : qsTr("LOW")))
             color: "white"
-            font: Qt.font({ pixelSize: _labelPixelSize })
+            font.pixelSize: 24
+            font.bold: true
             // rotation: -90
             // anchors.bottom: parent.bottom
             anchors.verticalCenter: parent.verticalCenter

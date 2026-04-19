@@ -61,7 +61,8 @@ Item {
         Label {
             text:                   qsTr("Mode")
             color:                  "white"
-            font:                   useFixedPixels ? Qt.font({ pixelSize: fixedLabelPixelSize }) : Qt.font({ pointSize: fontPointSize })
+            font.pixelSize:         28
+            font.bold:              true
             // anchors.centerIn:       parent
             anchors.horizontalCenterOffset: -90
             // anchors.horizontalCenterOffset: -ScreenTools.defaultFontPixelWidth * 1.5
@@ -79,7 +80,8 @@ Item {
         Label {
             text:                   activeVehicle ? activeVehicle.flightMode : qsTr("N/A", "No data to display")
             color:                  "white"
-            font:                   useFixedPixels ? Qt.font({ pixelSize: fixedLabelPixelSize }) : Qt.font({ pointSize: fontPointSize })
+            font.pixelSize:         28
+            font.bold:              true
             // anchors.centerIn:       parent
             anchors.horizontalCenterOffset: -90
             // anchors.horizontalCenterOffset: ScreenTools.defaultFontPixelWidth * 1.5

@@ -37,7 +37,7 @@ Item {
     property var  vehicle:      globals.activeVehicle
     property real _pitchAngle:  vehicle ? vehicle.pitch.rawValue : 0
     property real _pitchAngleDisplay: _pitchAngle
-    property real _pitchSetpoint: vehicle ? vehicle.pitchSp.rawValue : -5
+    property real _pitchSetpoint: vehicle ? vehicle.pitchSp.rawValue : 0
 
     function pitchToTrackOffset(pitchValue, trackHeight) {
         const clampedPitch = Math.max(_min_pitch, Math.min(_max_pitch, pitchValue))

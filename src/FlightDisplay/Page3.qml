@@ -6,6 +6,7 @@ import QGroundControl
 import QGroundControl.Controls
 import QGroundControl.Palette
 import QGroundControl.ScreenTools
+import Qt5Compat.GraphicalEffects
 
 Item {
     id: root
@@ -55,15 +56,15 @@ Item {
     function _modeText(modeValue) {
         switch (modeValue) {
         case 0:
-            return "POSITION MODE"
+            return "POSITION"
         case 1:
-            return "MANUAL SPEED"
+            return "SPEED"
         case 2:
             return "CALIBRATION"
         case 3:
             return "IDLE"
         case 4:
-            return "ZERO MODE"
+            return "ZERO"
         case 5:
             return "OFF"
         case 6:
@@ -137,14 +138,18 @@ Item {
 
     function _buildCard(title, row, column, angleFact, speedFact, targetFact, valveCmdFact, valveFeedbackFact, statusFact, modeFact, pressureFact, manualFrom, manualTo, manualUnit, manualIndex) {
         var modeValue = modeFact && modeFact.rawValue !== undefined && modeFact.rawValue !== null ? modeFact.rawValue : null
+        var modeText = modeValue === null ? "OFF" : _modeText(modeValue)
         var refillValue = vehicle && vehicle.refillCmd ? vehicle.refillCmd.rawValue : 0
 
         return {
             title: title,
+            modeText: modeText,
+            modeOff: modeText === "OFF",
             row: row,
             column: column,
             refillValue: refillValue,
             refillActive: refillValue >= 1,
+            angleFact: angleFact,
             manualFrom: manualFrom,
             manualTo: manualTo,
             manualUnit: manualUnit,
@@ -156,8 +161,7 @@ Item {
                 { label: "Valve cmd", value: _factValue(valveCmdFact, 0, "%") },
                 { label: "Valve feedback", value: _factValue(valveFeedbackFact, 0, "%") },
                 { label: "Accumulator pressure", value: _factValue(pressureFact, 0, "bar") },
-                { label: "Status", value: statusFact ? statusFact.rawValue : "-" },
-                { label: "Mode", value: modeValue === null ? "-" : _modeText(modeValue) }
+                { label: "Status", value: statusFact ? statusFact.rawValue : "-" }
             ]
         }
     }
@@ -271,7 +275,7 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: qgcPal.windowShade
+        color: "black"
     }
 
     Timer {
@@ -311,8 +315,8 @@ Item {
                         id: infoCard
                         anchors.fill: parent
                         color: qgcPal.window
-                        border.color: qgcPal.text
-                        border.width: 1
+                        border.color: modelData.modeOff ? "#ff4d4d" : qgcPal.text
+                        border.width: modelData.modeOff ? 2 : 1
                         radius: _cardCornerRadius
 
                         ColumnLayout {
@@ -324,12 +328,29 @@ Item {
                             anchors.bottomMargin: _contentMarginY
                             spacing: _rowSpacing
 
-                            Label {
-                                text: modelData.title
-                                font.bold: true
-                                font.pixelSize: _titlePixelSize
-                                color: qgcPal.text
+                            RowLayout {
                                 Layout.fillWidth: true
+                                spacing: _rowInlineSpacing * 2
+
+                                Label {
+                                    text: modelData.title + ":"
+                                    font.bold: true
+                                    font.pixelSize: _titlePixelSize
+                                    color: qgcPal.text
+                                }
+
+                                Item {
+                                    Layout.fillWidth: true
+                                }
+
+                                Label {
+                                    text: modelData.modeText
+                                    font.bold: true
+                                    font.pixelSize: _titlePixelSize
+                                    color: qgcPal.text
+                                    horizontalAlignment: Text.AlignRight
+                                    Layout.alignment: Qt.AlignRight
+                                }
                             }
 
                             ColumnLayout {
@@ -365,15 +386,15 @@ Item {
 
                     Rectangle {
                         id: sliderPanel
-                        visible: root._manualControlExpanded
+                        visible: true
                         property bool isFlapCard: modelData.manualUnit === "\u00b0"
-                        width: isFlapCard ? _manualSliderWidth + _foilIndicatorWidth : _manualSliderWidth
+                        width: root._manualControlExpanded ? _manualSliderWidth + _foilIndicatorWidth : _foilIndicatorWidth
                         height: parent.height
                         x: modelData.column === 0 ? -width - _manualSliderGap : parent.width + _manualSliderGap
                         y: 0
-                        color: qgcPal.window
+                        color: root._manualControlExpanded ? qgcPal.window : "transparent"
                         border.color: "#4aa3ff"
-                        border.width: 1
+                        border.width: root._manualControlExpanded ? 1 : 0
                         radius: _cardCornerRadius
                         z: 2
 
@@ -381,14 +402,16 @@ Item {
                             anchors.fill: parent
                             spacing: 0
 
-                            // Left foil indicator — PS cards (column 0)
+                            // Left indicator — PS cards (column 0)
                             Item {
-                                Layout.preferredWidth: (sliderPanel.isFlapCard && modelData.column === 0) ? _foilIndicatorWidth : 0
+                                Layout.preferredWidth: modelData.column === 0 ? _foilIndicatorWidth : 0
                                 Layout.fillHeight: true
-                                visible: sliderPanel.isFlapCard && modelData.column === 0
+                                visible: modelData.column === 0
 
+                                // Foil image — flap cards only
                                 Image {
                                     id: foilImgLeft
+                                    visible: sliderPanel.isFlapCard
                                     source: "/qmlimages/foil.svg"
                                     width: parent.width - 6
                                     height: width / 6.3
@@ -396,16 +419,74 @@ Item {
                                     smooth: true
                                     mipmap: true
                                     mirror: true
+                                    layer.enabled: root._manualControlExpanded
+                                    layer.effect: Glow {
+                                        color: "#4aa3ff"
+                                        radius: 8
+                                        samples: 9
+                                        spread: 0.4
+                                        transparentBorder: true
+                                    }
                                     transform: Rotation {
                                         origin.x: foilImgLeft.width * 0.18
                                         origin.y: foilImgLeft.height / 2
-                                        angle: sliderControl.value
+                                        angle: root._manualControlExpanded ? sliderControl.value : (modelData.angleFact ? modelData.angleFact.rawValue : 0)
+                                    }
+                                }
+
+                                // Bar indicator — interceptor cards only
+                                Item {
+                                    visible: !sliderPanel.isFlapCard
+                                    anchors.fill: parent
+
+                                    property real currentValue: root._manualControlExpanded ? sliderControl.value : (modelData.angleFact ? Number(modelData.angleFact.rawValue) : 0)
+                                    property real totalRange: modelData.manualTo - modelData.manualFrom
+                                    property real trackPad: 18
+                                    property real trackH: height - 2 * trackPad
+                                    property real zeroY: trackPad + (Math.abs(modelData.manualFrom) / totalRange) * trackH
+                                    property real fillH: (Math.abs(currentValue) / totalRange) * trackH
+
+                                    Rectangle {
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        y: parent.trackPad
+                                        width: 16
+                                        height: parent.trackH
+                                        radius: 8
+                                        color: "#111111"
+                                        border.color: "#aaaaaa"
+                                        border.width: 2
+                                    }
+
+                                    Rectangle {
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        width: 16
+                                        radius: 8
+                                        y: parent.currentValue >= 0 ? parent.zeroY : parent.zeroY - parent.fillH
+                                        height: Math.max(parent.fillH, 1)
+                                        color: root._manualControlExpanded ? "#4aa3ff" : "#888888"
+                                        layer.enabled: root._manualControlExpanded
+                                        layer.effect: Glow {
+                                            color: "#4aa3ff"
+                                            radius: 4
+                                            samples: 9
+                                            spread: 0.5
+                                            transparentBorder: true
+                                        }
+                                    }
+
+                                    Rectangle {
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        y: parent.zeroY - 1
+                                        width: 24
+                                        height: 2
+                                        color: "#aaaaaa"
                                     }
                                 }
                             }
 
                             // Slider column
                             ColumnLayout {
+                                visible: root._manualControlExpanded
                                 Layout.preferredWidth: _manualSliderWidth
                                 Layout.fillHeight: true
                                 Layout.topMargin: 8
@@ -458,24 +539,83 @@ Item {
                                 }
                             }
 
-                            // Right foil indicator — SB cards (column 1)
+                            // Right indicator — SB cards (column 1)
                             Item {
-                                Layout.preferredWidth: (sliderPanel.isFlapCard && modelData.column === 1) ? _foilIndicatorWidth : 0
+                                Layout.preferredWidth: modelData.column === 1 ? _foilIndicatorWidth : 0
                                 Layout.fillHeight: true
-                                visible: sliderPanel.isFlapCard && modelData.column === 1
+                                visible: modelData.column === 1
 
+                                // Foil image — flap cards only
                                 Image {
                                     id: foilImgRight
+                                    visible: sliderPanel.isFlapCard
                                     source: "/qmlimages/foil.svg"
                                     width: parent.width - 6
                                     height: width / 6.3
                                     anchors.centerIn: parent
                                     smooth: true
                                     mipmap: true
+                                    layer.enabled: root._manualControlExpanded
+                                    layer.effect: Glow {
+                                        color: "#4aa3ff"
+                                        radius: 8
+                                        samples: 9
+                                        spread: 0.4
+                                        transparentBorder: true
+                                    }
                                     transform: Rotation {
                                         origin.x: foilImgRight.width * 0.82
                                         origin.y: foilImgRight.height / 2
-                                        angle: -sliderControl.value
+                                        angle: root._manualControlExpanded ? -sliderControl.value : -(modelData.angleFact ? modelData.angleFact.rawValue : 0)
+                                    }
+                                }
+
+                                // Bar indicator — interceptor cards only
+                                Item {
+                                    visible: !sliderPanel.isFlapCard
+                                    anchors.fill: parent
+
+                                    property real currentValue: root._manualControlExpanded ? sliderControl.value : (modelData.angleFact ? Number(modelData.angleFact.rawValue) : 0)
+                                    property real totalRange: modelData.manualTo - modelData.manualFrom
+                                    property real trackPad: 18
+                                    property real trackH: height - 2 * trackPad
+                                    property real zeroY: trackPad + (Math.abs(modelData.manualFrom) / totalRange) * trackH
+                                    property real fillH: (Math.abs(currentValue) / totalRange) * trackH
+
+                                    Rectangle {
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        y: parent.trackPad
+                                        width: 16
+                                        height: parent.trackH
+                                        radius: 8
+                                        color: "#111111"
+                                        border.color: "#aaaaaa"
+                                        border.width: 2
+                                    }
+
+                                    Rectangle {
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        width: 16
+                                        radius: 8
+                                        y: parent.currentValue >= 0 ? parent.zeroY : parent.zeroY - parent.fillH
+                                        height: Math.max(parent.fillH, 1)
+                                        color: root._manualControlExpanded ? "#4aa3ff" : "#888888"
+                                        layer.enabled: root._manualControlExpanded
+                                        layer.effect: Glow {
+                                            color: "#4aa3ff"
+                                            radius: 4
+                                            samples: 9
+                                            spread: 0.5
+                                            transparentBorder: true
+                                        }
+                                    }
+
+                                    Rectangle {
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        y: parent.zeroY - 1
+                                        width: 24
+                                        height: 2
+                                        color: "#aaaaaa"
                                     }
                                 }
                             }
@@ -543,11 +683,11 @@ Item {
             width: _cardWidth
             height: _refillPanelHeight
             color: qgcPal.window
-            border.color: root._manualControlExpanded || _manualControlActive() ? "#4aa3ff" : "#7a7a7a"
+            border.color: root._manualControlExpanded ? "#4aa3ff" : "#7a7a7a"
             border.width: 2
             radius: _cardCornerRadius
 
-            property bool manualControlOn: root._manualControlExpanded || _manualControlActive()
+            property bool manualControlOn: root._manualControlExpanded
 
             MouseArea {
                 anchors.fill: parent

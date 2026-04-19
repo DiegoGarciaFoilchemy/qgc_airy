@@ -122,6 +122,7 @@ VehicleFactGroup::VehicleFactGroup(QObject *parent)
 
     _addFact(&_pitchSpFact);
     _addFact(&_rollSpFact);
+    _addFact(&_heaveSpFact);
 
     _hobbsFact.setRawValue(QStringLiteral("0000:00:00"));
     _followingSeasFact.setRawValue(0);
@@ -390,6 +391,7 @@ void VehicleFactGroup::_handleBoatSetpoint(const mavlink_message_t &message)
     // TODO: add pitch and roll setpoings
     pitchSp()->setRawValue(msg.pitch_sp);
     rollSp()->setRawValue(msg.roll_sp);
+    heaveSp()->setRawValue(msg.heave_sp);
     _setTelemetryAvailable(true);
 }
 

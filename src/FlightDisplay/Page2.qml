@@ -8,15 +8,16 @@ Item {
     height: parent ? parent.height : 760
     QGCPalette { id: qgcPal; colorGroupEnabled: true }
     property var  vehicle:      globals.activeVehicle
-    property var bowHeight: vehicle ? vehicle.bowHeight.rawValue : 3000
+    property var bowHeight: vehicle ? vehicle.bowHeight.rawValue : 0.0
     property int overlayHeight: 435 - 50
     property int _labelPixelSize: 16
-
+    property real _heaveSp: vehicle ? vehicle.heaveSp.rawValue : 4.0
+     property real _pitchAngle:  vehicle ? vehicle.pitch.rawValue : 0
     // overlay height of 0 means main deck 6 meters above water line
     // overlay height of 435 means main deck at water line
     Rectangle {
         anchors.fill: parent
-        color: qgcPal.windowShade
+        color: "black"
 
         
         Image {
@@ -25,6 +26,11 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             source: "/qmlimages/VesselBow.svg"
             fillMode: Image.PreserveAspectFit
+            transform: Rotation {
+                origin.x: bowImage.width
+                origin.y: 0
+                angle: -_pitchAngle
+            }
         }
 
         Rectangle {
@@ -37,6 +43,17 @@ Item {
             height: overlayHeight - bowHeight / 6. * overlayHeight + 50
             color: "#0f5e9c"
             opacity: 0.4
+        }
+
+        Rectangle {
+            id: heaveSpLine
+            anchors.left: bowImage.left
+            anchors.right: bowImage.right
+            anchors.rightMargin: -30
+            y: bowImage.y + bowImage.height - overlayHeight + _heaveSp / 6 * overlayHeight
+            height: 3
+            color: "#00cc44"
+            opacity: 0.85
         }
 
         Item {
