@@ -55,21 +55,27 @@ QGroundControl is *open-source*, meaning you have the power to shape it! Whether
 
 With QGroundControl, you're in full command of your UAV, ready to take your missions to the next level.
 
+
+
+
 ~/Qt/6.8.3/gcc_64/bin/qt-cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
 
 cmake --build build --config Debug
 
-./build/Debug/Foilchemy
+./build/Debug/QGroundControl
 
 // vuild for deploy
 cmake --install . --config Release 
 // add kiok to apprun file
-exec "${APPDIR}/usr/bin/Foilchemy" "--kiosk" "$@"
+exec "${APPDIR}/usr/bin/QgroundControl" "--kiosk" "$@"
 ssh foil@foil.local
 // mount as read only
-sudo mount -o remount,rw /media/root-ro 
+  sudo mount -o remount,rw /media/root-ro 
 // copy to special folder
 scp -r AppDir foil@foil.local:/media/root-ro/home/foil/Documents
 // command line where you can touch
 sudo /usr/sbin/overlayroot-chroot 
 
+// fully disable overlay root in the hmi pannel. comment the line
+sudo nano /etc/overlayroot.conf
+overlayroot="tmpfs"

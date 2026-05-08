@@ -17,24 +17,26 @@ Item {
 
     QGCPalette { id: qgcPal; colorGroupEnabled: true }
 
-    property int _outerMarginX: 4
-    property int _outerMarginY: 14
-    property int _columnGap: 8
-    property int _cardWidth: 290
-    property int _cardMinHeight: 170
-    property int _rowSpacing: 4
-    property int _titlePixelSize: 18
-    property int _rowPixelSize: 16
-    property int _rowInlineSpacing: 8
-    property int _contentMarginX: 2
-    property int _contentMarginY: 6
-    property int _cardCornerRadius: 6
-    property int _cardBottomPadding: 8
-    property int _refillIndicatorSize: 14
-    property int _refillPanelHeight: 46
-    property int _manualSliderWidth: 44
-    property int _foilIndicatorWidth: 72
-    property int _manualSliderGap: 8
+    readonly property real _unitPx:     14
+
+    property real _outerMarginX:        _unitPx * 0.3
+    property real _outerMarginY:        _unitPx * 0.2
+    property real _columnGap:           _unitPx * 0.6
+    property real _cardWidth:           _unitPx * 23
+    property real _cardMinHeight:       _unitPx * 1
+    property real _rowSpacing:          _unitPx * 0.3
+    property real _titlePixelSize:      _unitPx * 1.3
+    property real _rowPixelSize:        _unitPx * 1.1
+    property real _rowInlineSpacing:    _unitPx * 0.6
+    property real _contentMarginX:      _unitPx * 0.95
+    property real _contentMarginY:      _unitPx * 0.4
+    property real _cardCornerRadius:    _unitPx * 0.45
+    property real _cardBottomPadding:   _unitPx * 2.
+    property real _refillIndicatorSize: _unitPx * 1.2
+    property real _refillPanelHeight:   _unitPx * 3.8
+    property real _manualSliderWidth:   _unitPx * 3.8
+    property real _foilIndicatorWidth:  _unitPx * 5
+    property real _manualSliderGap:     _unitPx * 0.6
     property bool _manualControlExpanded: false
     property var _manualFoilAngles: [0, 0, 0, 0, 0, 0]
 
@@ -136,32 +138,30 @@ Item {
         }
     }
 
-    function _buildCard(title, row, column, angleFact, speedFact, targetFact, valveCmdFact, valveFeedbackFact, statusFact, modeFact, pressureFact, manualFrom, manualTo, manualUnit, manualIndex) {
-        var modeValue = modeFact && modeFact.rawValue !== undefined && modeFact.rawValue !== null ? modeFact.rawValue : null
-        var modeText = modeValue === null ? "OFF" : _modeText(modeValue)
-        var refillValue = vehicle && vehicle.refillCmd ? vehicle.refillCmd.rawValue : 0
+    function _isModeOff(modeFact) {
+        if (!modeFact || modeFact.rawValue === undefined || modeFact.rawValue === null) return true
+        return modeFact.rawValue === 5
+    }
 
+    function _buildCard(title, row, column, angleFact, speedFact, targetFact, valveCmdFact, valveFeedbackFact, statusFact, modeFact, pressureFact, manualFrom, manualTo, manualUnit, manualIndex) {
         return {
             title: title,
-            modeText: modeText,
-            modeOff: modeText === "OFF",
             row: row,
             column: column,
-            refillValue: refillValue,
-            refillActive: refillValue >= 1,
             angleFact: angleFact,
+            modeFact: modeFact,
             manualFrom: manualFrom,
             manualTo: manualTo,
             manualUnit: manualUnit,
             manualIndex: manualIndex,
             entries: [
-                { label: "Position", value: _factValue(angleFact, 1, "deg") },
-                { label: "Speed", value: _factValue(speedFact, 1, "deg/sec") },
-                { label: "Target", value: _factValue(targetFact, 1, "deg") },
-                { label: "Valve cmd", value: _factValue(valveCmdFact, 0, "%") },
-                { label: "Valve feedback", value: _factValue(valveFeedbackFact, 0, "%") },
-                { label: "Accumulator pressure", value: _factValue(pressureFact, 0, "bar") },
-                { label: "Status", value: statusFact ? statusFact.rawValue : "-" }
+                { label: "Position",             fact: angleFact,         decimals: 1, unit: manualUnit === "mm" ? "mm" : "deg" },
+                { label: "Speed",                fact: speedFact,         decimals: 1, unit: manualUnit === "mm" ? "mm/sec" : "deg/sec" },
+                { label: "Target",               fact: targetFact,        decimals: 1, unit: manualUnit === "mm" ? "mm" : "deg" },
+                { label: "Valve cmd",            fact: valveCmdFact,      decimals: 0, unit: "%" },
+                { label: "Valve feedback",       fact: valveFeedbackFact, decimals: 0, unit: "%" },
+                { label: "Accumulator pressure", fact: pressureFact,      decimals: 0, unit: "bar" },
+                { label: "Status",               fact: statusFact,        decimals: -1, unit: "" }
             ]
         }
     }
@@ -172,13 +172,13 @@ Item {
                 "BOW FLAP SB",
                 0,
                 1,
-                vehicle ? vehicle.acu1Angle : null,
-                vehicle ? vehicle.acu1Speed : null,
-                vehicle ? vehicle.acu1Target : null,
-                vehicle ? vehicle.acu1ValveCmd : null,
-                vehicle ? vehicle.acu1ValveFeedback : null,
-                vehicle ? vehicle.acu1Status : null,
-                vehicle ? vehicle.acu1Mode : null,
+                vehicle ? vehicle.acu5Angle : null,
+                vehicle ? vehicle.acu5Speed : null,
+                vehicle ? vehicle.acu5Target : null,
+                vehicle ? vehicle.acu5ValveCmd : null,
+                vehicle ? vehicle.acu5ValveFeedback : null,
+                vehicle ? vehicle.acu5Status : null,
+                vehicle ? vehicle.acu5Mode : null,
                 vehicle ? vehicle.bowSbPressure : null,
                 -35,
                 35,
@@ -189,13 +189,13 @@ Item {
                 "BOW FLAP PS",
                 0,
                 0,
-                vehicle ? vehicle.acu2Angle : null,
-                vehicle ? vehicle.acu2Speed : null,
-                vehicle ? vehicle.acu2Target : null,
-                vehicle ? vehicle.acu2ValveCmd : null,
-                vehicle ? vehicle.acu2ValveFeedback : null,
-                vehicle ? vehicle.acu2Status : null,
-                vehicle ? vehicle.acu2Mode : null,
+                vehicle ? vehicle.acu6Angle : null,
+                vehicle ? vehicle.acu6Speed : null,
+                vehicle ? vehicle.acu6Target : null,
+                vehicle ? vehicle.acu6ValveCmd : null,
+                vehicle ? vehicle.acu6ValveFeedback : null,
+                vehicle ? vehicle.acu6Status : null,
+                vehicle ? vehicle.acu6Mode : null,
                 vehicle ? vehicle.bowPsPressure : null,
                 -35,
                 35,
@@ -240,13 +240,13 @@ Item {
                 "INTERCEPTOR SB",
                 2,
                 1,
-                vehicle ? vehicle.acu5Angle : null,
-                vehicle ? vehicle.acu5Speed : null,
-                vehicle ? vehicle.acu5Target : null,
-                vehicle ? vehicle.acu5ValveCmd : null,
-                vehicle ? vehicle.acu5ValveFeedback : null,
-                vehicle ? vehicle.acu5Status : null,
-                vehicle ? vehicle.acu5Mode : null,
+                vehicle ? vehicle.acu1Angle : null,
+                vehicle ? vehicle.acu1Speed : null,
+                vehicle ? vehicle.acu1Target : null,
+                vehicle ? vehicle.acu1ValveCmd : null,
+                vehicle ? vehicle.acu1ValveFeedback : null,
+                vehicle ? vehicle.acu1Status : null,
+                vehicle ? vehicle.acu1Mode : null,
                 vehicle ? vehicle.intSbPressure : null,
                 -10,
                 50,
@@ -257,12 +257,12 @@ Item {
                 "INTERCEPTOR PS",
                 2,
                 0,
-                vehicle ? vehicle.acu6Angle : null,
-                vehicle ? vehicle.acu6Speed : null,
-                vehicle ? vehicle.acu6Target : null,
-                vehicle ? vehicle.acu6ValveCmd : null,
-                vehicle ? vehicle.acu6ValveFeedback : null,
-                vehicle ? vehicle.acu6Status : null,
+                vehicle ? vehicle.acu2Angle : null,
+                vehicle ? vehicle.acu2Speed : null,
+                vehicle ? vehicle.acu2Target : null,
+                vehicle ? vehicle.acu2ValveCmd : null,
+                vehicle ? vehicle.acu2ValveFeedback : null,
+                vehicle ? vehicle.acu2Status : null,
                 vehicle ? vehicle.acu6Mode : null,
                 vehicle ? vehicle.intPsPressure : null,
                 -10,
@@ -315,8 +315,8 @@ Item {
                         id: infoCard
                         anchors.fill: parent
                         color: qgcPal.window
-                        border.color: modelData.modeOff ? "#ff4d4d" : qgcPal.text
-                        border.width: modelData.modeOff ? 2 : 1
+                        border.color: _isModeOff(modelData.modeFact) ? "#ff4d4d" : qgcPal.text
+                        border.width: _isModeOff(modelData.modeFact) ? 2 : 1
                         radius: _cardCornerRadius
 
                         ColumnLayout {
@@ -344,7 +344,7 @@ Item {
                                 }
 
                                 Label {
-                                    text: modelData.modeText
+                                    text: (modelData.modeFact && modelData.modeFact.rawValue !== undefined && modelData.modeFact.rawValue !== null) ? _modeText(modelData.modeFact.rawValue) : "OFF"
                                     font.bold: true
                                     font.pixelSize: _titlePixelSize
                                     color: qgcPal.text
@@ -372,7 +372,7 @@ Item {
                                         }
 
                                         Label {
-                                            text: modelData.value
+                                            text: _factValue(modelData.fact, modelData.decimals, modelData.unit)
                                             font.pixelSize: _rowPixelSize
                                             color: qgcPal.text
                                             horizontalAlignment: Text.AlignRight
@@ -489,8 +489,8 @@ Item {
                                 visible: root._manualControlExpanded
                                 Layout.preferredWidth: _manualSliderWidth
                                 Layout.fillHeight: true
-                                Layout.topMargin: 8
-                                Layout.bottomMargin: 8
+                                Layout.topMargin: _cardBottomPadding
+                                Layout.bottomMargin: _cardBottomPadding
                                 spacing: 2
 
                                 Label {
@@ -498,14 +498,14 @@ Item {
                                     text: Number(sliderControl.value).toFixed(0) + modelData.manualUnit
                                     color: "#4aa3ff"
                                     font.bold: true
-                                    font.pixelSize: _rowPixelSize - 1
+                                    font.pixelSize: _unitPx
                                 }
 
                                 Label {
                                     Layout.alignment: Qt.AlignHCenter
                                     text: modelData.manualFrom + modelData.manualUnit
                                     color: qgcPal.text
-                                    font.pixelSize: _rowPixelSize - 4
+                                    font.pixelSize: _unitPx * 0.85
                                 }
 
                                 QGCSlider {
@@ -516,6 +516,7 @@ Item {
                                     from: modelData.manualTo
                                     to: modelData.manualFrom
                                     stepSize: 1
+                                    handleRadius: _unitPx * 1.3
 
                                     Component.onCompleted: value = root._manualFoilAngles[modelData.manualIndex]
                                     onVisibleChanged: {
@@ -535,7 +536,7 @@ Item {
                                     Layout.alignment: Qt.AlignHCenter
                                     text: modelData.manualTo + modelData.manualUnit
                                     color: qgcPal.text
-                                    font.pixelSize: _rowPixelSize - 4
+                                    font.pixelSize: _unitPx * 0.85
                                 }
                             }
 
@@ -640,16 +641,16 @@ Item {
 
             RowLayout {
                 anchors.fill: parent
-                anchors.leftMargin: 10
-                anchors.rightMargin: 10
-                anchors.topMargin: 6
-                anchors.bottomMargin: 6
-                spacing: 10
+                anchors.leftMargin: _rowInlineSpacing
+                anchors.rightMargin: _rowInlineSpacing
+                anchors.topMargin: _contentMarginY
+                anchors.bottomMargin: _contentMarginY
+                spacing: _rowInlineSpacing
 
                 Rectangle {
-                    Layout.preferredWidth: 18
-                    Layout.preferredHeight: 18
-                    radius: 9
+                    Layout.preferredWidth: _refillIndicatorSize
+                    Layout.preferredHeight: _refillIndicatorSize
+                    radius: _refillIndicatorSize / 2
                     color: refillValvePanel.refillOpen ? "#4fe06b" : "#5a5a5a"
                     border.color: refillValvePanel.refillOpen ? "#a8ffb8" : "#9a9a9a"
                     border.width: 2
@@ -663,14 +664,14 @@ Item {
                         text: "REFILL VALVE"
                         color: qgcPal.text
                         font.bold: true
-                        font.pixelSize: _rowPixelSize - 1
+                        font.pixelSize: _unitPx
                     }
 
                     Label {
                         text: refillValvePanel.refillOpen ? "OPEN" : "CLOSED"
                         color: refillValvePanel.refillOpen ? "#4fe06b" : "#c8c8c8"
                         font.bold: true
-                        font.pixelSize: _titlePixelSize + 1
+                        font.pixelSize: _unitPx * 1.25
                     }
                 }
             }
@@ -696,16 +697,16 @@ Item {
 
             RowLayout {
                 anchors.fill: parent
-                anchors.leftMargin: 10
-                anchors.rightMargin: 10
-                anchors.topMargin: 6
-                anchors.bottomMargin: 6
-                spacing: 10
+                anchors.leftMargin: _rowInlineSpacing
+                anchors.rightMargin: _rowInlineSpacing
+                anchors.topMargin: _contentMarginY
+                anchors.bottomMargin: _contentMarginY
+                spacing: _rowInlineSpacing
 
                 Rectangle {
-                    Layout.preferredWidth: 18
-                    Layout.preferredHeight: 18
-                    radius: 9
+                    Layout.preferredWidth: _refillIndicatorSize
+                    Layout.preferredHeight: _refillIndicatorSize
+                    radius: _refillIndicatorSize / 2
                     color: manualControlPanel.manualControlOn ? "#4aa3ff" : "#5a5a5a"
                     border.color: manualControlPanel.manualControlOn ? "#a9d1ff" : "#9a9a9a"
                     border.width: 2
@@ -719,14 +720,14 @@ Item {
                         text: "MANUAL CONTROL"
                         color: qgcPal.text
                         font.bold: true
-                        font.pixelSize: _rowPixelSize - 1
+                        font.pixelSize: _unitPx
                     }
 
                     Label {
                         text: manualControlPanel.manualControlOn ? "ON" : "OFF"
                         color: manualControlPanel.manualControlOn ? "#4aa3ff" : "#c8c8c8"
                         font.bold: true
-                        font.pixelSize: _titlePixelSize + 1
+                        font.pixelSize: _unitPx * 1.25
                     }
                 }
             }

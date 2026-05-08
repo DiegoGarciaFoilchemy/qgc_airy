@@ -169,6 +169,7 @@ private:
     void _sendBoatSpeed();
     void _sendFcb35ControlState();
     void _sendFcb35Actuator();
+    void _sendSetpoint();
     void _sendHighLatency2();
     void _sendHomePosition();
     void _sendGpsRawInt();

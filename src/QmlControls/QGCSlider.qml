@@ -28,6 +28,7 @@ Slider {
     property bool zeroCentered:         false   // Value indicator starts display from zero instead of min value
     property bool displayValue:         false
     property bool indicatorBarVisible:  true
+    property real handleRadius:         0       // Set > 0 to override the default handle size
 
     property real _implicitBarLength:   Math.round(ScreenTools.defaultFontPixelWidth * 20)
     property real _barHeight:           Math.round(ScreenTools.defaultFontPixelHeight / 3)
@@ -87,7 +88,7 @@ Slider {
         border.width:   1
         radius:         _radius
 
-        property real _radius: ScreenTools.isMobile ? ScreenTools.minTouchPixels / 2 : ScreenTools.defaultFontPixelHeight / 2
+        property real _radius: control.handleRadius > 0 ? control.handleRadius : (ScreenTools.isMobile ? ScreenTools.minTouchPixels / 2 : ScreenTools.defaultFontPixelHeight / 2)
 
         Label {
             text:               control.value.toFixed( control.to <= 1 ? 1 : 0)

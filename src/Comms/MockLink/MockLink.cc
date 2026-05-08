@@ -184,6 +184,7 @@ void MockLink::run10HzTasks()
         _sendBoatSpeed();
         _sendFcb35ControlState();
         _sendFcb35Actuator();
+        _sendSetpoint();
         
         
     }
@@ -344,7 +345,7 @@ void MockLink::_sendAttitudeEuler()
 
     const float roll = amplitude * std::sin(phase);
     constexpr float quarterTurn = 1.57079632679f;
-    const float pitch = amplitude * std::sin(phase + quarterTurn);
+    const float pitch = 0;//amplitude * std::sin(phase + quarterTurn);
     phase += phaseStep;
 
     const float accBody[3] = {0.0f, 0.0f, 0.0f};
@@ -389,6 +390,35 @@ void MockLink::_sendFcb35Actuator()
     }
 }
 
+void MockLink::_sendSetpoint()
+{
+     static float phase = 0.0f;
+    constexpr float amplitude = 3.0f;
+    constexpr float phaseStep = 0.1f;
+
+    const float pitch = 0.3 * std::sin(phase) + 0.9f; // Speed oscillates between 4 and 6 m/s
+    const float heave = 3.0f * std::sin(phase) + 3.0f; // Speed oscillates between 4 and 6 m/s
+    phase += phaseStep;
+
+    mavlink_message_t msg{};
+    (void)mavlink_msg_boat_setpoint_pack_chan(
+        _vehicleSystemId,
+        _vehicleComponentId,
+        mavlinkChannel(),
+        &msg,
+        0, // roll_sp
+        pitch, // pitch_sp
+        0, // yaw_sp
+        0.0f, // pitch_rate_sp
+        0.0f, // roll_rate_sp
+        0.0f, // yaw_rate_sp
+        heave, // heave_sp
+        0.0f // heave_speed_sp
+    );
+    respondWithMavlinkMessage(msg);
+}
+ // float roll_sp,float pitch_sp,float yaw_sp,float pitch_rate_sp,float roll_rate_sp,float yaw_rate_sp,float heave_sp,float heave_speed_sp
+
 void MockLink::_sendBoatSpeed()
 {
     static float phase = 0.0f;
@@ -417,7 +447,7 @@ void MockLink::_sendFcb35ControlState()
     static float phase = 0.0f;
     constexpr float amplitudeDeg = 10.0f;
     constexpr float amplitudemm = 25.f;
-    constexpr float amplitudeHeave = 0.3f;
+    constexpr float amplitudeHeave = 3.f;
     constexpr float phaseStep = 0.08f;
     constexpr float quarterTurn = 1.57079632679f;
 
@@ -428,7 +458,7 @@ void MockLink::_sendFcb35ControlState()
     const float interceptorSb = amplitudemm * std::sin(phase + (4.0f * quarterTurn)) + 25.f;
     const float interceptorPs = amplitudemm * std::sin(phase + (5.0f * quarterTurn)) + 25.f;
     phase += phaseStep;
-    const float heave = amplitudeHeave * std::sin(phase) + 4.5f; 
+    const float heave = amplitudeHeave * std::sin(phase) + 3.f; 
     mavlink_message_t msg{};
     (void) mavlink_msg_fcb35_control_state_pack_chan(
         _vehicleSystemId,

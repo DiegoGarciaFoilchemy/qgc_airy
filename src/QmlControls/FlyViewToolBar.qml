@@ -208,7 +208,7 @@ Rectangle {
         }
         
         Label {
-            text: !_activeVehicle ? "-" : (_activeVehicle.waveState.rawValue === 2 ? qsTr("HIGH") : (_activeVehicle.waveState.rawValue === 1 ? qsTr("MID") : qsTr("LOW")))
+            text: !_activeVehicle ? "-" : (_activeVehicle.waveState.rawValue === 2 ? qsTr("+1.5m") : (_activeVehicle.waveState.rawValue === 1 ? qsTr("0.5 - 1.5m") : qsTr("0 - 0.5m")))
             color: "white"
             font.pixelSize: 24
             font.bold: true

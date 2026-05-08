@@ -329,7 +329,7 @@ void VehicleFactGroup::_handleMarsunActuator(const mavlink_message_t &message)
             acu1Target()->setRawValue(msg.target);
             acu1Status()->setRawValue(msg.status);
             acu1Mode()->setRawValue(msg.mode);
-            acu1ValveCmd()->setRawValue(msg.valve_cmd);
+            acu1ValveCmd()->setRawValue(msg.valve_cmd * 10);
             acu1ValveFeedback()->setRawValue(msg.valve_feedback);
             break;
         case 1:
@@ -338,7 +338,7 @@ void VehicleFactGroup::_handleMarsunActuator(const mavlink_message_t &message)
             acu2Target()->setRawValue(msg.target);
             acu2Status()->setRawValue(msg.status);
             acu2Mode()->setRawValue(msg.mode);
-            acu2ValveCmd()->setRawValue(msg.valve_cmd);
+            acu2ValveCmd()->setRawValue(msg.valve_cmd * 10);
             acu2ValveFeedback()->setRawValue(msg.valve_feedback);
             break;
         case 2:
@@ -347,7 +347,7 @@ void VehicleFactGroup::_handleMarsunActuator(const mavlink_message_t &message)
             acu3Target()->setRawValue(msg.target);
             acu3Status()->setRawValue(msg.status);
             acu3Mode()->setRawValue(msg.mode);
-            acu3ValveCmd()->setRawValue(msg.valve_cmd);
+            acu3ValveCmd()->setRawValue(msg.valve_cmd * 10);
             acu3ValveFeedback()->setRawValue(msg.valve_feedback);
             break;
         case 3:
@@ -356,25 +356,25 @@ void VehicleFactGroup::_handleMarsunActuator(const mavlink_message_t &message)
             acu4Target()->setRawValue(msg.target);
             acu4Status()->setRawValue(msg.status);
             acu4Mode()->setRawValue(msg.mode);
-            acu4ValveCmd()->setRawValue(msg.valve_cmd);
+            acu4ValveCmd()->setRawValue(msg.valve_cmd * 10);
             acu4ValveFeedback()->setRawValue(msg.valve_feedback);
             break;
         case 4:
-            acu5Angle()->setRawValue(msg.position * 180.0 / M_PI);
-            acu5Speed()->setRawValue(msg.speed * 180.0 / M_PI);
-            acu5Target()->setRawValue(msg.target * 180.0 / M_PI);
+            acu5Angle()->setRawValue(msg.position);
+            acu5Speed()->setRawValue(msg.speed);
+            acu5Target()->setRawValue(msg.target);
             acu5Status()->setRawValue(msg.status);
             acu5Mode()->setRawValue(msg.mode);
-            acu5ValveCmd()->setRawValue(msg.valve_cmd);
+            acu5ValveCmd()->setRawValue(msg.valve_cmd * 10);
             acu5ValveFeedback()->setRawValue(msg.valve_feedback);
             break;
         case 5:
-            acu6Angle()->setRawValue(msg.position * 180.0 / M_PI);
-            acu6Speed()->setRawValue(msg.speed * 180.0 / M_PI);
-            acu6Target()->setRawValue(msg.target * 180.0 / M_PI);
+            acu6Angle()->setRawValue(msg.position);
+            acu6Speed()->setRawValue(msg.speed);
+            acu6Target()->setRawValue(msg.target);
             acu6Status()->setRawValue(msg.status);
             acu6Mode()->setRawValue(msg.mode);
-            acu6ValveCmd()->setRawValue(msg.valve_cmd);
+            acu6ValveCmd()->setRawValue(msg.valve_cmd * 10);
             acu6ValveFeedback()->setRawValue(msg.valve_feedback);
             break;
         default:
