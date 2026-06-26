@@ -8,7 +8,8 @@ Item {
     QGCPalette { id: qgcPal; colorGroupEnabled: true }
     property var  vehicle:      globals.activeVehicle
     property var acuModeLabels: ["RUNNING", "RUNNING", "CALIBRATING", "IDLE", "ZERO", "OFF", "ERROR"]
-
+    property var acu1Mode: vehicle ? vehicle.acu1Mode.rawValue : 0
+    property var acu2Mode: vehicle ? vehicle.acu2Mode.rawValue : 0
     // Fixed-pixel layout tokens for this page.
     property real _vesselImageCenterOffsetYPx:   -60
     property real _topRowTopMarginPx:            270
@@ -31,8 +32,14 @@ Item {
         }
         if (modeValue >= 0 && modeValue < acuModeLabels.length) {
             loader.item.foilStatus = acuModeLabels[modeValue]
+            if (modeValue === 5) {
+                loader.item.isVisible = false
+            } else {
+                loader.item.isVisible = true
+            }
         } else {
             loader.item.foilStatus = "--"
+            loader.item.isVisible = false
         }
     }
 
@@ -42,14 +49,14 @@ Item {
         repeat: true
         running: true
         onTriggered: {
-            var acu1ModeValue = vehicle ? vehicle.acu1Mode.rawValue : 0
-            var acu2ModeValue = vehicle ? vehicle.acu2Mode.rawValue : 0
             var acu3ModeValue = vehicle ? vehicle.acu3Mode.rawValue : 0
             var acu4ModeValue = vehicle ? vehicle.acu4Mode.rawValue : 0
+            var acu5ModeValue = vehicle ? vehicle.acu5Mode.rawValue : 0
+            var acu6ModeValue = vehicle ? vehicle.acu6Mode.rawValue : 0
 
-            updateFoilStatus(foil1, acu2ModeValue)
-            updateFoilStatus(foil2, acu1ModeValue)
-            updateFoilStatus(foil3, acu4ModeValue)
+            updateFoilStatus(foil1, acu6ModeValue)
+            updateFoilStatus(foil2, acu4ModeValue)
+            updateFoilStatus(foil3, acu5ModeValue)
             updateFoilStatus(foil4, acu3ModeValue)
         }
     }
@@ -203,6 +210,8 @@ Item {
                 item.starboardDeployment = Qt.binding(function() { return vehicle ? vehicle.commandInterSb.rawValue * 2 : 0 })
                 item.portDeployment = Qt.binding(function() { return vehicle ? vehicle.commandInterPs.rawValue * 2 : 0 })
                 item.showInterceptor = Qt.binding(function() { return vehicle ? vehicle.armed : false })
+                item.stbdVisible = Qt.binding(function() { return acu1Mode !== 5 })
+                item.portVisible = Qt.binding(function() { return acu2Mode !== 5 })
             }
         }
     }

@@ -38,6 +38,7 @@ Item {
     property var foilName: "Generic Foil"
     property var foilStatus: "RUNNING"
     property bool inverted: false
+    property var isVisible: true
     
     // Computed angles for current orientation
     readonly property real arcStart: inverted ? -spanRadians/2 : startAngle
@@ -136,12 +137,11 @@ Item {
     // Needle
     Image {
         id: foil
-        visible: showFoil
+        visible: showFoil && isVisible
         source:             "/qmlimages/foil.svg"
         mipmap:             true
         fillMode:           Image.PreserveAspectFit
         width: 110
-
         // Align rotation point with speedometer center
         x: inverted ? gaugeCenterX + width : gaugeCenterX - width
         y: gaugeCenterY - height / 2 - 5
@@ -177,7 +177,7 @@ Item {
     }
     Item {
         id: foilAngleValue
-        visible: showFoil
+        visible: showFoil && isVisible
         y: gaugeCenterY - labelFontSize * 1.3
         width: gaugeRadius * 1.3
         height: labelFontSize * 1.8

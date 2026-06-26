@@ -372,19 +372,20 @@ void MockLink::_sendFcb35Actuator()
 {
     mavlink_message_t msg{};
     for (int i = 0; i < 6; ++i) {
+        uint8_t mode = i % 2 == 0 ? 5 : 0; // Alternate between mode 5 and mode 0 for demonstration
         (void)mavlink_msg_fcb35_actuator_pack_chan(
             _vehicleSystemId,
             _vehicleComponentId,
             mavlinkChannel(),
             &msg,
             i, //id
-            0.0f,//pos
+            1.0f,//pos
             0.0f,//speed
             0.0f,//target
             0, //valve_cmd
             0, //valve_feedback
             0, //status
-            i  //mode
+            mode  //mode
         );
         respondWithMavlinkMessage(msg);
     }

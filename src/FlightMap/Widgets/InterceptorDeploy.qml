@@ -18,6 +18,8 @@ Item {
     width: 110
     height: width * 0.6
     visible: showInterceptor
+    property var stbdVisible: true
+    property var portVisible: true
 
     property real portDeployment: 0
     property real starboardDeployment: 0
@@ -71,7 +73,7 @@ Item {
         anchors.right: centerLine.left
         anchors.rightMargin: _sideMargin
         anchors.verticalCenter: centerLine.verticalCenter
-        // visible: portDeployment !== 0
+        visible: portVisible
     }
 
     Text {
@@ -81,7 +83,7 @@ Item {
         anchors.left: centerLine.right
         anchors.leftMargin: _sideMargin
         anchors.verticalCenter: centerLine.verticalCenter
-        // visible: starboardDeployment !== 0
+        visible: stbdVisible
     }
 
     Rectangle {
@@ -92,7 +94,7 @@ Item {
             ? centerLine.y + _lineThickness + _topMargin
             : centerLine.y - _topMargin - height
         color: "white"
-        visible: portDeployment !== 0
+        visible: portDeployment !== 0 && portVisible === true
     }
 
     Rectangle {
@@ -103,7 +105,7 @@ Item {
             ? centerLine.y + _lineThickness + _topMargin
             : centerLine.y - _topMargin - height
         color: "white"
-        visible: starboardDeployment !== 0
+        visible: starboardDeployment !== 0 && stbdVisible === true
     }
     
     
