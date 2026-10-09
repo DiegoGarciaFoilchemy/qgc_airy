@@ -372,7 +372,7 @@ void MockLink::_sendFcb35Actuator()
 {
     mavlink_message_t msg{};
     for (int i = 0; i < 6; ++i) {
-        uint8_t mode = i % 2 == 0 ? 5 : 0; // Alternate between mode 5 and mode 0 for demonstration
+        uint8_t mode = 0; // Alternate between mode 5 and mode 0 for demonstration
         (void)mavlink_msg_fcb35_actuator_pack_chan(
             _vehicleSystemId,
             _vehicleComponentId,
@@ -456,8 +456,8 @@ void MockLink::_sendFcb35ControlState()
     const float aoaBowPs = amplitudeDeg * std::sin(phase + quarterTurn);
     const float aoaMainSb = amplitudeDeg * std::sin(phase + (2.0f * quarterTurn));
     const float aoaMainPs = amplitudeDeg * std::sin(phase + (3.0f * quarterTurn));
-    const float interceptorSb = amplitudemm * std::sin(phase + (4.0f * quarterTurn)) + 25.f;
-    const float interceptorPs = amplitudemm * std::sin(phase + (5.0f * quarterTurn)) + 25.f;
+    const float interceptorSb = amplitudemm * std::sin(phase + (4.0f * quarterTurn)) + 0.f;
+    const float interceptorPs = amplitudemm * std::sin(phase + (5.0f * quarterTurn)) + 0.f;
     phase += phaseStep;
     const float heave = amplitudeHeave * std::sin(phase) + 3.f; 
     mavlink_message_t msg{};

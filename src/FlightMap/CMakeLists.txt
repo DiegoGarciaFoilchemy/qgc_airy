@@ -25,6 +25,7 @@ qt_add_qml_module(FlightMapModule
         Widgets/HorizontalCompassAttitude.qml
         
         Widgets/InterceptorDeploy.qml
+        Widgets/RudderDeploy.qml
         Widgets/IntegratedAttitudeIndicator.qml
         Widgets/IntegratedCompassAttitude.qml
         Widgets/MapFitFunctions.qml

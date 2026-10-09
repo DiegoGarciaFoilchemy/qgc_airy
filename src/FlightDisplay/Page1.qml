@@ -16,7 +16,7 @@ Item {
     property real _topRowSpacingPx:              120
     property real _foilColumnSideMarginPx:       150
     property real _foilColumnSpacingPx:          230
-    property real _interceptorBottomMarginPx:    70
+    property real _rudderBottomMarginPx:    70
 
     property real _pitchWidthPx:                 300
     property real _pitchHeightPx:                200
@@ -24,7 +24,7 @@ Item {
     property real _rollWidthPx:                  300
     property real _rollHeightPx:                 200
     property real _foilSizePx:                   260
-    property real _interceptorWidthPx:           110
+    property real _rudderWidthPx:                260
 
     function updateFoilStatus(loader, modeValue) {
         if (!loader.item) {
@@ -144,8 +144,8 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 onLoaded: {
                     item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.commandBowPs.rawValue : 0 })
-                    item.highSpeed = Qt.binding(function() { return vehicle ? vehicle.groundSpeed.rawValue > 20 : false })
-                    item.showFoil = Qt.binding(function() { return vehicle ? vehicle.armed : false })
+                    item.highSpeed = true
+                    item.showFoil = true 
                     item.foilName = "BOW PS"
                 }
             }
@@ -158,8 +158,8 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 onLoaded: {
                     item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.commandMainPs.rawValue : 0 })
-                    item.highSpeed = Qt.binding(function() { return vehicle ? vehicle.groundSpeed.rawValue > 20 : false })
-                    item.showFoil = Qt.binding(function() { return vehicle ? vehicle.armed : false })
+                    item.highSpeed = true
+                    item.showFoil = true
                     item.foilName = "AFT PS"
                 }
             }
@@ -177,8 +177,8 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 onLoaded: {
                     item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.commandBowSb.rawValue : 0 })
-                    item.highSpeed = Qt.binding(function() { return vehicle ? vehicle.groundSpeed.rawValue > 20 : false })
-                    item.showFoil = Qt.binding(function() { return vehicle ? vehicle.armed : false })
+                    item.highSpeed = true
+                    item.showFoil = true
                     item.foilName = "BOW SB"
                     item.inverted = true
                 }
@@ -191,8 +191,8 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 onLoaded: {
                     item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.commandMainSb.rawValue : 0 })
-                    item.highSpeed = Qt.binding(function() { return vehicle ? vehicle.groundSpeed.rawValue > 20 : false })
-                    item.showFoil = Qt.binding(function() { return vehicle ? vehicle.armed : false })
+                    item.highSpeed = true
+                    item.showFoil = true
                     item.foilName = "AFT SB"
                     item.inverted = true
                 }
@@ -202,16 +202,12 @@ Item {
             id: interceptorDeploy
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: _interceptorBottomMarginPx
-            source: "qrc:/qml/QGroundControl/FlightMap/Widgets/InterceptorDeploy.qml"
-            width: _interceptorWidthPx
-            height: _interceptorWidthPx * 0.6
+            anchors.bottomMargin: _rudderBottomMarginPx
+            source: "qrc:/qml/QGroundControl/FlightMap/Widgets/RudderDeploy.qml"
+            width: _rudderWidthPx
+            height: _rudderWidthPx * 0.3
             onLoaded: {
-                item.starboardDeployment = Qt.binding(function() { return vehicle ? vehicle.commandInterSb.rawValue * 2 : 0 })
-                item.portDeployment = Qt.binding(function() { return vehicle ? vehicle.commandInterPs.rawValue * 2 : 0 })
-                item.showInterceptor = Qt.binding(function() { return vehicle ? vehicle.armed : false })
-                item.stbdVisible = Qt.binding(function() { return acu1Mode !== 5 })
-                item.portVisible = Qt.binding(function() { return acu2Mode !== 5 })
+                item.rudderDeployment = Qt.binding(function() { return vehicle ? vehicle.commandInterPs.rawValue : 0 })
             }
         }
     }
