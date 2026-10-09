@@ -22,6 +22,8 @@ Item {
 
     property real labelPointSize: 20
     property real rudderDeployment: 0
+    property var foilStatus: "OFFLINE"
+    property bool isVisible: true
 
     // Rudder deflection range (symmetric around zero).
     readonly property real _maxDeflection: 25
@@ -76,10 +78,20 @@ Item {
 
     // Angle readout below the rectangle.
     QGCLabel {
+        id: angleLabel
+        visible: isVisible
         anchors.top: bar.bottom
         anchors.topMargin: 4
         anchors.horizontalCenter: parent.horizontalCenter
         text: rudderDeployment.toFixed(1) + "\u00B0"
-        font: Qt.font({ pixelSize: labelPointSize * 1.7 })
+        font: Qt.font({ pixelSize: labelPointSize * 1.3 })
+    }
+    QGCLabel {
+        id: stateLabel
+        anchors.top: angleLabel.bottom
+        anchors.topMargin: 4
+        anchors.horizontalCenter: parent.horizontalCenter
+        text: foilStatus
+        font: Qt.font({ pixelSize: labelPointSize * 1.3 })
     }
 }

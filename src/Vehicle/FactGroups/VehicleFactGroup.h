@@ -118,6 +118,19 @@ class VehicleFactGroup : public FactGroup
     Q_PROPERTY(Fact *pitchSp                READ pitchSp           CONSTANT)
     Q_PROPERTY(Fact *rollSp                 READ rollSp            CONSTANT)
     Q_PROPERTY(Fact *heaveSp                READ heaveSp            CONSTANT)
+
+    Q_PROPERTY(Fact *uss1State             READ uss1State            CONSTANT)
+    Q_PROPERTY(Fact *uss2State             READ uss2State            CONSTANT)
+    Q_PROPERTY(Fact *uss3State             READ uss3State            CONSTANT)
+    Q_PROPERTY(Fact *uss4State             READ uss4State            CONSTANT)
+    Q_PROPERTY(Fact *uss1Distance          READ uss1Distance         CONSTANT)
+    Q_PROPERTY(Fact *uss2Distance          READ uss2Distance         CONSTANT)
+    Q_PROPERTY(Fact *uss3Distance          READ uss3Distance         CONSTANT)
+    Q_PROPERTY(Fact *uss4Distance          READ uss4Distance         CONSTANT)
+    Q_PROPERTY(Fact *joystickState         READ joystickState        CONSTANT)
+    Q_PROPERTY(Fact *joystickX            READ joystickX           CONSTANT)
+    Q_PROPERTY(Fact *joystickY            READ joystickY           CONSTANT)
+    Q_PROPERTY(Fact *joystickZ            READ joystickZ           CONSTANT)
     
 
 public:
@@ -227,6 +240,18 @@ public:
     Fact *pitchSp() { return &_pitchSpFact; }
     Fact *rollSp() { return &_rollSpFact; }
     Fact *heaveSp() { return &_heaveSpFact; }
+    Fact *uss1State() { return &_uss1StateFact; }
+    Fact *uss2State() { return &_uss2StateFact; }
+    Fact *uss3State() { return &_uss3StateFact; }
+    Fact *uss4State() { return &_uss4StateFact; }
+    Fact *uss1Distance() { return &_uss1DistanceFact; }
+    Fact *uss2Distance() { return &_uss2DistanceFact; }
+    Fact *uss3Distance() { return &_uss3DistanceFact; }
+    Fact *uss4Distance() { return &_uss4DistanceFact; }
+    Fact *joystickState() { return &_joystickStateFact; }
+    Fact *joystickX() { return &_joystickXFact; }
+    Fact *joystickY() { return &_joystickYFact; }
+    Fact *joystickZ() { return &_joystickZFact; }
 
     void handleMessage(Vehicle *vehicle, const mavlink_message_t &message) override;
 
@@ -238,11 +263,13 @@ protected:
     void _handleRawImuTemp(const mavlink_message_t &message);
     void _handleNavControllerOutput(const mavlink_message_t &message);
     void _handleMarsunActuator(const mavlink_message_t &message);
+    void _handleActuatorStatus(const mavlink_message_t &message);
     void _handleMarsunControlState(const mavlink_message_t &message);
     void _handleAccumulator(const mavlink_message_t &message);
     void _handleBoatSpeed(const mavlink_message_t &message);
     void _handleBoatSetpoint(const mavlink_message_t &message);
     void _handleJoystick(const mavlink_message_t &message);
+    void _handleUss(const mavlink_message_t &message);
 #ifndef QGC_NO_ARDUPILOT_DIALECT
     void _handleRangefinder(const mavlink_message_t &message);
 #endif
@@ -352,6 +379,18 @@ protected:
     Fact _pitchSpFact = Fact(0, QStringLiteral("pitchSp"), FactMetaData::valueTypeDouble);
     Fact _rollSpFact = Fact(0, QStringLiteral("rollSp"), FactMetaData::valueTypeDouble);
     Fact _heaveSpFact = Fact(0, QStringLiteral("heaveSp"), FactMetaData::valueTypeDouble);
+    Fact _uss1StateFact = Fact(0, QStringLiteral("uss1State"), FactMetaData::valueTypeUint8);
+    Fact _uss2StateFact = Fact(0, QStringLiteral("uss2State"), FactMetaData::valueTypeUint8);
+    Fact _uss3StateFact = Fact(0, QStringLiteral("uss3State"), FactMetaData::valueTypeUint8);
+    Fact _uss4StateFact = Fact(0, QStringLiteral("uss4State"), FactMetaData::valueTypeUint8);
+    Fact _uss1DistanceFact = Fact(0, QStringLiteral("uss1Distance"), FactMetaData::valueTypeDouble);
+    Fact _uss2DistanceFact = Fact(0, QStringLiteral("uss2Distance"), FactMetaData::valueTypeDouble);
+    Fact _uss3DistanceFact = Fact(0, QStringLiteral("uss3Distance"), FactMetaData::valueTypeDouble);
+    Fact _uss4DistanceFact = Fact(0, QStringLiteral("uss4Distance"), FactMetaData::valueTypeDouble);
+    Fact _joystickStateFact = Fact(0, QStringLiteral("joystickState"), FactMetaData::valueTypeUint8);
+    Fact _joystickXFact = Fact(0, QStringLiteral("joystickX"), FactMetaData::valueTypeInt8);
+    Fact _joystickYFact = Fact(0, QStringLiteral("joystickY"), FactMetaData::valueTypeInt8);
+    Fact _joystickZFact = Fact(0, QStringLiteral("joystickZ"), FactMetaData::valueTypeInt8);
     float _altitudeTuningOffset = qQNaN();
 
 protected:

@@ -124,6 +124,19 @@ VehicleFactGroup::VehicleFactGroup(QObject *parent)
     _addFact(&_rollSpFact);
     _addFact(&_heaveSpFact);
 
+    _addFact(&_uss1StateFact);
+    _addFact(&_uss2StateFact);
+    _addFact(&_uss3StateFact);
+    _addFact(&_uss4StateFact);
+    _addFact(&_uss1DistanceFact);
+    _addFact(&_uss2DistanceFact);
+    _addFact(&_uss3DistanceFact);
+    _addFact(&_uss4DistanceFact);
+    _addFact(&_joystickStateFact);
+    _addFact(&_joystickXFact);
+    _addFact(&_joystickYFact);
+    _addFact(&_joystickZFact);
+
     _hobbsFact.setRawValue(QStringLiteral("0000:00:00"));
     _followingSeasFact.setRawValue(0);
     _waveStateFact.setRawValue(0);
@@ -168,6 +181,11 @@ void VehicleFactGroup::handleMessage(Vehicle *vehicle, const mavlink_message_t &
         break;
     case MAVLINK_MSG_ID_JOYSTICK:
         _handleJoystick(message);
+        break;
+    case MAVLINK_MSG_ID_ACTUATOR_STATE:
+        _handleActuatorStatus(message);
+    case MAVLINK_MSG_ID_ULTRASONIC_SENSOR:
+        _handleUss(message);
         break;
 #ifndef QGC_NO_ARDUPILOT_DIALECT
     case MAVLINK_MSG_ID_RANGEFINDER:
@@ -399,6 +417,10 @@ void VehicleFactGroup::_handleJoystick(const mavlink_message_t &message)
 {
     mavlink_joystick_t msg{};
     mavlink_msg_joystick_decode(&message, &msg);
+    joystickX()->setRawValue(msg.x);
+    joystickY()->setRawValue(msg.y);
+    joystickZ()->setRawValue(msg.z);
+    joystickState()->setRawValue(msg.state);
     if(msg.z == 0) {
         ballastCommand()->setRawValue(0);
     } else {
@@ -408,6 +430,44 @@ void VehicleFactGroup::_handleJoystick(const mavlink_message_t &message)
 
     _setTelemetryAvailable(true);
 }
+
+void VehicleFactGroup::_handleUss(const mavlink_message_t &message)
+{
+    mavlink_ultrasonic_sensor_t msg{};
+    mavlink_msg_ultrasonic_sensor_decode(&message, &msg);
+    uss1Distance()->setRawValue(msg.distance[0]);
+    uss2Distance()->setRawValue(msg.distance[1]);
+    uss3Distance()->setRawValue(msg.distance[2]);
+    uss4Distance()->setRawValue(msg.distance[3]);
+
+    uss1State()->setRawValue(msg.state[0]);
+    uss2State()->setRawValue(msg.state[1]);
+    uss3State()->setRawValue(msg.state[2]);
+    uss4State()->setRawValue(msg.state[3]);
+
+    _setTelemetryAvailable(true);
+}
+
+void VehicleFactGroup::_handleActuatorStatus(const mavlink_message_t &message)
+{
+    mavlink_actuator_state_t msg{};
+    mavlink_msg_actuator_state_decode(&message, &msg);
+    acu1Angle()->setRawValue(msg.position[0]);
+    acu2Angle()->setRawValue(msg.position[1]);
+    acu3Angle()->setRawValue(msg.position[2]);
+    acu4Angle()->setRawValue(msg.position[3]);
+    acu5Angle()->setRawValue(msg.position[4]);
+    acu6Angle()->setRawValue(msg.position[4]);
+
+    acu1Mode()->setRawValue(msg.state[0]);
+    acu2Mode()->setRawValue(msg.state[1]);
+    acu3Mode()->setRawValue(msg.state[2]);
+    acu4Mode()->setRawValue(msg.state[3]);
+    acu5Mode()->setRawValue(msg.state[4]);
+    acu6Mode()->setRawValue(msg.state[4]);
+    _setTelemetryAvailable(true);
+}
+
 void VehicleFactGroup::_handleMarsunControlState(const mavlink_message_t &message)
 {
     mavlink_fcb35_control_state_t msg{};

@@ -7,7 +7,25 @@ Item {
     height: parent ? parent.height : 760
     QGCPalette { id: qgcPal; colorGroupEnabled: true }
     property var  vehicle:      globals.activeVehicle
-    property var acuModeLabels: ["RUNNING", "RUNNING", "CALIBRATING", "IDLE", "ZERO", "OFF", "ERROR"]
+    // Sparse map of ServoState values to display labels. Values 1 and
+    // 15..255 (including OFFLINE = 255) are intentionally omitted and
+    // fall back to "OFFLINE" in updateFoilStatus().
+    property var acuModeLabels: ({
+        "0": "UNKNOWN",
+        "2": "SWITCHED ON",
+        "3": "OPERATION ENABLED",
+        "4": "READY",
+        "5": "ENABLED PPM",
+        "6": "HOMING",
+        "7": "SET HOMING",
+        "8": "SET PPM",
+        "9": "NO VOLTAGE",
+        "10": "FAULT",
+        "11": "NOT READY",
+        "12": "SET IPM",
+        "13": "WORKING",
+        "14": "SET VELOCITY"
+    })
     property var acu1Mode: vehicle ? vehicle.acu1Mode.rawValue : 0
     property var acu2Mode: vehicle ? vehicle.acu2Mode.rawValue : 0
     // Fixed-pixel layout tokens for this page.
@@ -30,17 +48,12 @@ Item {
         if (!loader.item) {
             return
         }
-        if (modeValue >= 0 && modeValue < acuModeLabels.length) {
-            loader.item.foilStatus = acuModeLabels[modeValue]
-            if (modeValue === 5) {
-                loader.item.isVisible = false
-            } else {
-                loader.item.isVisible = true
-            }
-        } else {
-            loader.item.foilStatus = "--"
-            loader.item.isVisible = false
+        var status = acuModeLabels[modeValue]
+        if (status === undefined) {
+            status = "OFFLINE"
         }
+        loader.item.foilStatus = status
+        loader.item.isVisible = status !== "OFFLINE" && status !== "UNKNOWN"
     }
 
     Timer {
@@ -49,15 +62,18 @@ Item {
         repeat: true
         running: true
         onTriggered: {
+            var acu1ModeValue = vehicle ? vehicle.acu1Mode.rawValue : 0
+            var acu2ModeValue = vehicle ? vehicle.acu2Mode.rawValue : 0
             var acu3ModeValue = vehicle ? vehicle.acu3Mode.rawValue : 0
             var acu4ModeValue = vehicle ? vehicle.acu4Mode.rawValue : 0
             var acu5ModeValue = vehicle ? vehicle.acu5Mode.rawValue : 0
             var acu6ModeValue = vehicle ? vehicle.acu6Mode.rawValue : 0
 
-            updateFoilStatus(foil1, acu6ModeValue)
+            updateFoilStatus(foil1, acu2ModeValue)
             updateFoilStatus(foil2, acu4ModeValue)
-            updateFoilStatus(foil3, acu5ModeValue)
+            updateFoilStatus(foil3, acu1ModeValue)
             updateFoilStatus(foil4, acu3ModeValue)
+            updateFoilStatus(interceptorDeploy, acu5ModeValue)
         }
     }
     
@@ -143,7 +159,7 @@ Item {
                 height: _foilSizePx
                 anchors.horizontalCenter: parent.horizontalCenter
                 onLoaded: {
-                    item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.commandBowPs.rawValue : 0 })
+                    item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.acu2Angle.rawValue : 0 })
                     item.highSpeed = true
                     item.showFoil = true 
                     item.foilName = "BOW PS"
@@ -157,7 +173,7 @@ Item {
                      height: _foilSizePx
                 anchors.horizontalCenter: parent.horizontalCenter
                 onLoaded: {
-                    item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.commandMainPs.rawValue : 0 })
+                    item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.acu4Angle.rawValue : 0 })
                     item.highSpeed = true
                     item.showFoil = true
                     item.foilName = "AFT PS"
@@ -176,7 +192,7 @@ Item {
                 height: _foilSizePx
                 anchors.horizontalCenter: parent.horizontalCenter
                 onLoaded: {
-                    item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.commandBowSb.rawValue : 0 })
+                    item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.acu1Angle.rawValue : 0 })
                     item.highSpeed = true
                     item.showFoil = true
                     item.foilName = "BOW SB"
@@ -190,7 +206,7 @@ Item {
                      height: _foilSizePx
                 anchors.horizontalCenter: parent.horizontalCenter
                 onLoaded: {
-                    item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.commandMainSb.rawValue : 0 })
+                    item.foilAngle = Qt.binding(function() { return vehicle ? vehicle.acu3Angle.rawValue : 0 })
                     item.highSpeed = true
                     item.showFoil = true
                     item.foilName = "AFT SB"
@@ -207,7 +223,7 @@ Item {
             width: _rudderWidthPx
             height: _rudderWidthPx * 0.3
             onLoaded: {
-                item.rudderDeployment = Qt.binding(function() { return vehicle ? vehicle.commandInterPs.rawValue : 0 })
+                item.rudderDeployment = Qt.binding(function() { return vehicle ? vehicle.acu5Angle.rawValue : 0 })
             }
         }
     }

@@ -172,7 +172,7 @@ Item {
         x: statusCenterX - width / 2
         text: foilStatus
         color: "#ffffff"
-        font: Qt.font({ pixelSize: labelFontSize * 1.2 })
+        font: Qt.font({ pixelSize: labelFontSize * 1. })
         horizontalAlignment: Text.AlignHCenter
     }
     Item {

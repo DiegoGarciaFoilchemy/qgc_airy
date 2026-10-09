@@ -363,7 +363,8 @@ void MockLink::_sendAttitudeEuler()
         0.0f,   // roll_rate
         0.0f,   // yaw_rate
         0.0f,   // heave_speed
-        &accBody[0]
+        &accBody[0],
+        0 // state ok
     );
     respondWithMavlinkMessage(msg);
 }
@@ -438,7 +439,8 @@ void MockLink::_sendBoatSpeed()
         speed,      // speed over ground
         speed,      // speed through water
         speed,       // control speed
-        0.0f, 0.0f, 0.0f      // vs vy vz
+        0.0f, 0.0f, 0.0f,      // vs vy vz
+        0           // state ok
     );
     respondWithMavlinkMessage(msg);
 }
