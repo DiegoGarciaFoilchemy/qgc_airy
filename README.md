@@ -64,6 +64,10 @@ cmake --build build --config Debug
 
 ./build/Debug/QGroundControl
 
+(if it fails, ```
+QT_QPA_PLATFORM=xcb ./build/Debug/QGroundControl
+```
+)
 // vuild for deploy
 cmake --install . --config Release 
 // add kiok to apprun file
