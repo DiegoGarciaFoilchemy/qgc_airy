@@ -21,10 +21,10 @@ Item {
     /// no parameter list) is available yet when this page is created at startup.
     property Fact _heaveSp2Fact: null
 
-    Component {
-        id: factControllerComponent
-        FactPanelController { }
-    }
+    // Component {
+    //     id: factControllerComponent
+    //     FactPanelController { }
+    // }
 
     // FactPanelController captures the active vehicle in its constructor, so it
     // must only be created once a vehicle is actually connected. The returned
@@ -88,33 +88,7 @@ Item {
         }
     }
 
-    Rectangle {
-        id: rebootHmiButton
-        width: 140
-        height: 60
-        radius: 4
-        color: "#2f2f2f"
-        border.color: "#ffffff"
-        border.width: 1
-        anchors {
-            left: parent.left
-            top: topLeftButton.bottom
-            leftMargin: 16
-            topMargin: 30
-        }
-
-        Text {
-            anchors.centerIn: parent
-            text: "Reboot HMI"
-            color: "white"
-            font.pixelSize: 16
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: Qt.quit()
-        }
-    }
+    
 
     /// Button that increments HEAVE_SP_2 by 0.2 on each click.
     /// Wraps back to 0 when the value would exceed 2.0.
