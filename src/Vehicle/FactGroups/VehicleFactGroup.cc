@@ -179,11 +179,15 @@ void VehicleFactGroup::handleMessage(Vehicle *vehicle, const mavlink_message_t &
     case MAVLINK_MSG_ID_BOAT_SETPOINT:
         _handleBoatSetpoint(message);
         break;
+    case MAVLINK_MSG_ID_BOAT_HEAVE:
+        _handleBoatHeave(message);
+        break;
     case MAVLINK_MSG_ID_JOYSTICK:
         _handleJoystick(message);
         break;
     case MAVLINK_MSG_ID_ACTUATOR_STATE:
         _handleActuatorStatus(message);
+        break;
     case MAVLINK_MSG_ID_ULTRASONIC_SENSOR:
         _handleUss(message);
         break;
@@ -241,6 +245,7 @@ void VehicleFactGroup::_handleAttitude(Vehicle *vehicle, const mavlink_message_t
     rollRate()->setRawValue(attitude.roll_rate);
     pitchRate()->setRawValue(attitude.pitch_rate);
     yawRate()->setRawValue(attitude.yaw_rate);
+    attitudeState()->setRawValue(attitude.state);
     _setTelemetryAvailable(true);
 }
 
@@ -431,6 +436,15 @@ void VehicleFactGroup::_handleJoystick(const mavlink_message_t &message)
     _setTelemetryAvailable(true);
 }
 
+void VehicleFactGroup::_handleBoatHeave(const mavlink_message_t &message)
+{
+    mavlink_boat_heave_t msg{};
+    mavlink_msg_boat_heave_decode(&message, &msg);
+    heaveState()->setRawValue(msg.state);
+    bowHeight()->setRawValue(msg.heave);
+    _setTelemetryAvailable(true);
+}
+
 void VehicleFactGroup::_handleUss(const mavlink_message_t &message)
 {
     mavlink_ultrasonic_sensor_t msg{};
@@ -512,7 +526,7 @@ void VehicleFactGroup::_handleBoatSpeed(const mavlink_message_t &message)
     mavlink_msg_boat_speed_decode(&message, &msg);
 
     groundSpeed()->setRawValue(msg.control_speed);
-
+    speedState()->setRawValue(msg.state);
     _setTelemetryAvailable(true);
 }
 

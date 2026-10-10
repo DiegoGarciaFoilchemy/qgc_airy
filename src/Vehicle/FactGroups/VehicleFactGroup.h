@@ -270,6 +270,7 @@ protected:
     void _handleBoatSetpoint(const mavlink_message_t &message);
     void _handleJoystick(const mavlink_message_t &message);
     void _handleUss(const mavlink_message_t &message);
+    void _handleBoatHeave(const mavlink_message_t &message);
 #ifndef QGC_NO_ARDUPILOT_DIALECT
     void _handleRangefinder(const mavlink_message_t &message);
 #endif
