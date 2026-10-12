@@ -1,0 +1,63 @@
+{
+    "version":              1,
+    "fileType":             "FactMetaData",
+    "QGC.MetaData.Facts":
+[
+{
+    "name":             "timestamp",
+    "shortDesc":        "Timestamp",
+    "type":             "uint64",
+    "units":            "us"
+},
+{
+    "name":             "bcm_active",
+    "shortDesc":        "BCM active warnings",
+    "type":             "uint32"
+},
+{
+    "name":             "bcm_stored",
+    "shortDesc":        "BCM stored warnings",
+    "type":             "uint32"
+},
+{
+    "name":             "bms_active",
+    "shortDesc":        "BMS active warnings",
+    "type":             "uint32"
+},
+{
+    "name":             "bms_stored",
+    "shortDesc":        "BMS stored warnings",
+    "type":             "uint32"
+},
+{
+    "name":             "inverter_active",
+    "shortDesc":        "Inverter active warnings",
+    "type":             "uint32"
+},
+{
+    "name":             "inverter_stored",
+    "shortDesc":        "Inverter stored warnings",
+    "type":             "uint32"
+},
+{
+    "name":             "dcdc_active",
+    "shortDesc":        "DC-DC active warnings",
+    "type":             "uint32"
+},
+{
+    "name":             "dcdc_stored",
+    "shortDesc":        "DC-DC stored warnings",
+    "type":             "uint32"
+},
+{
+    "name":             "isolator_active",
+    "shortDesc":        "Isolator active warnings",
+    "type":             "uint32"
+},
+{
+    "name":             "isolator_stored",
+    "shortDesc":        "Isolator stored warnings",
+    "type":             "uint32"
+}
+]
+}

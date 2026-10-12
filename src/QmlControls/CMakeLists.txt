@@ -103,6 +103,7 @@ qt_add_qml_module(QGroundControlControlsModule
         MissionCommandDialog.qml
         MissionItemIndexLabel.qml
         MvPanelPage.qml
+        NumericKeypad.qml
         OfflineMapButton.qml
         ParameterDiffDialog.qml
         ParameterEditor.qml

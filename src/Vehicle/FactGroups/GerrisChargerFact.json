@@ -1,0 +1,47 @@
+{
+    "version":              1,
+    "fileType":             "FactMetaData",
+    "QGC.MetaData.Facts":
+[
+{
+    "name":             "timestamp",
+    "shortDesc":        "Timestamp",
+    "type":             "uint64",
+    "units":            "us"
+},
+{
+    "name":             "on_request",
+    "shortDesc":        "Charger on request",
+    "type":             "uint8"
+},
+{
+    "name":             "on_state",
+    "shortDesc":        "Charger on state",
+    "type":             "uint8"
+},
+{
+    "name":             "actual_voltage_x10",
+    "shortDesc":        "Actual voltage",
+    "type":             "int16",
+    "units":            "V"
+},
+{
+    "name":             "set_voltage_x10",
+    "shortDesc":        "Set voltage",
+    "type":             "int16",
+    "units":            "V"
+},
+{
+    "name":             "actual_current_x10",
+    "shortDesc":        "Actual current",
+    "type":             "int16",
+    "units":            "A"
+},
+{
+    "name":             "set_current_x10",
+    "shortDesc":        "Set current",
+    "type":             "int16",
+    "units":            "A"
+}
+]
+}

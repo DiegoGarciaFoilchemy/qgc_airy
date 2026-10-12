@@ -170,7 +170,7 @@ void ParameterEditorController::_buildListsForComponent(int compId)
 {
     for (const QString& factName: _parameterMgr->parameterNames(compId)) {
         Fact* fact = _parameterMgr->getParameter(compId, factName);
-        if(fact->category() != QStringLiteral("Airy")) {
+        if((fact->category() != QStringLiteral("Airy")) && (fact->category() != QStringLiteral("Sim"))) {
             continue;
         }
         ParameterEditorCategory* category = nullptr;

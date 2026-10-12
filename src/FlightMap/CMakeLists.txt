@@ -36,6 +36,7 @@ qt_add_qml_module(FlightMapModule
         Widgets/QGCPitchIndicator.qml
         Widgets/VerticalCompassAttitude.qml
         Widgets/VesselSpeed.qml
+        Widgets/VesselPower.qml
         Widgets/VesselPitch.qml
         Widgets/VesselRoll.qml
         Widgets/FoilAngle.qml

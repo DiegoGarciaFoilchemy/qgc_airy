@@ -1,0 +1,64 @@
+{
+    "version":              1,
+    "fileType":             "FactMetaData",
+    "QGC.MetaData.Facts":
+[
+{
+    "name":             "timestamp",
+    "shortDesc":        "Timestamp",
+    "type":             "uint64",
+    "units":            "us"
+},
+{
+    "name":             "on_request",
+    "shortDesc":        "DC-DC on request",
+    "type":             "uint8"
+},
+{
+    "name":             "on_state",
+    "shortDesc":        "DC-DC on state",
+    "type":             "uint8"
+},
+{
+    "name":             "hv_voltage_x10",
+    "shortDesc":        "High-voltage side voltage",
+    "type":             "int16",
+    "units":            "V"
+},
+{
+    "name":             "hv_current_x10",
+    "shortDesc":        "High-voltage side current",
+    "type":             "int16",
+    "units":            "A"
+},
+{
+    "name":             "lv_voltage_x10",
+    "shortDesc":        "Low-voltage side voltage",
+    "type":             "int16",
+    "units":            "V"
+},
+{
+    "name":             "lv_current_x10",
+    "shortDesc":        "Low-voltage side current",
+    "type":             "int16",
+    "units":            "A"
+},
+{
+    "name":             "coolant_temp_x10",
+    "shortDesc":        "Coolant temperature",
+    "type":             "int16",
+    "units":            "°C"
+},
+{
+    "name":             "radiator_temp_x10",
+    "shortDesc":        "Radiator temperature",
+    "type":             "int16",
+    "units":            "°C"
+},
+{
+    "name":             "io_mask",
+    "shortDesc":        "DC-DC I/O mask",
+    "type":             "uint16"
+}
+]
+}

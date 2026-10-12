@@ -26,6 +26,20 @@ target_sources(${CMAKE_PROJECT_NAME}
         VehicleLocalPositionFactGroup.h
         VehicleLocalPositionSetpointFactGroup.cc
         VehicleLocalPositionSetpointFactGroup.h
+        VehicleGerrisBcmFactGroup.cc
+        VehicleGerrisBcmFactGroup.h
+        VehicleGerrisInverterFactGroup.cc
+        VehicleGerrisInverterFactGroup.h
+        VehicleGerrisDcdcFactGroup.cc
+        VehicleGerrisDcdcFactGroup.h
+        VehicleGerrisBmsFactGroup.cc
+        VehicleGerrisBmsFactGroup.h
+        VehicleGerrisChargerFactGroup.cc
+        VehicleGerrisChargerFactGroup.h
+        VehicleGerrisAlarmsFactGroup.cc
+        VehicleGerrisAlarmsFactGroup.h
+        VehicleGerrisWarningsFactGroup.cc
+        VehicleGerrisWarningsFactGroup.h
         // VehicleRPMFactGroup.cc
         // VehicleRPMFactGroup.h
         VehicleSetpointFactGroup.cc

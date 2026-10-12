@@ -1,0 +1,88 @@
+{
+    "version":              1,
+    "fileType":             "FactMetaData",
+    "QGC.MetaData.Facts":
+[
+{
+    "name":             "timestamp",
+    "shortDesc":        "Timestamp",
+    "type":             "uint64",
+    "units":            "us"
+},
+{
+    "name":             "status_word_1",
+    "shortDesc":        "BCM status word 1",
+    "type":             "uint16"
+},
+{
+    "name":             "status_word_2",
+    "shortDesc":        "BCM status word 2",
+    "type":             "uint16"
+},
+{
+    "name":             "temp_x10",
+    "shortDesc":        "BCM temperature",
+    "type":             "int16",
+    "units":            "°C"
+},
+{
+    "name":             "throttle",
+    "shortDesc":        "Calculated accelerator",
+    "type":             "uint8",
+    "units":            "%"
+},
+{
+    "name":             "services_battery_voltage_x10",
+    "shortDesc":        "Services battery voltage",
+    "type":             "int16",
+    "units":            "V"
+},
+{
+    "name":             "roll_x10",
+    "shortDesc":        "Roll angle",
+    "type":             "int16",
+    "units":            "deg"
+},
+{
+    "name":             "pitch_x10",
+    "shortDesc":        "Pitch angle",
+    "type":             "int16",
+    "units":            "deg"
+},
+{
+    "name":             "isolation_voltage_1",
+    "shortDesc":        "Isolation meter voltage 1",
+    "type":             "uint16",
+    "units":            "V"
+},
+{
+    "name":             "isolation_voltage_2",
+    "shortDesc":        "Isolation meter voltage 2",
+    "type":             "uint16",
+    "units":            "V"
+},
+{
+    "name":             "isolation_resistance",
+    "shortDesc":        "Insulation resistance",
+    "type":             "uint16",
+    "units":            "kOhm"
+},
+{
+    "name":             "isolation_alarm_threshold",
+    "shortDesc":        "Insulation resistance alarm threshold",
+    "type":             "uint16",
+    "units":            "kOhm"
+},
+{
+    "name":             "isolation_warning_threshold",
+    "shortDesc":        "Insulation resistance warning threshold",
+    "type":             "uint16",
+    "units":            "kOhm"
+},
+{
+    "name":             "io_mask",
+    "shortDesc":        "BCM I/O mask",
+    "type":             "uint16"
+}
+]
+}

@@ -1,0 +1,76 @@
+{
+    "version":              1,
+    "fileType":             "FactMetaData",
+    "QGC.MetaData.Facts":
+[
+{
+    "name":             "timestamp",
+    "shortDesc":        "Timestamp",
+    "type":             "uint64",
+    "units":            "us"
+},
+{
+    "name":             "on_request",
+    "shortDesc":        "Inverter on request",
+    "type":             "uint8"
+},
+{
+    "name":             "on_state",
+    "shortDesc":        "Inverter on state",
+    "type":             "uint8"
+},
+{
+    "name":             "aux_voltage_x10",
+    "shortDesc":        "Auxiliary voltage",
+    "type":             "int16",
+    "units":            "V"
+},
+{
+    "name":             "battery_voltage_x10",
+    "shortDesc":        "Battery voltage",
+    "type":             "int16",
+    "units":            "V"
+},
+{
+    "name":             "throttle",
+    "shortDesc":        "Accelerator",
+    "type":             "uint8",
+    "units":            "%"
+},
+{
+    "name":             "battery_current_x10",
+    "shortDesc":        "Battery current",
+    "type":             "int16",
+    "units":            "A"
+},
+{
+    "name":             "output_power_x100",
+    "shortDesc":        "Output power",
+    "type":             "int16",
+    "units":            "kW"
+},
+{
+    "name":             "board_temp_x10",
+    "shortDesc":        "Board temperature",
+    "type":             "int16",
+    "units":            "°C"
+},
+{
+    "name":             "motor_temp_x10",
+    "shortDesc":        "Motor temperature",
+    "type":             "int16",
+    "units":            "°C"
+},
+{
+    "name":             "motor_rpm",
+    "shortDesc":        "Motor speed",
+    "type":             "int16",
+    "units":            "rpm"
+},
+{
+    "name":             "io_mask",
+    "shortDesc":        "Inverter I/O mask",
+    "type":             "uint16"
+}
+]
+}

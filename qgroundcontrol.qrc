@@ -107,6 +107,13 @@
         <file alias="Vehicle/GeneratorFact.json">src/Vehicle/FactGroups/GeneratorFact.json</file>
         <file alias="Vehicle/EFIFact.json">src/Vehicle/FactGroups/EFIFact.json</file>
         <file alias="Vehicle/GimbalFact.json">src/Gimbal/GimbalFact.json</file>
+        <file alias="Vehicle/GerrisBcmFact.json">src/Vehicle/FactGroups/GerrisBcmFact.json</file>
+        <file alias="Vehicle/GerrisInverterFact.json">src/Vehicle/FactGroups/GerrisInverterFact.json</file>
+        <file alias="Vehicle/GerrisDcdcFact.json">src/Vehicle/FactGroups/GerrisDcdcFact.json</file>
+        <file alias="Vehicle/GerrisBmsFact.json">src/Vehicle/FactGroups/GerrisBmsFact.json</file>
+        <file alias="Vehicle/GerrisChargerFact.json">src/Vehicle/FactGroups/GerrisChargerFact.json</file>
+        <file alias="Vehicle/GerrisAlarmsFact.json">src/Vehicle/FactGroups/GerrisAlarmsFact.json</file>
+        <file alias="Vehicle/GerrisWarningsFact.json">src/Vehicle/FactGroups/GerrisWarningsFact.json</file>
         <file alias="Video.SettingsGroup.json">src/Settings/Video.SettingsGroup.json</file>
         <file alias="VTOLLandingPattern.FactMetaData.json">src/MissionManager/VTOLLandingPattern.FactMetaData.json</file>
         <file alias="Viewer3D.SettingsGroup.json">src/Settings/Viewer3D.SettingsGroup.json</file>

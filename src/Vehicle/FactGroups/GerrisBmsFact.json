@@ -1,0 +1,64 @@
+{
+    "version":              1,
+    "fileType":             "FactMetaData",
+    "QGC.MetaData.Facts":
+[
+{
+    "name":             "timestamp",
+    "shortDesc":        "Timestamp",
+    "type":             "uint64",
+    "units":            "us"
+},
+{
+    "name":             "on_request",
+    "shortDesc":        "BMS on request",
+    "type":             "uint8"
+},
+{
+    "name":             "on_state",
+    "shortDesc":        "BMS on state",
+    "type":             "uint8"
+},
+{
+    "name":             "battery_voltage_x10",
+    "shortDesc":        "Battery voltage",
+    "type":             "int16",
+    "units":            "V"
+},
+{
+    "name":             "battery_current_x10",
+    "shortDesc":        "Battery current",
+    "type":             "int16",
+    "units":            "A"
+},
+{
+    "name":             "max_discharge_current_x10",
+    "shortDesc":        "Max discharge current",
+    "type":             "int16",
+    "units":            "A"
+},
+{
+    "name":             "max_charge_current_x10",
+    "shortDesc":        "Max charge current",
+    "type":             "int16",
+    "units":            "A"
+},
+{
+    "name":             "soc_x10",
+    "shortDesc":        "State of charge",
+    "type":             "int16",
+    "units":            "%"
+},
+{
+    "name":             "soh_x10",
+    "shortDesc":        "State of health",
+    "type":             "int16",
+    "units":            "%"
+},
+{
+    "name":             "io_mask",
+    "shortDesc":        "BMS I/O mask",
+    "type":             "uint16"
+}
+]
+}

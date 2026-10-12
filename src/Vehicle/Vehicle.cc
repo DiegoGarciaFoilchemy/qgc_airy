@@ -110,6 +110,13 @@ Vehicle::Vehicle(LinkInterface*             link,
     , _distanceSensorFactGroup      (this)
     , _localPositionFactGroup       (this)
     , _localPositionSetpointFactGroup(this)
+    , _gerrisBcmFactGroup           (this)
+    , _gerrisInverterFactGroup      (this)
+    , _gerrisDcdcFactGroup          (this)
+    , _gerrisBmsFactGroup           (this)
+    , _gerrisChargerFactGroup       (this)
+    , _gerrisAlarmsFactGroup        (this)
+    , _gerrisWarningsFactGroup      (this)
     // , _escStatusFactGroup           (this)
     // , _estimatorStatusFactGroup     (this)
     // , _hygrometerFactGroup          (this)
@@ -219,6 +226,13 @@ Vehicle::Vehicle(MAV_AUTOPILOT              firmwareType,
     , _distanceSensorFactGroup          (this)
     , _localPositionFactGroup           (this)
     , _localPositionSetpointFactGroup   (this)
+    , _gerrisBcmFactGroup               (this)
+    , _gerrisInverterFactGroup          (this)
+    , _gerrisDcdcFactGroup              (this)
+    , _gerrisBmsFactGroup               (this)
+    , _gerrisChargerFactGroup           (this)
+    , _gerrisAlarmsFactGroup            (this)
+    , _gerrisWarningsFactGroup          (this)
 {
     // This will also set the settings based firmware/vehicle types. So it needs to happen first.
     if (_firmwareType == MAV_AUTOPILOT_TRACK) {
@@ -331,6 +345,13 @@ void Vehicle::_commonInit()
     _addFactGroup(&_distanceSensorFactGroup,    _distanceSensorFactGroupName);
     _addFactGroup(&_localPositionFactGroup,     _localPositionFactGroupName);
     _addFactGroup(&_localPositionSetpointFactGroup,_localPositionSetpointFactGroupName);
+    _addFactGroup(&_gerrisBcmFactGroup,         _gerrisBcmFactGroupName);
+    _addFactGroup(&_gerrisInverterFactGroup,    _gerrisInverterFactGroupName);
+    _addFactGroup(&_gerrisDcdcFactGroup,        _gerrisDcdcFactGroupName);
+    _addFactGroup(&_gerrisBmsFactGroup,         _gerrisBmsFactGroupName);
+    _addFactGroup(&_gerrisChargerFactGroup,     _gerrisChargerFactGroupName);
+    _addFactGroup(&_gerrisAlarmsFactGroup,      _gerrisAlarmsFactGroupName);
+    _addFactGroup(&_gerrisWarningsFactGroup,    _gerrisWarningsFactGroupName);
     // _addFactGroup(&_escStatusFactGroup,         _escStatusFactGroupName);
     // _addFactGroup(&_estimatorStatusFactGroup,   _estimatorStatusFactGroupName);
     // _addFactGroup(&_hygrometerFactGroup,        _hygrometerFactGroupName);

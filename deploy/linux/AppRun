@@ -17,6 +17,13 @@ export GST_PLUGIN_SYSTEM_PATH="${APPDIR}/usr/lib/gstreamer-1.0"
 export GST_PLUGIN_PATH_1_0="${APPDIR}/usr/lib/gstreamer-1.0"
 export GST_PLUGIN_PATH="${APPDIR}/usr/lib/gstreamer-1.0"
 
-# export QT_QPA_PLATFORM="wayland;xcb"
+# Run on X11 (xcb): X11 on-screen keyboards such as onboard cannot attach to
+# Wayland clients, so force the X11 platform plugin.
+export QT_QPA_PLATFORM="xcb"
+
+# Always enable Qt accessibility on Linux. Without this Qt apps do not emit the
+# AT-SPI focus events that the system on-screen keyboard (onboard) relies on,
+# so the keyboard never appears when a QGC text field gets focus.
+export QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1
 
 exec "${APPDIR}/usr/bin/QGroundControl" "$@"

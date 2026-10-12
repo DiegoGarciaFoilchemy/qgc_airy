@@ -40,7 +40,7 @@ Item {
     // Properties of UTM adapter
     property bool utmspSendActTrigger: false
     // Page names for navigation
-    property var pageNames: ["OVERVIEW", "FREEBOARD", "ACTUATOR", "STATUS"]
+    property var pageNames: ["OVERVIEW", "FREEBOARD", "STATUS", "POWERTRAIN"]
     // PlanMasterController {
     //     id:                     _planController
     //     flyView:                true
@@ -142,8 +142,8 @@ Item {
 
                 Page1 { width: screenSwipeView.width; height: screenSwipeView.height }
                 Page2 { width: screenSwipeView.width; height: screenSwipeView.height }
-                Page3 { width: screenSwipeView.width; height: screenSwipeView.height }
                 Page4 { width: screenSwipeView.width; height: screenSwipeView.height }
+                Page3 { width: screenSwipeView.width; height: screenSwipeView.height }
                 // Page5 { width: screenSwipeView.width; height: screenSwipeView.height }
             }
             // QGCToolBarButton {

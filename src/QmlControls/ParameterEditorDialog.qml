@@ -148,6 +148,11 @@ QGCPopupDialog {
                     close()
                 }
             }
+        } // editRow
+
+        NumericKeypad {
+            textField:          valueField
+            visible:            valueField.visible
         }
 
         Column {

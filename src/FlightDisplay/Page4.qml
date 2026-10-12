@@ -21,6 +21,7 @@ Item {
     /// HEAVE_SP_2 parameter fact. Fetched lazily because no vehicle (and hence
     /// no parameter list) is available yet when this page is created at startup.
     property Fact _heaveSp2Fact: null
+    property Fact _pitchSp2Fact: null
     property Fact _simAngleFact: null
     property Fact _bowPsFact:    null   // SIM_BOW_PS
     property Fact _bowSbFact:    null   // SIM_BOW_SB
@@ -41,6 +42,11 @@ Item {
     property real _heaveStepMeters: 0.05
     property real _heaveMinMeters:  0.0
     property real _heaveMaxMeters:  0.5
+
+    /// Pitch setpoint limits/step (in degrees)
+    property real _pitchStepDegrees: 0.1
+    property real _pitchMinDegrees:  -10.0
+    property real _pitchMaxDegrees:  10.0
 
     Component {
         id: factControllerComponent
@@ -64,6 +70,7 @@ Item {
 
     function _fetchFacts() {
         _heaveSp2Fact = _fetchParameterFact("HEAVE_SP_2")
+        _pitchSp2Fact = _fetchParameterFact("PITCH_SP_2")
         _simAngleFact = _fetchParameterFact("SIM_ANGLE")
         _bowPsFact    = _fetchParameterFact("SIM_BOW_PS")
         _bowSbFact    = _fetchParameterFact("SIM_BOW_SB")
@@ -98,6 +105,22 @@ Item {
             newValue = _heaveMinMeters
         }
         _heaveSp2Fact.value = newValue   // triggers PARAM_SET to vehicle
+    }
+
+    // Adjust the pitch setpoint by delta (degrees), clamped to [_pitchMinDegrees, _pitchMaxDegrees].
+    function _adjustPitch(deltaDegrees) {
+        if (!_pitchSp2Fact) {
+            return
+        }
+        var newValue = Number(_pitchSp2Fact.rawValue) + deltaDegrees
+        // Round to 2 decimals to avoid floating point accumulation errors
+        newValue = Math.round(newValue * 100) / 100
+        if (newValue > _pitchMaxDegrees) {
+            newValue = _pitchMaxDegrees
+        } else if (newValue < _pitchMinDegrees) {
+            newValue = _pitchMinDegrees
+        }
+        _pitchSp2Fact.value = newValue   // triggers PARAM_SET to vehicle
     }
 
     // Toggle SIM_ANGLE between 0 and 1
@@ -361,7 +384,7 @@ Item {
         }
     }
 
-    // Heave setpoint controls, placed right of the Manual foil control button
+    // Heave setpoint controls, placed right of the Reboot FCU button
     Rectangle {
         id: heaveDownButton
         width: 140
@@ -372,7 +395,7 @@ Item {
         border.color: "#ffffff"
         border.width: 1
         anchors {
-            left: manualFoilButton.right
+            left: topLeftButton.right
             top: topLeftButton.top
             leftMargin: 12
         }
@@ -434,10 +457,83 @@ Item {
         font.pixelSize: 16
     }
 
-    // Manual foil control toggle, right of the Reboot FCU button
+    // Pitch setpoint controls, placed just below the heave controls
+    Rectangle {
+        id: pitchDownButton
+        width: 140
+        height: 60
+        opacity: (vehicle && _pitchSp2Fact) ? 1.0 : 0.45
+        radius: 4
+        color: "#2f2f2f"
+        border.color: "#ffffff"
+        border.width: 1
+        anchors {
+            left: heaveDownButton.left
+            top: heaveDownButton.bottom
+            topMargin: 12
+        }
+
+        Text {
+            anchors.centerIn: parent
+            text: "Pitch -0.1°"
+            color: "white"
+            font.pixelSize: 16
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            enabled: !!vehicle && !!_pitchSp2Fact
+            onClicked: _adjustPitch(-_pitchStepDegrees)
+        }
+    }
+
+    Rectangle {
+        id: pitchUpButton
+        width: 140
+        height: 60
+        opacity: (vehicle && _pitchSp2Fact) ? 1.0 : 0.45
+        radius: 4
+        color: "#2f2f2f"
+        border.color: "#ffffff"
+        border.width: 1
+        anchors {
+            left: pitchDownButton.right
+            top: heaveDownButton.bottom
+            leftMargin: 12
+            topMargin: 12
+        }
+
+        Text {
+            anchors.centerIn: parent
+            text: "Pitch +0.1°"
+            color: "white"
+            font.pixelSize: 16
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            enabled: !!vehicle && !!_pitchSp2Fact
+            onClicked: _adjustPitch(_pitchStepDegrees)
+        }
+    }
+
+    // Current PITCH_SP_2 value, right of both pitch buttons
+    Text {
+        anchors {
+            left: pitchUpButton.right
+            verticalCenter: pitchDownButton.verticalCenter
+            leftMargin: 16
+        }
+        text: _pitchSp2Fact ? ("Pitch Target: " + Number(_pitchSp2Fact.rawValue).toFixed(1) + "°")
+                            : "Pitch Target: N/A"
+        color: "white"
+        font.pixelSize: 16
+    }
+
+    // Manual foil control toggle, below the Reboot FCU button
     Rectangle {
         id: manualFoilButton
-        width: 200
+        width: 140
         height: 60
         opacity: (vehicle && _simAngleFact) ? 1.0 : 0.45
         radius: 4
@@ -445,16 +541,16 @@ Item {
         border.color: "#ffffff"
         border.width: 1
         anchors {
-            left: topLeftButton.right
-            top: topLeftButton.top
-            leftMargin: 12
+            left: topLeftButton.left
+            top: topLeftButton.bottom
+            topMargin: 12
         }
 
         Text {
             anchors.centerIn: parent
             text: "Manual foil control"
             color: "white"
-            font.pixelSize: 16
+            font.pixelSize: 13
         }
 
         MouseArea {
@@ -514,12 +610,12 @@ Item {
         }
     }
 
-    // Foil angle controls, below the top button row
+    // Foil angle controls, below the pitch button row
     Column {
         id: foilSlidersColumn
         anchors {
             horizontalCenter: parent.horizontalCenter
-            top: topLeftButton.bottom
+            top: pitchDownButton.bottom
             topMargin: 20
         }
         spacing: 16

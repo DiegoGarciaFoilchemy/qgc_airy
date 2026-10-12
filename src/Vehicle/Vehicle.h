@@ -44,6 +44,13 @@
 #include "VehicleTemperatureFactGroup.h"
 #include "VehicleVibrationFactGroup.h"
 #include "VehicleWindFactGroup.h"
+#include "VehicleGerrisBcmFactGroup.h"
+#include "VehicleGerrisInverterFactGroup.h"
+#include "VehicleGerrisDcdcFactGroup.h"
+#include "VehicleGerrisBmsFactGroup.h"
+#include "VehicleGerrisChargerFactGroup.h"
+#include "VehicleGerrisAlarmsFactGroup.h"
+#include "VehicleGerrisWarningsFactGroup.h"
 #include "GimbalController.h"
 
 class Actuators;
@@ -1248,6 +1255,13 @@ private:
     const QString _distanceSensorFactGroupName =     QStringLiteral("distanceSensor");
     const QString _localPositionFactGroupName =      QStringLiteral("localPosition");
     const QString _localPositionSetpointFactGroupName = QStringLiteral("localPositionSetpoint");
+    const QString _gerrisBcmFactGroupName =          QStringLiteral("gerrisBcm");
+    const QString _gerrisInverterFactGroupName =     QStringLiteral("gerrisInverter");
+    const QString _gerrisDcdcFactGroupName =         QStringLiteral("gerrisDcdc");
+    const QString _gerrisBmsFactGroupName =          QStringLiteral("gerrisBms");
+    const QString _gerrisChargerFactGroupName =      QStringLiteral("gerrisCharger");
+    const QString _gerrisAlarmsFactGroupName =       QStringLiteral("gerrisAlarms");
+    const QString _gerrisWarningsFactGroupName =     QStringLiteral("gerrisWarnings");
     // const QString _escStatusFactGroupName =          QStringLiteral("escStatus");
     // const QString _estimatorStatusFactGroupName =    QStringLiteral("estimatorStatus");
     // const QString _terrainFactGroupName =            QStringLiteral("terrain");
@@ -1267,6 +1281,13 @@ private:
     VehicleDistanceSensorFactGroup  _distanceSensorFactGroup;
     VehicleLocalPositionFactGroup   _localPositionFactGroup;
     VehicleLocalPositionSetpointFactGroup _localPositionSetpointFactGroup;
+    VehicleGerrisBcmFactGroup       _gerrisBcmFactGroup;
+    VehicleGerrisInverterFactGroup  _gerrisInverterFactGroup;
+    VehicleGerrisDcdcFactGroup      _gerrisDcdcFactGroup;
+    VehicleGerrisBmsFactGroup       _gerrisBmsFactGroup;
+    VehicleGerrisChargerFactGroup   _gerrisChargerFactGroup;
+    VehicleGerrisAlarmsFactGroup    _gerrisAlarmsFactGroup;
+    VehicleGerrisWarningsFactGroup  _gerrisWarningsFactGroup;
     // VehicleEscStatusFactGroup       _escStatusFactGroup;
     // VehicleEstimatorStatusFactGroup _estimatorStatusFactGroup;
     // VehicleHygrometerFactGroup      _hygrometerFactGroup;

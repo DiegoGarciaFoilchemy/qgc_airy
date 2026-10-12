@@ -68,6 +68,12 @@ cmake --build build --config Debug
 QT_QPA_PLATFORM=xcb ./build/Debug/QGroundControl
 ```
 )
+
+To get the on-screen keyboard (onboard) to appear when a text field is focused, run with Qt accessibility forced on:
+```
+QT_QPA_PLATFORM=xcb QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1 ./build/Debug/QGroundControl
+```
+(Requires `onboard` installed and its "auto-show when editing text" option enabled. `QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1` makes Qt emit the AT-SPI focus events that onboard listens for.)
 // vuild for deploy
 cmake --install . --config Release 
 // add kiok to apprun file
