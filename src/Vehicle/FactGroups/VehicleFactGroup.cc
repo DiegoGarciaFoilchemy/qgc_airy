@@ -176,6 +176,9 @@ void VehicleFactGroup::handleMessage(Vehicle *vehicle, const mavlink_message_t &
     case MAVLINK_MSG_ID_BOAT_SPEED:
         _handleBoatSpeed(message);
         break;
+    case MAVLINK_MSG_ID_BOAT_STATE:
+        _handleBoatState(message);
+        break;
     case MAVLINK_MSG_ID_BOAT_SETPOINT:
         _handleBoatSetpoint(message);
         break;
@@ -489,7 +492,7 @@ void VehicleFactGroup::_handleMarsunControlState(const mavlink_message_t &messag
 
     bowHeight()->setRawValue(msg.bow_freeboard);
     estimatedDisplacement()->setRawValue(msg.average_freeboard);
-    controlMode()->setRawValue(msg.control_mode);
+    // controlMode()->setRawValue(msg.control_mode);
     attitudeState()->setRawValue(msg.attitude_state);
     heaveState()->setRawValue(msg.heave_state);
     speedState()->setRawValue(msg.speed_state);
@@ -501,8 +504,8 @@ void VehicleFactGroup::_handleMarsunControlState(const mavlink_message_t &messag
     commandMainPs()->setRawValue(msg.aoa_main_ps);
     commandInterSb()->setRawValue(msg.interceptor_sb);
     commandInterPs()->setRawValue(msg.interceptor_ps);
-    followingSeas()->setRawValue(msg.following_seas);
-    waveState()->setRawValue(msg.wave_state);
+    // followingSeas()->setRawValue(msg.following_seas);
+    // waveState()->setRawValue(msg.wave_state);
     _setTelemetryAvailable(true);
 }
 
@@ -527,6 +530,15 @@ void VehicleFactGroup::_handleBoatSpeed(const mavlink_message_t &message)
 
     groundSpeed()->setRawValue(msg.control_speed);
     speedState()->setRawValue(msg.state);
+    _setTelemetryAvailable(true);
+}
+void VehicleFactGroup::_handleBoatState(const mavlink_message_t &message)
+{
+    mavlink_boat_state_t msg{};
+    mavlink_msg_boat_state_decode(&message, &msg);
+    controlMode()->setRawValue(msg.mode);
+    followingSeas()->setRawValue(msg.following_seas);
+    waveState()->setRawValue(msg.wave_state);
     _setTelemetryAvailable(true);
 }
 

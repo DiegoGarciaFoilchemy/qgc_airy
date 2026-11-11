@@ -1669,7 +1669,7 @@ void Vehicle::followingSeasOn(void)
     if(current_state == 0) {
         new_state = 1.0f;
     } else if (current_state == 1) {
-        new_state = 2.0f;
+        new_state = 0.0f;
     } else {
         new_state = 0.0f;
     }

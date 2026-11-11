@@ -267,6 +267,7 @@ protected:
     void _handleMarsunControlState(const mavlink_message_t &message);
     void _handleAccumulator(const mavlink_message_t &message);
     void _handleBoatSpeed(const mavlink_message_t &message);
+    void _handleBoatState(const mavlink_message_t &message);
     void _handleBoatSetpoint(const mavlink_message_t &message);
     void _handleJoystick(const mavlink_message_t &message);
     void _handleUss(const mavlink_message_t &message);
