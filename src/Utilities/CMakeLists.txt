@@ -10,6 +10,8 @@ target_sources(${CMAKE_PROJECT_NAME}
         FileSystem/QGCFileDownload.h
         QGC.cc
         QGC.h
+        QGCClock.cc
+        QGCClock.h
         QGCLogging.cc
         QGCLogging.h
         QGCLoggingCategory.cc
@@ -42,7 +44,6 @@ target_include_directories(${CMAKE_PROJECT_NAME}
 
 #===========================================================================#
 
-add_subdirectory(Audio)
 add_subdirectory(Compression)
 add_subdirectory(Geo)
 add_subdirectory(Shape)

@@ -20,7 +20,6 @@
 
 class MissionItem;
 class PlanMasterController;
-class TerrainAtCoordinateQuery;
 class Vehicle;
 
 // Abstract base class for all Simple and Complex visual mission objects.
@@ -281,14 +280,10 @@ protected:
 private slots:
     void _updateTerrainAltitude (void);
     void _reallyUpdateTerrainAltitude (void);
-    void _terrainDataReceived   (bool success, QList<double> heights);
 
 private:
     void _commonInit(void);
 
     QTimer                      _updateTerrainTimer;
-    TerrainAtCoordinateQuery*   _currentTerrainAtCoordinateQuery = nullptr;
 
-    double _lastLatTerrainQuery = 0;
-    double _lastLonTerrainQuery = 0;
 };

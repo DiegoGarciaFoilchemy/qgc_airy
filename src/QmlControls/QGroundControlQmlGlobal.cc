@@ -15,11 +15,8 @@
 #include "MAVLinkProtocol.h"
 #include "FirmwarePluginManager.h"
 #include "AppSettings.h"
-#include "FlightMapSettings.h"
 #include "SettingsManager.h"
 #include "PositionManager.h"
-#include "QGCMapEngineManager.h"
-#include "ADSBVehicleManager.h"
 #include "MissionCommandTree.h"
 #include "HorizontalFactValueGrid.h"
 #include "FlightPathSegment.h"
@@ -39,10 +36,8 @@
 #include "QGCPalette.h"
 #include "QmlObjectListModel.h"
 #include "RCToParamDialogController.h"
-#include "TerrainProfile.h"
 #include "ToolStripAction.h"
 #include "ToolStripActionList.h"
-#include "VideoManager.h"
 #include "MultiVehicleManager.h"
 #include "QGCLoggingCategory.h"
 #ifndef QGC_NO_SERIAL_LINK
@@ -105,7 +100,6 @@ void QGroundControlQmlGlobal::registerQmlTypes()
     qmlRegisterType<RCChannelMonitorController>         ("QGroundControl.Controllers",           1, 0, "RCChannelMonitorController");
     qmlRegisterType<RCToParamDialogController>          ("QGroundControl.Controllers",           1, 0, "RCToParamDialogController");
     qmlRegisterType<ScreenToolsController>              ("QGroundControl.Controllers",           1, 0, "ScreenToolsController");
-    qmlRegisterType<TerrainProfile>                     ("QGroundControl.Controls",              1, 0, "TerrainProfile");
     qmlRegisterType<ToolStripAction>                    ("QGroundControl.Controls",              1, 0, "ToolStripAction");
     qmlRegisterType<ToolStripActionList>                ("QGroundControl.Controls",              1, 0, "ToolStripActionList");
 
@@ -116,11 +110,8 @@ void QGroundControlQmlGlobal::registerQmlTypes()
 
 QGroundControlQmlGlobal::QGroundControlQmlGlobal(QObject *parent)
     : QObject(parent)
-    , _mapEngineManager(QGCMapEngineManager::instance())
-    , _adsbVehicleManager(ADSBVehicleManager::instance())
     , _qgcPositionManager(QGCPositionManager::instance())
     , _missionCommandTree(MissionCommandTree::instance())
-    , _videoManager(VideoManager::instance())
     , _linkManager(LinkManager::instance())
     , _multiVehicleManager(MultiVehicleManager::instance())
     , _settingsManager(SettingsManager::instance())
@@ -385,16 +376,6 @@ QString QGroundControlQmlGlobal::altitudeModeShortDescription(AltMode altMode)
 
     // Should never get here but makes some compilers happy
     return QString();
-}
-
-QString QGroundControlQmlGlobal::elevationProviderName()
-{
-    return _settingsManager->flightMapSettings()->elevationMapProvider()->rawValue().toString();
-}
-
-QString QGroundControlQmlGlobal::elevationProviderNotice()
-{
-    return _settingsManager->flightMapSettings()->elevationMapProvider()->rawValue().toString();
 }
 
 QString QGroundControlQmlGlobal::parameterFileExtension() const

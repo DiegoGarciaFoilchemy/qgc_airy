@@ -13,11 +13,9 @@
 #include "GenericAutoPilotPlugin.h"
 #include "MAVLinkProtocol.h"
 #include "QGCApplication.h"
-#include "QGCCameraManager.h"
 #include "QGCFileDownload.h"
 #include "QGCLoggingCategory.h"
 #include "RadioComponentController.h"
-#include "VehicleCameraControl.h"
 #include "VehicleComponent.h"
 
 #include <QtCore/QRegularExpression>
@@ -309,15 +307,6 @@ bool FirmwarePlugin::hasGimbal(Vehicle *vehicle, bool &rollSupported, bool &pitc
     return false;
 }
 
-QGCCameraManager *FirmwarePlugin::createCameraManager(Vehicle *vehicle) const
-{
-    return new QGCCameraManager(vehicle);
-}
-
-MavlinkCameraControl *FirmwarePlugin::createCameraControl(const mavlink_camera_information_t *info, Vehicle *vehicle, int compID, QObject *parent) const
-{
-    return new VehicleCameraControl(info, vehicle, compID, parent);
-}
 
 void FirmwarePlugin::checkIfIsLatestStable(Vehicle *vehicle) const
 {
@@ -414,37 +403,6 @@ int FirmwarePlugin::versionCompare(const Vehicle *vehicle, const QString &compar
     const int patch = versionNumbers[2].toInt();
 
     return versionCompare(vehicle, major, minor, patch);
-}
-
-void FirmwarePlugin::sendGCSMotionReport(Vehicle *vehicle, const FollowMe::GCSMotionReport &motionReport, uint8_t estimationCapabilities) const
-{
-    SharedLinkInterfacePtr sharedLink = vehicle->vehicleLinkManager()->primaryLink().lock();
-    if (!sharedLink) {
-        return;
-    }
-
-    mavlink_follow_target_t follow_target{};
-
-    follow_target.timestamp = qgcApp()->msecsSinceBoot();
-    follow_target.est_capabilities = estimationCapabilities;
-    follow_target.position_cov[0] = static_cast<float>(motionReport.pos_std_dev[0]);
-    follow_target.position_cov[2] = static_cast<float>(motionReport.pos_std_dev[2]);
-    follow_target.alt = static_cast<float>(motionReport.altMetersAMSL);
-    follow_target.lat = motionReport.lat_int;
-    follow_target.lon = motionReport.lon_int;
-    follow_target.vel[0] = static_cast<float>(motionReport.vxMetersPerSec);
-    follow_target.vel[1] = static_cast<float>(motionReport.vyMetersPerSec);
-
-    mavlink_message_t message{};
-    mavlink_msg_follow_target_encode_chan(
-        static_cast<uint8_t>(MAVLinkProtocol::instance()->getSystemId()),
-        static_cast<uint8_t>(MAVLinkProtocol::getComponentId()),
-        sharedLink->mavlinkChannel(),
-        &message,
-        &follow_target
-    );
-
-    (void) vehicle->sendMessageOnLinkThreadSafe(sharedLink.get(), message);
 }
 
 Autotune *FirmwarePlugin::createAutotune(Vehicle *vehicle) const

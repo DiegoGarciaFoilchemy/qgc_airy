@@ -111,6 +111,8 @@ private:
 
     void _saveTelemetryLog(const QString &tempLogfile);
     bool _checkTelemetrySavePath();
+    bool _rotateLogFileIfNeeded();
+    void _pruneTelemetryLogs(const QString &saveDirPath);
 
     QGCTemporaryFile * const _tempLogFile = nullptr;
 
@@ -131,4 +133,11 @@ private:
     static constexpr const char *_logFileExtension = "mavlink";             ///< Extension for log files
 
     static constexpr uint8_t kMaxCompId = MAV_COMPONENT_ENUM_END - 1;
+
+    /// A temporary log rotates at this size. The temporary directory is a RAM disk on
+    /// write protected machines, so a long session must not fill it.
+    static constexpr qint64 kMaxTempLogSize = 16LL * 1024 * 1024;
+
+    /// Total size kept for saved telemetry logs in the telemetry directory.
+    static constexpr qint64 kMaxSavedTelemetryLogsSize = 64LL * 1024 * 1024;
 };

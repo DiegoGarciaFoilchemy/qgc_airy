@@ -8,7 +8,6 @@
  ****************************************************************************/
 
 #include "VisualMissionItem.h"
-#include "TerrainQuery.h"
 #include "PlanMasterController.h"
 #include "Vehicle.h"
 #include "QGC.h"
@@ -182,27 +181,7 @@ void VisualMissionItem::_updateTerrainAltitude(void)
 
 void VisualMissionItem::_reallyUpdateTerrainAltitude(void)
 {
-    QGeoCoordinate coord = coordinate();
-    if (specifiesCoordinate() && coord.isValid() && (qIsNaN(_terrainAltitude) || !QGC::fuzzyCompare(_lastLatTerrainQuery, coord.latitude()) || !QGC::fuzzyCompare(_lastLonTerrainQuery, coord.longitude()))) {
-        _lastLatTerrainQuery = coord.latitude();
-        _lastLonTerrainQuery = coord.longitude();
-        if (_currentTerrainAtCoordinateQuery) {
-            disconnect(_currentTerrainAtCoordinateQuery, &TerrainAtCoordinateQuery::terrainDataReceived, this, &VisualMissionItem::_terrainDataReceived);
-            _currentTerrainAtCoordinateQuery = nullptr;
-        }
-        _currentTerrainAtCoordinateQuery = new TerrainAtCoordinateQuery(true /* autoDelet */);
-        connect(_currentTerrainAtCoordinateQuery, &TerrainAtCoordinateQuery::terrainDataReceived, this, &VisualMissionItem::_terrainDataReceived);
-        QList<QGeoCoordinate> rgCoord;
-        rgCoord.append(coordinate());
-        _currentTerrainAtCoordinateQuery->requestData(rgCoord);
-    }
-}
-
-void VisualMissionItem::_terrainDataReceived(bool success, QList<double> heights)
-{
-    _terrainAltitude = success ? heights[0] : qQNaN();
-    emit terrainAltitudeChanged(_terrainAltitude);
-    _currentTerrainAtCoordinateQuery = nullptr;
+    // Terrain data is not available in this build. The altitude stays NaN.
 }
 
 void VisualMissionItem::_setBoundingCube(QGCGeoBoundingCube bc)

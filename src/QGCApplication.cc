@@ -35,16 +35,11 @@
 #include <QtCore/private/qthread_p.h>
 
 #include "QGCLogging.h"
-#include "AudioOutput.h"
 #include "AutoPilotPlugin.h"
 #include "CmdLineOptParser.h"
 #include "ESP8266ComponentController.h"
-#include "FollowMe.h"
 #include "GeoTagController.h"
-#include "GimbalController.h"
 #include "GPSRtk.h"
-#include "JoystickConfigController.h"
-#include "JoystickManager.h"
 #include "JsonHelper.h"
 #include "LinkManager.h"
 #include "LogDownloadController.h"
@@ -55,20 +50,19 @@
 #include "MultiVehicleManager.h"
 #include "ParameterManager.h"
 #include "PositionManager.h"
-#include "QGCCameraManager.h"
 #include "QGCCorePlugin.h"
 #include "QGCFileDownload.h"
 #include "QGCImageProvider.h"
 #include "QGCLoggingCategory.h"
 #include "QGroundControlQmlGlobal.h"
 #include "SettingsManager.h"
+#include "QGCClock.h"
 #include "AppSettings.h"
 #include "ShapeFileHelper.h"
 #include "SyslinkComponentController.h"
 #include "UDPLink.h"
 #include "Vehicle.h"
 #include "VehicleComponent.h"
-#include "VideoManager.h"
 
 #ifndef QGC_DISABLE_MAVLINK_INSPECTOR
 #include "MAVLinkInspectorController.h"
@@ -257,24 +251,20 @@ QGCApplication::~QGCApplication()
 void QGCApplication::init()
 {
     SettingsManager::instance()->init();
+    QGCClock::instance()->init();
 
     LinkManager::registerQmlTypes();
     ParameterManager::registerQmlTypes();
     QGroundControlQmlGlobal::registerQmlTypes();
     MissionManager::registerQmlTypes();
-    QGCCameraManager::registerQmlTypes();
     MultiVehicleManager::registerQmlTypes();
-    QGCPositionManager::registerQmlTypes();
     SettingsManager::registerQmlTypes();
-    // VideoManager::registerQmlTypes();
     QGCCorePlugin::registerQmlTypes();
     GPSRtk::registerQmlTypes();
-    JoystickManager::registerQmlTypes();
 #ifdef QGC_VIEWER3D
     Viewer3DManager::registerQmlTypes();
 #endif
 
-    qmlRegisterUncreatableType<GimbalController>("QGroundControl.Vehicle", 1, 0, "GimbalController", "Reference only");
 
 #ifndef QGC_DISABLE_MAVLINK_INSPECTOR
     qmlRegisterUncreatableType<MAVLinkChartController>("QGroundControl", 1, 0, "MAVLinkChart", "Reference only");
@@ -294,7 +284,6 @@ void QGCApplication::init()
 #ifndef QGC_NO_SERIAL_LINK
     qmlRegisterType<FirmwareUpgradeController>("QGroundControl.Controllers", 1, 0, "FirmwareUpgradeController");
 #endif
-    qmlRegisterType<JoystickConfigController>("QGroundControl.Controllers", 1, 0, "JoystickConfigController");
 
     (void) qmlRegisterSingletonType<ShapeFileHelper>("QGroundControl.ShapeFileHelper", 1, 0, "ShapeFileHelper", [](QQmlEngine *, QJSEngine *) { return new ShapeFileHelper(); });
 
@@ -325,9 +314,7 @@ void QGCApplication::_initVideo()
     QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
 #endif
 
-    QGCCorePlugin::instance();  // CorePlugin must be initialized before VideoManager for Video Cleanup
-    // VideoManager::instance();
-    _videoManagerInitialized = true;
+    QGCCorePlugin::instance();
 }
 
 void QGCApplication::_initForNormalAppBoot()
@@ -342,11 +329,8 @@ void QGCApplication::_initForNormalAppBoot()
     QObject::connect(_qmlAppEngine, &QQmlApplicationEngine::objectCreationFailed, this, QCoreApplication::quit, Qt::QueuedConnection);
     QGCCorePlugin::instance()->createRootWindow(_qmlAppEngine);
 
-    AudioOutput::instance()->init(SettingsManager::instance()->appSettings()->audioMuted());
-    FollowMe::instance()->init();
     QGCPositionManager::instance()->init();
     LinkManager::instance()->init();
-    // VideoManager::instance()->init(mainRootWindow());
 
     // Image provider for Optical Flow
     _qmlAppEngine->addImageProvider(_qgcImageProviderId, new QGCImageProvider());
@@ -387,8 +371,6 @@ void QGCApplication::_initForNormalAppBoot()
     // Load known link configurations
     LinkManager::instance()->loadLinkConfigurationList();
 
-    // Probe for joysticks
-    JoystickManager::instance()->init();
 
     if (_settingsUpgraded) {
         showAppMessage(tr("The format for %1 saved settings has been modified. "
@@ -741,10 +723,6 @@ QGCImageProvider *QGCApplication::qgcImageProvider()
 void QGCApplication::shutdown()
 {
     qCDebug(QGCApplicationLog) << "Exit";
-
-    if (_videoManagerInitialized) {
-        VideoManager::instance()->cleanup();
-    }
 
     QGCCorePlugin::instance()->cleanup();
 

@@ -9,8 +9,6 @@
 
 #include "Vehicle.h"
 #include "Actuators.h"
-#include "ADSBVehicleManager.h"
-#include "AudioOutput.h"
 #include "AutoPilotPlugin.h"
 #include "ComponentInformationManager.h"
 #include "EventHandler.h"
@@ -20,8 +18,6 @@
 #include "GeoFenceManager.h"
 #include "ImageProtocolManager.h"
 #include "InitialConnectStateMachine.h"
-#include "Joystick.h"
-#include "JoystickManager.h"
 #include "LinkManager.h"
 #include "MAVLinkLogManager.h"
 #include "MAVLinkProtocol.h"
@@ -33,29 +29,23 @@
 #include "PositionManager.h"
 #include "QGC.h"
 #include "QGCApplication.h"
-#include "QGCCameraManager.h"
 #include "QGCCorePlugin.h"
 #include "QGCImageProvider.h"
 #include "QGCLoggingCategory.h"
+#include "QGCClock.h"
 #include "QGCQGeoCoordinate.h"
 #include "RallyPointManager.h"
-#include "RemoteIDManager.h"
 #include "SettingsManager.h"
 #include "AppSettings.h"
 #include "FlyViewSettings.h"
 #include "StandardModes.h"
-#include "TerrainProtocolHandler.h"
-#include "TerrainQuery.h"
 #include "TrajectoryPoints.h"
 #include "VehicleBatteryFactGroup.h"
 #include "VehicleLinkManager.h"
 #include "VehicleObjectAvoidance.h"
-#include "VideoManager.h"
-#include "VideoSettings.h"
 #include "DeviceInfo.h"
 #include "StatusTextHandler.h"
 #include "MAVLinkSigning.h"
-#include "GimbalController.h"
 #include "MavlinkSettings.h"
 #include "APM.h"
 
@@ -126,7 +116,6 @@ Vehicle::Vehicle(LinkInterface*             link,
     // , _terrainFactGroup             (this)
     // , _terrainProtocolHandler       (new TerrainProtocolHandler(this, &_terrainFactGroup, this))
 {
-    connect(JoystickManager::instance(), &JoystickManager::activeJoystickChanged, this, &Vehicle::_loadJoystickSettings);
     connect(MultiVehicleManager::instance(), &MultiVehicleManager::activeVehicleChanged, this, &Vehicle::_activeVehicleChanged);
 
     qCDebug(VehicleLog) << "Link started with Mavlink " << (MAVLinkProtocol::instance()->getCurrentVersion() >= 200 ? "V2" : "V1");
@@ -150,12 +139,6 @@ Vehicle::Vehicle(LinkInterface*             link,
     _commonInit();
 
     _vehicleLinkManager->_addLink(link);
-
-    // Set video stream to udp if running ArduSub and Video is disabled
-    if (sub() && SettingsManager::instance()->videoSettings()->videoSource()->rawValue() == VideoSettings::videoDisabled) {
-        SettingsManager::instance()->videoSettings()->videoSource()->setRawValue(VideoSettings::videoSourceUDPH264);
-        SettingsManager::instance()->videoSettings()->lowLatencyMode()->setRawValue(true);
-    }
 
 #ifdef QGC_UTM_ADAPTER
     _utmspVehicle = UTMSPManager::instance()->instantiateVehicle(this);
@@ -287,8 +270,6 @@ void Vehicle::_commonInit()
     _missionManager = new MissionManager(this);
     connect(_missionManager, &MissionManager::error,                    this, &Vehicle::_missionManagerError);
     connect(_missionManager, &MissionManager::newMissionItemsAvailable, this, &Vehicle::_firstMissionLoadComplete);
-    connect(_missionManager, &MissionManager::newMissionItemsAvailable, this, &Vehicle::_clearCameraTriggerPoints);
-    connect(_missionManager, &MissionManager::sendComplete,             this, &Vehicle::_clearCameraTriggerPoints);
     connect(_missionManager, &MissionManager::currentIndexChanged,      this, &Vehicle::_updateHeadingToNextWP);
     connect(_missionManager, &MissionManager::currentIndexChanged,      this, &Vehicle::_updateMissionItemIndex);
 
@@ -325,7 +306,6 @@ void Vehicle::_commonInit()
     connect(_rallyPointManager, &RallyPointManager::loadComplete,   this, &Vehicle::_firstRallyPointLoadComplete);
 
     // Remote ID manager might want to acces parameters so make sure to create it after
-    _remoteIDManager = new RemoteIDManager(this);
 
     // Flight modes can differ based on advanced mode
     connect(QGCCorePlugin::instance(), &QGCCorePlugin::showAdvancedUIChanged, this, &Vehicle::flightModesChanged);
@@ -374,19 +354,6 @@ void Vehicle::_commonInit()
     _flightTimeUpdater.setSingleShot(false);
     connect(&_flightTimeUpdater, &QTimer::timeout, this, &Vehicle::_updateFlightTime);
 
-    // Set video stream to udp if running ArduSub and Video is disabled
-    if (sub() && SettingsManager::instance()->videoSettings()->videoSource()->rawValue() == VideoSettings::videoDisabled) {
-        SettingsManager::instance()->videoSettings()->videoSource()->setRawValue(VideoSettings::videoSourceUDPH264);
-        SettingsManager::instance()->videoSettings()->lowLatencyMode()->setRawValue(true);
-    }
-
-    // enable Joystick if appropriate
-    _loadJoystickSettings();
-
-    _gimbalController = new GimbalController(this);
-
-    // Create camera manager instance
-    _cameraManager = _firmwarePlugin->createCameraManager(this);
 }
 
 Vehicle::~Vehicle()
@@ -402,32 +369,6 @@ Vehicle::~Vehicle()
 
 void Vehicle::prepareDelete()
 {
-    // Clean up camera manager to stop all timers and prevent crashes during destruction
-    if(_cameraManager) {
-        // because of _cameraManager QML bindings check for nullptr won't work in the binding pipeline
-        // the dangling pointer access will cause a runtime fault
-        auto tmpCameras = _cameraManager;
-        _cameraManager = nullptr;
-        delete tmpCameras;
-        emit cameraManagerChanged();
-        // Note: Removed qApp->processEvents() to prevent MAVLink crashes during destruction
-    }
-}
-
-void Vehicle::deleteCameraManager()
-{
-    if(_cameraManager) {
-        delete _cameraManager;
-        _cameraManager = nullptr;
-    }
-}
-
-void Vehicle::deleteGimbalController()
-{
-    if (_gimbalController) {
-        delete _gimbalController;
-        _gimbalController = nullptr;
-    }
 }
 
 void Vehicle::_offlineFirmwareTypeSettingChanged(QVariant varFirmwareType)
@@ -530,13 +471,9 @@ void Vehicle::_mavlinkMessageReceived(LinkInterface* link, mavlink_message_t mes
         return;
     }
 
-    if (!_terrainProtocolHandler->mavlinkMessageReceived(message)) {
-        return;
-    }
     _ftpManager->_mavlinkMessageReceived(message);
     _parameterManager->mavlinkMessageReceived(message);
     (void) QMetaObject::invokeMethod(_imageProtocolManager, "mavlinkMessageReceived", Qt::AutoConnection, message);
-    _remoteIDManager->mavlinkMessageReceived(message);
 
     _waitForMavlinkMessageMessageReceivedHandler(message);
 
@@ -584,14 +521,11 @@ void Vehicle::_mavlinkMessageReceived(LinkInterface* link, mavlink_message_t mes
     case MAVLINK_MSG_ID_GPS_RAW_INT:
         _handleGpsRawInt(message);
         break;
+    case MAVLINK_MSG_ID_SYSTEM_TIME:
+        _handleSystemTime(message);
+        break;
     case MAVLINK_MSG_ID_GLOBAL_POSITION_INT:
         _handleGlobalPositionInt(message);
-        break;
-    case MAVLINK_MSG_ID_CAMERA_IMAGE_CAPTURED:
-        _handleCameraImageCaptured(message);
-        break;
-    case MAVLINK_MSG_ID_ADSB_VEHICLE:
-        ADSBVehicleManager::instance()->mavlinkMessageReceived(message);
         break;
     case MAVLINK_MSG_ID_HIGH_LATENCY:
         _handleHighLatency(message);
@@ -649,9 +583,6 @@ void Vehicle::_mavlinkMessageReceived(LinkInterface* link, mavlink_message_t mes
 
         // Following are ArduPilot dialect messages
 #if !defined(QGC_NO_ARDUPILOT_DIALECT)
-    case MAVLINK_MSG_ID_CAMERA_FEEDBACK:
-        _handleCameraFeedback(message);
-        break;
 #endif
     case MAVLINK_MSG_ID_LOG_ENTRY:
     {
@@ -684,19 +615,6 @@ void Vehicle::_mavlinkMessageReceived(LinkInterface* link, mavlink_message_t mes
     // does processing.
     emit mavlinkMessageReceived(message);
 }
-
-#if !defined(QGC_NO_ARDUPILOT_DIALECT)
-void Vehicle::_handleCameraFeedback(const mavlink_message_t& message)
-{
-    mavlink_camera_feedback_t feedback;
-
-    mavlink_msg_camera_feedback_decode(&message, &feedback);
-
-    QGeoCoordinate imageCoordinate((double)feedback.lat / qPow(10.0, 7.0), (double)feedback.lng / qPow(10.0, 7.0), feedback.alt_msl);
-    qCDebug(VehicleLog) << "_handleCameraFeedback coord:index" << imageCoordinate << feedback.img_idx;
-    _cameraTriggerPoints.append(new QGCQGeoCoordinate(imageCoordinate, this));
-}
-#endif
 
 void Vehicle::_handleOrbitExecutionStatus(const mavlink_message_t& message)
 {
@@ -734,24 +652,28 @@ void Vehicle::_orbitTelemetryTimeout()
     emit orbitActiveChanged(false);
 }
 
-void Vehicle::_handleCameraImageCaptured(const mavlink_message_t& message)
+// TODO: VehicleFactGroup
+void Vehicle::_handleSystemTime(mavlink_message_t &message)
 {
-    mavlink_camera_image_captured_t feedback;
+    mavlink_system_time_t systemTime;
+    mavlink_msg_system_time_decode(&message, &systemTime);
 
-    mavlink_msg_camera_image_captured_decode(&message, &feedback);
-
-    QGeoCoordinate imageCoordinate((double)feedback.lat / qPow(10.0, 7.0), (double)feedback.lon / qPow(10.0, 7.0), feedback.alt);
-    qCDebug(VehicleLog) << "_handleCameraFeedback coord:index" << imageCoordinate << feedback.image_index << feedback.capture_result;
-    if (feedback.capture_result == 1) {
-        _cameraTriggerPoints.append(new QGCQGeoCoordinate(imageCoordinate, this));
+    // Used only while no GPS time arrived, because the vehicle clock can be set wrongly
+    // by a ground station with a wrong clock.
+    if (systemTime.time_unix_usec != 0) {
+        QGCClock::instance()->setVehicleTime(static_cast<qint64>(systemTime.time_unix_usec / 1000), false);
     }
 }
 
-// TODO: VehicleFactGroup
 void Vehicle::_handleGpsRawInt(mavlink_message_t& message)
 {
     mavlink_gps_raw_int_t gpsRawInt;
     mavlink_msg_gps_raw_int_decode(&message, &gpsRawInt);
+
+    // The GPS time is the only time source that is correct on a unit without internet access.
+    if ((gpsRawInt.fix_type >= GPS_FIX_TYPE_3D_FIX) && (gpsRawInt.time_usec != 0)) {
+        QGCClock::instance()->setVehicleTime(static_cast<qint64>(gpsRawInt.time_usec / 1000), true);
+    }
 
     _gpsRawIntMessageAvailable = true;
 
@@ -1107,8 +1029,6 @@ void Vehicle::_handleBatteryStatus(mavlink_message_t& message)
         } else {
             batteryIdStr = batteryIdStr.arg("");
         }
-        _say(tr("warning"));
-        _say(QStringLiteral("%1 %2 ").arg(_vehicleIdSpeech()).arg(batteryMessage.arg(batteryIdStr)));
     }
 }
 
@@ -1142,17 +1062,11 @@ void Vehicle::_updateArmed(bool armed)
         if (_armed) {
             _trajectoryPoints->start();
             _flightTimerStart();
-            _clearCameraTriggerPoints();
             // Reset battery warning
             _lowestBatteryChargeStateAnnouncedMap.clear();
         } else {
             _trajectoryPoints->stop();
             _flightTimerStop();
-            // Also handle Video Streaming
-            if(SettingsManager::instance()->videoSettings()->disableWhenDisarmed()->rawValue().toBool()) {
-                SettingsManager::instance()->videoSettings()->streamEnabled()->setRawValue(false);
-                VideoManager::instance()->stopVideo();
-            }
         }
     }
 }
@@ -1546,35 +1460,8 @@ bool Vehicle::xConfigMotors()
 // 1. On constructor of vehicle, to see if we should enable a joystick
 // 2. When there is a new active joystick
 // 3. When the active joystick is disconnected (even if there isnt a new one)
-void Vehicle::_loadJoystickSettings()
-{
-    QSettings settings;
-    settings.beginGroup(QString(_settingsGroup).arg(_id));
-
-    if (JoystickManager::instance()->activeJoystick()) {
-        qCDebug(JoystickLog) << "Vehicle " << this->id() << " Notified of an active joystick. Loading setting joystickenabled: " << settings.value(_joystickEnabledSettingsKey, false).toBool();
-        setJoystickEnabled(settings.value(_joystickEnabledSettingsKey, false).toBool());
-    } else {
-        qCDebug(JoystickLog) << "Vehicle " << this->id() << " Notified that there is no active joystick";
-        setJoystickEnabled(false);
-    }
-}
-
 // This is called from the UI when a deliberate action is taken to enable or disable the joystick
 // This save allows the joystick enable state to persist restarts, disconnections of the joystick etc
-void Vehicle::saveJoystickSettings()
-{
-    QSettings settings;
-    settings.beginGroup(QString(_settingsGroup).arg(_id));
-
-    // The joystick enabled setting should only be changed if a joystick is present
-    // since the checkbox can only be clicked if one is present
-    if (JoystickManager::instance()->joysticks().count()) {
-        qCDebug(JoystickLog) << "Vehicle " << this->id() << " Saving setting joystickenabled: " << _joystickEnabled;
-        settings.setValue(_joystickEnabledSettingsKey, _joystickEnabled);
-    }
-}
-
 bool Vehicle::joystickEnabled() const
 {
     return _joystickEnabled;
@@ -1582,47 +1469,16 @@ bool Vehicle::joystickEnabled() const
 
 void Vehicle::setJoystickEnabled(bool enabled)
 {
-    if (enabled){
-        qCDebug(JoystickLog) << "Vehicle " << this->id() << " Joystick Enabled";
-    }
-    else {
-        qCDebug(JoystickLog) << "Vehicle " << this->id() << " Joystick Disabled";
-    }
-
-    // _joystickEnabled is the runtime state - it determines whether a vehicle is using joystick data when it is active
     _joystickEnabled = enabled;
-
-    // if we are the active vehicle, call start polling on the active joystick
-    // This routes the joystick signals to this vehicle
-    if (enabled && MultiVehicleManager::instance()->activeVehicle() == this){
-        _captureJoystick();
-    }
-
     emit joystickEnabledChanged(_joystickEnabled);
 }
 
 void Vehicle::_activeVehicleChanged(Vehicle *newActiveVehicle)
 {
-    // the new active vehicle should always capture the joystick
-    // even if the new active vehicle has joystick disabled
-    // capturing the joystick will stop the joystick data going to the inactive vehicle
     if (newActiveVehicle == this){
-        qCDebug(JoystickLog) << "Vehicle " << this->id() << " is the new active vehicle";
-        _captureJoystick();
         _isActiveVehicle = true;
     } else {
         _isActiveVehicle = false;
-    }
-}
-
-// tells the active joystick where to send data
-void Vehicle::_captureJoystick()
-{
-    Joystick* joystick = JoystickManager::instance()->activeJoystick();
-
-    if(joystick){
-        qCDebug(JoystickLog) << "Vehicle " << this->id() << " Capture Joystick" << joystick->name();
-        joystick->startPolling(this);
     }
 }
 
@@ -1884,11 +1740,6 @@ void Vehicle::_rallyPointManagerError(int errorCode, const QString& errorMsg)
     qgcApp()->showAppMessage(tr("Rally Point transfer failed. Error: %1").arg(errorMsg));
 }
 
-void Vehicle::_clearCameraTriggerPoints()
-{
-    _cameraTriggerPoints.clearAndDeleteContents();
-}
-
 void Vehicle::_flightTimerStart()
 {
     _flightTimer.start();
@@ -1962,6 +1813,21 @@ void Vehicle::_parametersReady(bool parametersReady)
 
 void Vehicle::_sendQGCTimeToVehicle()
 {
+    // The computer clock is not reliable on units without internet access. A wrong SYSTEM_TIME
+    // can move the autopilot clock away from GPS time, so the send is off unless an operator
+    // enables it in the telemetry settings.
+    if (!SettingsManager::instance()->mavlinkSettings()->sendSystemTimeToVehicle()->rawValue().toBool()) {
+        return;
+    }
+
+    // Refuse a date before 2022. Such a clock is certainly wrong.
+    static constexpr qint64 earliestPlausibleMsecs = 1640995200000LL; // 2022-01-01 00:00 UTC
+    const qint64 nowMsecs = QDateTime::currentMSecsSinceEpoch();
+    if (nowMsecs < earliestPlausibleMsecs) {
+        qCWarning(VehicleLog) << "System time not sent to the vehicle. The computer clock is wrong:" << QDateTime::fromMSecsSinceEpoch(nowMsecs).toString(Qt::ISODate);
+        return;
+    }
+
     SharedLinkInterfacePtr sharedLink = vehicleLinkManager()->primaryLink().lock();
     if (!sharedLink) {
         qCDebug(VehicleLog) << "_sendQGCTimeToVehicle: primary link gone!";
@@ -1972,7 +1838,7 @@ void Vehicle::_sendQGCTimeToVehicle()
     mavlink_system_time_t   cmd;
 
     // Timestamp of the master clock in microseconds since UNIX epoch.
-    cmd.time_unix_usec = QDateTime::currentDateTime().currentMSecsSinceEpoch()*1000;
+    cmd.time_unix_usec = static_cast<uint64_t>(nowMsecs) * 1000;
     // Timestamp of the component clock since boot time in milliseconds (Not necessary).
     cmd.time_boot_ms = 0;
     mavlink_msg_system_time_encode_chan(MAVLinkProtocol::instance()->getSystemId(),
@@ -2008,24 +1874,6 @@ void Vehicle::_remoteControlRSSIChanged(uint8_t rssi)
         _rcRSSI = filteredRSSI;
         emit rcRSSIChanged(_rcRSSI);
     }
-}
-
-void Vehicle::virtualTabletJoystickValue(double roll, double pitch, double yaw, double thrust)
-{
-    // The following if statement prevents the virtualTabletJoystick from sending values if the standard joystick is enabled
-    if (!_joystickEnabled) {
-        sendJoystickDataThreadSafe(
-                    static_cast<float>(roll),
-                    static_cast<float>(pitch),
-                    static_cast<float>(yaw),
-                    static_cast<float>(thrust),
-                    0);
-    }
-}
-
-void Vehicle::_say(const QString& text)
-{
-    AudioOutput::instance()->say(text.toLower());
 }
 
 bool Vehicle::airship() const
@@ -2110,13 +1958,11 @@ QString Vehicle::_vehicleIdSpeech()
 
 void Vehicle::_handleFlightModeChanged(const QString& flightMode)
 {
-    _say(tr("%1 %2 flight mode").arg(_vehicleIdSpeech()).arg(flightMode));
     emit guidedModeChanged(_firmwarePlugin->isGuidedMode(this));
 }
 
 void Vehicle::_announceArmedChanged(bool armed)
 {
-    _say(QString("%1 %2").arg(_vehicleIdSpeech()).arg(armed ? tr("armed") : tr("disarmed")));
     if(armed) {
         //-- Keep track of armed coordinates
         _armedPosition = _coordinate;
@@ -3502,15 +3348,6 @@ const QVariantList& Vehicle::modeIndicators()
     return emptyList;
 }
 
-const QVariantList& Vehicle::staticCameraList() const
-{
-    if (_cameraManager) {
-        return _cameraManager->cameraList();
-    }
-    static QVariantList emptyList;
-    return emptyList;
-}
-
 void Vehicle::_setupAutoDisarmSignalling()
 {
     QString param = _firmwarePlugin->autoDisarmParameter(this);
@@ -3705,7 +3542,7 @@ void Vehicle::_initializeCsv()
     if (!SettingsManager::instance()->mavlinkSettings()->saveCsvTelemetry()->rawValue().toBool()) {
         return;
     }
-    QString now = QDateTime::currentDateTime().toString("yyyy-MM-dd hh-mm-ss");
+    QString now = QGCClock::currentDateTime().toString("yyyy-MM-dd hh-mm-ss");
     QString fileName = QString("%1 vehicle%2.csv").arg(now).arg(_id);
     QDir saveDir(SettingsManager::instance()->appSettings()->telemetrySavePath());
     _csvLogFile.setFileName(saveDir.absoluteFilePath(fileName));
@@ -3743,7 +3580,7 @@ void Vehicle::_writeCsvLine()
     QTextStream stream(&_csvLogFile);
 
     // Write timestamp to csv file
-    allFactValues << QDateTime::currentDateTime().toString(QStringLiteral("yyyy-MM-dd hh:mm:ss.zzz"));
+    allFactValues << QGCClock::currentDateTime().toString(QStringLiteral("yyyy-MM-dd hh:mm:ss.zzz"));
     // Write Vehicle's own facts
     for (const QString& factName : factNames()) {
         allFactValues << getFact(factName)->cookedValueString();
@@ -3761,112 +3598,24 @@ void Vehicle::_writeCsvLine()
 void Vehicle::doSetHome(const QGeoCoordinate& coord)
 {
     if (coord.isValid()) {
-        // If for some reason we already did a query and it hasn't arrived yet, disconnect signals and unset current query. TerrainQuery system will
-        // automatically delete that forgotten query. This could happen if we send 2 do_set_home commands one after another, so usually the latest one
-        // is the one we would want to arrive to the vehicle, so it is fine to forget about the previous ones in case it could happen.
-        if (_currentDoSetHomeTerrainAtCoordinateQuery) {
-            disconnect(_currentDoSetHomeTerrainAtCoordinateQuery, &TerrainAtCoordinateQuery::terrainDataReceived, this, &Vehicle::_doSetHomeTerrainReceived);
-            _currentDoSetHomeTerrainAtCoordinateQuery = nullptr;
-        }
-        // Save the coord for using when our terrain data arrives. If there was a pending terrain query paired with an older coordinate it is safe to 
-        // Override now, as we just disconnected the signal that would trigger the command sending 
-        _doSetHomeCoordinate = coord;
-        // Now setup and trigger the new terrain query
-        _currentDoSetHomeTerrainAtCoordinateQuery = new TerrainAtCoordinateQuery(true /* autoDelet */);
-        connect(_currentDoSetHomeTerrainAtCoordinateQuery, &TerrainAtCoordinateQuery::terrainDataReceived, this, &Vehicle::_doSetHomeTerrainReceived);
-        QList<QGeoCoordinate> rgCoord;
-        rgCoord.append(coord);
-        _currentDoSetHomeTerrainAtCoordinateQuery->requestData(rgCoord);
+        sendMavCommand(
+                    defaultComponentId(),
+                    MAV_CMD_DO_SET_HOME,
+                    true, // show error if fails
+                    0,
+                    0,
+                    0,
+                    static_cast<float>(qQNaN()),
+                    coord.latitude(),
+                    coord.longitude(),
+                    0);
     }
 }
 
-// This will be called after our query started in doSetHome arrives
-void Vehicle::_doSetHomeTerrainReceived(bool success, QList<double> heights)
-{
-    if (success) {
-        double terrainAltitude = heights[0];
-        // Coord and terrain alt sanity check
-        if (_doSetHomeCoordinate.isValid() && terrainAltitude <= SET_HOME_TERRAIN_ALT_MAX && terrainAltitude >= SET_HOME_TERRAIN_ALT_MIN) {
-            sendMavCommand(
-                        defaultComponentId(),
-                        MAV_CMD_DO_SET_HOME,
-                        true, // show error if fails
-                        0,
-                        0,
-                        0,
-                        static_cast<float>(qQNaN()),
-                        _doSetHomeCoordinate.latitude(),
-                        _doSetHomeCoordinate.longitude(),
-                        terrainAltitude);
-
-        } else if (_doSetHomeCoordinate.isValid()) {
-            qCDebug(VehicleLog) << "_doSetHomeTerrainReceived: internal error, elevation data out of limits ";
-        } else {
-            qCDebug(VehicleLog) << "_doSetHomeTerrainReceived: internal error, cached home coordinate is not valid";
-        }
-    } else {
-        qgcApp()->showAppMessage(tr("Set Home failed, terrain data not available for selected coordinate"));
-    }
-    // Clean up
-    _currentDoSetHomeTerrainAtCoordinateQuery = nullptr;
-    _doSetHomeCoordinate = QGeoCoordinate(); // So isValid() will no longer return true, for extra safety
-}
 
 void Vehicle::_updateAltAboveTerrain()
 {
-    // We won't do another query if the previous query was done closer than 2 meters from current position
-    // or if altitude change has been less than 0.5 meters since then.
-    const qreal minimumDistanceTraveled = 2;
-    const float minimumAltitudeChanged  = 0.5f;
-
-    // This is not super elegant but it works to limit the amount of queries we do. It seems more than 500ms is not possible to get
-    // serviced on time. It is not a big deal if it is not serviced on time as terrain queries can manage that just fine, but QGC would
-    // use resources to service those queries, and it is pointless, so this is a quick workaround to not waste that little computing time
-    int altitudeAboveTerrQueryMinInterval = 500;
-    if (_altitudeAboveTerrQueryTimer.elapsed() < altitudeAboveTerrQueryMinInterval) {
-        // qCDebug(VehicleLog) << "_updateAltAboveTerrain: minimum 500ms interval between queries not reached, returning";
-        return;
-    }
-    // Sanity check, although it is very unlikely that vehicle coordinate is not valid
-    if (_coordinate.isValid()) {
-        // Check for minimum distance and altitude traveled before doing query, to not do a lot of queries of the same data
-        if (_altitudeAboveTerrLastCoord.isValid() && !qIsNaN(_altitudeAboveTerrLastRelAlt)) {
-            if (_altitudeAboveTerrLastCoord.distanceTo(_coordinate) < minimumDistanceTraveled && fabs(_altitudeRelativeFact.rawValue().toFloat() - _altitudeAboveTerrLastRelAlt) < minimumAltitudeChanged ) {
-                return;
-            }
-        }
-        _altitudeAboveTerrLastCoord = _coordinate;
-        _altitudeAboveTerrLastRelAlt = _altitudeRelativeFact.rawValue().toFloat();
-
-        // If for some reason we already did a query and it hasn't arrived yet, disconnect signals and unset current query. TerrainQuery system will
-        // automatically delete that forgotten query.
-        if (_altitudeAboveTerrTerrainAtCoordinateQuery) {
-            // qCDebug(VehicleLog) << "_updateAltAboveTerrain: cleaning previous query, no longer needed";
-            disconnect(_altitudeAboveTerrTerrainAtCoordinateQuery, &TerrainAtCoordinateQuery::terrainDataReceived, this, &Vehicle::_altitudeAboveTerrainReceived);
-            _altitudeAboveTerrTerrainAtCoordinateQuery = nullptr;
-        }
-        // Now setup and trigger the new terrain query
-        _altitudeAboveTerrTerrainAtCoordinateQuery = new TerrainAtCoordinateQuery(true /* autoDelet */);
-        connect(_altitudeAboveTerrTerrainAtCoordinateQuery, &TerrainAtCoordinateQuery::terrainDataReceived, this, &Vehicle::_altitudeAboveTerrainReceived);
-        QList<QGeoCoordinate> rgCoord;
-        rgCoord.append(_coordinate);
-        _altitudeAboveTerrTerrainAtCoordinateQuery->requestData(rgCoord);
-        _altitudeAboveTerrQueryTimer.restart();
-    }
-}
-
-void Vehicle::_altitudeAboveTerrainReceived(bool success, QList<double> heights)
-{
-    if (!success) {
-        qCDebug(VehicleLog) << "_altitudeAboveTerrainReceived: terrain data not available for vehicle coordinate";
-    } else {
-        // Query was succesful, save the data.
-        double terrainAltitude = heights[0];
-        double altitudeAboveTerrain = altitudeAMSL()->rawValue().toDouble() - terrainAltitude;
-        _altitudeAboveTerrFact.setRawValue(altitudeAboveTerrain);
-    }
-    // Clean up
-    _altitudeAboveTerrTerrainAtCoordinateQuery = nullptr;
+    // Terrain data is not available in this build. The altitude above terrain stays NaN.
 }
 
 void Vehicle::_handleObstacleDistance(const mavlink_message_t& message)
@@ -3906,7 +3655,6 @@ void Vehicle::_handleFenceStatus(const mavlink_message_t& message)
                     break;
             }
 
-            _say(breachTypeStr + " " + tr("fence breached"));
         }
     } else {
         lastUpdate = now;
@@ -3976,54 +3724,6 @@ void Vehicle::clearAllParamMapRC(void)
                                            0, 0, 0, 0);                                         // unused
         sendMessageOnLinkThreadSafe(sharedLink.get(), message);
     }
-}
-
-void Vehicle::sendJoystickDataThreadSafe(float roll, float pitch, float yaw, float thrust, quint16 buttons)
-{
-    SharedLinkInterfacePtr sharedLink = vehicleLinkManager()->primaryLink().lock();
-    if (!sharedLink) {
-        qCDebug(VehicleLog)<< "sendJoystickDataThreadSafe: primary link gone!";
-        return;
-    }
-
-    if (sharedLink->linkConfiguration()->isHighLatency()) {
-        return;
-    }
-
-    mavlink_message_t message;
-
-    // Incoming values are in the range -1:1
-    float axesScaling =         1.0 * 1000.0;
-    float newRollCommand =      roll * axesScaling;
-    float newPitchCommand  =    pitch * axesScaling;    // Joystick data is reverse of mavlink values
-    float newYawCommand    =    yaw * axesScaling;
-    float newThrustCommand =    thrust * axesScaling;
-
-    mavlink_msg_manual_control_pack_chan(
-        static_cast<uint8_t>(MAVLinkProtocol::instance()->getSystemId()),
-        static_cast<uint8_t>(MAVLinkProtocol::getComponentId()),
-        sharedLink->mavlinkChannel(),
-        &message,
-        static_cast<uint8_t>(_id),
-        static_cast<int16_t>(newPitchCommand),
-        static_cast<int16_t>(newRollCommand),
-        static_cast<int16_t>(newThrustCommand),
-        static_cast<int16_t>(newYawCommand),
-        buttons, 0,
-        0,
-        0, 0,
-        0, 0, 0, 0, 0, 0
-    );
-    sendMessageOnLinkThreadSafe(sharedLink.get(), message);
-}
-
-void Vehicle::triggerSimpleCamera()
-{
-    sendMavCommand(_defaultComponentId,
-                   MAV_CMD_DO_DIGICAM_CONTROL,
-                   true,                        // show errors
-                   0.0, 0.0, 0.0, 0.0,          // param 1-4 unused
-                   1.0);                        // trigger camera
 }
 
 void Vehicle::setGripperAction(GRIPPER_ACTIONS gripperAction)
@@ -4419,7 +4119,6 @@ void Vehicle::_textMessageReceived(MAV_COMPONENT componentid, MAV_SEVERITY sever
     }
 
     if (readAloud && !skipSpoken) {
-        _say(text);
     }
 
     emit textMessageReceived(id(), componentid, severity, text, description);

@@ -80,13 +80,6 @@
     "decimalPlaces":    1
 },
 {
-    "name":             "audioMuted",
-    "shortDesc": "Mute audio output",
-    "longDesc":  "If this option is enabled all audio output will be muted.",
-    "type":             "bool",
-    "default":     false
-},
-{
     "name":             "virtualJoystick",
     "shortDesc": "Show virtual joystick",
     "longDesc":  "If this option is enabled the virtual joystick will be shown on the Fly view.",

@@ -25,6 +25,20 @@
     "qgcRebootRequired":    true
 },
 {
+    "name":             "sendSystemTimeToVehicle",
+    "shortDesc": "Send computer time to the vehicle",
+    "longDesc":  "If enabled, QGC sends the computer time to the vehicle when the parameter download completes. Disable it when the computer clock is not reliable and the vehicle gets time from GPS.",
+    "type":             "bool",
+    "default":     false
+},
+{
+    "name":             "useVehicleTimeForClock",
+    "shortDesc": "Use the vehicle GPS time for the clock and log files",
+    "longDesc":  "If enabled, QGC uses the time reported by the vehicle GPS for its clock, telemetry log names and log timestamps. Enable it on units without internet access. The computer clock is used while no GPS time is available.",
+    "type":             "bool",
+    "default":     false
+},
+{
     "name":             "saveCsvTelemetry",
     "shortDesc": "Save CSV Telementry Logs",
     "longDesc":  "If this option is enabled, all Facts will be written to a CSV file with a 1 Hertz frequency.",

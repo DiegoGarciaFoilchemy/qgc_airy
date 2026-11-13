@@ -24,6 +24,8 @@ public:
     DEFINE_SETTINGFACT(telemetrySave)
     DEFINE_SETTINGFACT(telemetrySaveNotArmed)
     DEFINE_SETTINGFACT(saveCsvTelemetry)
+    DEFINE_SETTINGFACT(sendSystemTimeToVehicle)
+    DEFINE_SETTINGFACT(useVehicleTimeForClock)
     DEFINE_SETTINGFACT(forwardMavlink)
     DEFINE_SETTINGFACT(forwardMavlinkHostName)
     DEFINE_SETTINGFACT(forwardMavlinkAPMSupportHostName)

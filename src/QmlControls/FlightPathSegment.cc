@@ -22,14 +22,10 @@ FlightPathSegment::FlightPathSegment(SegmentType segmentType, const QGeoCoordina
     , _queryTerrainData (queryTerrainData)
     , _segmentType      (segmentType)
 {
-    _delayedTerrainPathQueryTimer.setSingleShot(true);
-    _delayedTerrainPathQueryTimer.setInterval(200);
-    _delayedTerrainPathQueryTimer.callOnTimeout(this, &FlightPathSegment::_sendTerrainPathQuery);
     _updateTotalDistance();
 
     qCDebug(FlightPathSegmentLog) << this << "new" << coord1 << coord2 << amslCoord1Alt << amslCoord2Alt << _totalDistance;
 
-    _sendTerrainPathQuery();
 }
 
 void FlightPathSegment::setCoordinate1(const QGeoCoordinate &coordinate)
@@ -37,7 +33,6 @@ void FlightPathSegment::setCoordinate1(const QGeoCoordinate &coordinate)
     if (_coord1 != coordinate) {
         _coord1 = coordinate;
         emit coordinate1Changed(_coord1);
-        _delayedTerrainPathQueryTimer.start();
         _updateTotalDistance();
     }
 }
@@ -47,7 +42,6 @@ void FlightPathSegment::setCoordinate2(const QGeoCoordinate &coordinate)
     if (_coord2 != coordinate) {
         _coord2 = coordinate;
         emit coordinate2Changed(_coord2);
-        _delayedTerrainPathQueryTimer.start();
         _updateTotalDistance();
     }
 }
@@ -76,57 +70,6 @@ void FlightPathSegment::setSpecialVisual(bool specialVisual)
         _specialVisual = specialVisual;
         emit specialVisualChanged(specialVisual);
     }
-}
-
-void FlightPathSegment::_sendTerrainPathQuery(void)
-{
-    if (_queryTerrainData && _coord1.isValid() && _coord2.isValid()) {
-        qCDebug(FlightPathSegmentLog) << this << "_sendTerrainPathQuery";
-        // Clear any previous query
-        if (_currentTerrainPathQuery) {
-            // We are already waiting on another query. We don't care about those results any more.
-            disconnect(_currentTerrainPathQuery, &TerrainPathQuery::terrainDataReceived, this, &FlightPathSegment::_terrainDataReceived);
-            _currentTerrainPathQuery = nullptr;
-        }
-
-        // Clear old terrain data
-        _amslTerrainHeights.clear();
-        _distanceBetween = 0;
-        _finalDistanceBetween = 0;
-        emit distanceBetweenChanged(0);
-        emit finalDistanceBetweenChanged(0);
-        emit amslTerrainHeightsChanged();
-
-        _currentTerrainPathQuery = new TerrainPathQuery(true /* autoDelete */);
-        connect(_currentTerrainPathQuery, &TerrainPathQuery::terrainDataReceived, this, &FlightPathSegment::_terrainDataReceived);
-        _currentTerrainPathQuery->requestData(_coord1, _coord2);
-    }
-}
-
-void FlightPathSegment::_terrainDataReceived(bool success, const TerrainPathQuery::PathHeightInfo_t& pathHeightInfo)
-{
-    qCDebug(FlightPathSegmentLog) << this << "_terrainDataReceived" << success << pathHeightInfo.heights.count();
-    if (success) {
-        if (!QGC::fuzzyCompare(pathHeightInfo.distanceBetween, _distanceBetween)) {
-            _distanceBetween = pathHeightInfo.distanceBetween;
-            emit distanceBetweenChanged(_distanceBetween);
-        }
-        if (!QGC::fuzzyCompare(pathHeightInfo.finalDistanceBetween, _finalDistanceBetween)) {
-            _finalDistanceBetween = pathHeightInfo.finalDistanceBetween;
-            emit finalDistanceBetweenChanged(_finalDistanceBetween);
-        }
-
-        _amslTerrainHeights.clear();
-        for (const double& amslTerrainHeight: pathHeightInfo.heights) {
-            _amslTerrainHeights.append(amslTerrainHeight);
-        }
-        emit amslTerrainHeightsChanged();
-    }
-
-    _currentTerrainPathQuery->deleteLater();
-    _currentTerrainPathQuery = nullptr;
-
-    _updateTerrainCollision();
 }
 
 void FlightPathSegment::_updateTotalDistance(void)

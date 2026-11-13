@@ -115,6 +115,32 @@ SettingsPage {
 
     SettingsGroupLayout {
         Layout.fillWidth:   true
+        heading:            qsTr("Time")
+
+        FactCheckBoxSlider {
+            Layout.fillWidth:   true
+            text:               qsTr("Send computer time to the vehicle")
+            fact:               _sendSystemTimeToVehicle
+            visible:            fact.visible
+            property Fact _sendSystemTimeToVehicle: _mavlinkSettings.sendSystemTimeToVehicle
+        }
+
+        FactCheckBoxSlider {
+            Layout.fillWidth:   true
+            text:               qsTr("Use the vehicle GPS time for the clock and log files")
+            fact:               _useVehicleTimeForClock
+            visible:            fact.visible
+            property Fact _useVehicleTimeForClock: _mavlinkSettings.useVehicleTimeForClock
+        }
+
+        LabelledLabel {
+            Layout.fillWidth:   true
+            label:              qsTr("The vehicle GPS time replaces the computer clock when a GPS fix is available. Leave both options off when the computer clock is correct.")
+        }
+    }
+
+    SettingsGroupLayout {
+        Layout.fillWidth:   true
         heading:            qsTr("Logging")
         visible:            !_disableAllDataPersistence
 

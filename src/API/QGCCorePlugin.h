@@ -25,7 +25,6 @@ class QmlObjectListModel;
 class QQmlApplicationEngine;
 class QQuickItem;
 class Vehicle;
-class VideoReceiver;
 class VideoSink;
 class FactValueGrid;
 typedef struct __mavlink_message mavlink_message_t;
@@ -107,13 +106,6 @@ public:
     /// Allows the plugin to override the creation of the root (native) window.
     virtual void createRootWindow(QQmlApplicationEngine *qmlEngine);
 
-    /// Allows the plugin to override the creation of VideoReceiver.
-    virtual VideoReceiver *createVideoReceiver(QObject *parent);
-    /// Allows the plugin to override the creation of VideoSink.
-    virtual void *createVideoSink(QQuickItem *widget, QObject *parent);
-    /// Allows the plugin to override the release of VideoSink.
-    virtual void releaseVideoSink(void *sink);
-
     /// Allows the plugin to see all mavlink traffic to a vehicle
     /// @return true: Allow vehicle to continue processing, false: Vehicle should not process message
     virtual bool mavlinkMessage(Vehicle *vehicle, LinkInterface *link, const mavlink_message_t &message) { Q_UNUSED(vehicle); Q_UNUSED(link); Q_UNUSED(message); return true; }
@@ -142,11 +134,9 @@ public:
     /// The contents of this file should be a single line in the form:
     ///     v3.4.4
     /// This indicates the latest stable version number.
-#ifdef QGC_CUSTOM_BUILD
+    /// This fork does not check for new versions. The function returns an empty string,
+    /// so no download starts at application launch.
     virtual QString stableVersionCheckFileUrl() const { return QString(); }
-#else
-    virtual QString stableVersionCheckFileUrl() const { return QStringLiteral("https://s3-us-west-2.amazonaws.com/qgroundcontrol/latest/QGC.version.txt"); }
-#endif
 
     /// Returns the user visible url to show user where to download new stable builds from.
     /// Custom builds must override to provide their own location.

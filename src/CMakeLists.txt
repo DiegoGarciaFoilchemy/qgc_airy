@@ -23,10 +23,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         Qt6::Core5Compat
         Qt6::CorePrivate
         Qt6::Gui
-        Qt6::Location
-        Qt6::LocationPrivate
-        Qt6::Multimedia
-        Qt6::MultimediaQuickPrivate
         Qt6::Network
         Qt6::Positioning
         Qt6::PositioningPrivate
@@ -36,7 +32,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         Qt6::QuickControls2
         Qt6::Sensors
         Qt6::Svg
-        Qt6::TextToSpeech
         Qt6::Widgets
         Qt6::Xml
         # Explicitly link QML modules, needed by Qt 6.6.3
@@ -71,34 +66,26 @@ endif()
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_subdirectory(ADSB)
 add_subdirectory(AnalyzeView)
 add_subdirectory(Android)
 add_subdirectory(API)
 add_subdirectory(AutoPilotPlugins)
-add_subdirectory(Camera)
 add_subdirectory(Comms)
 add_subdirectory(FactSystem)
 add_subdirectory(FirmwarePlugin)
 add_subdirectory(FirstRunPromptDialogs)
 add_subdirectory(FlightDisplay)
 add_subdirectory(FlightMap)
-add_subdirectory(FollowMe)
-add_subdirectory(Gimbal)
 add_subdirectory(GPS)
-add_subdirectory(Joystick)
 add_subdirectory(MAVLink)
 add_subdirectory(MissionManager)
 add_subdirectory(PlanView)
 add_subdirectory(PositionManager)
 add_subdirectory(QmlControls)
 add_subdirectory(Settings)
-add_subdirectory(Terrain)
 add_subdirectory(UI)
 add_subdirectory(Utilities)
 add_subdirectory(UTMSP)
 add_subdirectory(Vehicle)
-add_subdirectory(VideoManager)
 add_subdirectory(Viewer3D)
 
-add_subdirectory(QtLocationPlugin)

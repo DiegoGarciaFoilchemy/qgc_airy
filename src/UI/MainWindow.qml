@@ -19,7 +19,6 @@ import QGroundControl.Controls
 import QGroundControl.FactControls
 import QGroundControl.ScreenTools
 import QGroundControl.FlightDisplay
-import QGroundControl.FlightMap
 
 import QGroundControl.UTMSP
 
@@ -134,14 +133,8 @@ ApplicationWindow {
         return globals.validationErrorCount <= previousValidationErrorCount
     }
 
-    function showPlanView() {
-        flyView.visible = false
-        planView.visible = true
-    }
-
     function showFlyView() {
         flyView.visible = true
-        planView.visible = false
     }
 
     function showTool(toolTitle, toolSource, toolIcon) {
@@ -207,20 +200,15 @@ ApplicationWindow {
         // So we have to do it ourselves otherwise the signal flows through on app shutdown to an object which no longer exists.
         firstRunPromptManager.clearNextPromptSignal()
         QGroundControl.linkManager.shutdown()
-        QGroundControl.videoManager.stopVideo();
         mainWindow.close()
     }
 
     // Check for things which should prevent the app from closing
     //  Returns true if it is OK to close
-    readonly property int _skipUnsavedMissionCheckMask: 0x01
     readonly property int _skipPendingParameterWritesCheckMask: 0x02
     readonly property int _skipActiveConnectionsCheckMask: 0x04
     property int _closeChecksToSkip: 0
     function performCloseChecks() {
-        if (!(_closeChecksToSkip & _skipUnsavedMissionCheckMask) && !checkForUnsavedMission()) {
-            return false
-        }
         if (!(_closeChecksToSkip & _skipPendingParameterWritesCheckMask) && !checkForPendingParameterWrites()) {
             return false
         }
@@ -232,18 +220,6 @@ ApplicationWindow {
     }
 
     property string closeDialogTitle: qsTr("Close %1").arg(QGroundControl.appName)
-
-    function checkForUnsavedMission() {
-        if (planView._planMasterController.dirty) {
-            showMessageDialog(closeDialogTitle,
-                              qsTr("You have a mission edit in progress which has not been saved/sent. If you close you will lose changes. Are you sure you want to close?"),
-                              Dialog.Yes | Dialog.No,
-                              function() { _closeChecksToSkip |= _skipUnsavedMissionCheckMask; performCloseChecks() })
-            return false
-        } else {
-            return true
-        }
-    }
 
     function checkForPendingParameterWrites() {
         for (var index=0; index<QGroundControl.multiVehicleManager.vehicles.count; index++) {
@@ -286,12 +262,6 @@ ApplicationWindow {
         id:                     flyView
         anchors.fill:           parent
         utmspSendActTrigger:    _utmspSendActTrigger
-    }
-
-    PlanView {
-        id:             planView
-        anchors.fill:   parent
-        visible:        false
     }
 
     footer: LogReplayStatusBar {
@@ -561,7 +531,7 @@ ApplicationWindow {
 
     function showCriticalVehicleMessage(message) {
         closeIndicatorDrawer()
-        if (criticalVehicleMessagePopup.visible || QGroundControl.videoManager.fullScreen) {
+        if (criticalVehicleMessagePopup.visible) {
             // We received additional warning message while an older warning message was still displayed.
             // When the user close the older one drop the message indicator tool so they can see the rest of them.
             criticalVehicleMessagePopup.additionalCriticalMessagesReceived = true

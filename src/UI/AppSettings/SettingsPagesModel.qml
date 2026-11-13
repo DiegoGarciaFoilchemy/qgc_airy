@@ -28,20 +28,6 @@ ListModel {
     }
 
     ListElement {
-        name: qsTr("Plan View")
-        url: "qrc:/qml/QGroundControl/AppSettings/PlanViewSettings.qml"
-        iconUrl: "qrc:/qmlimages/Plan.svg"
-        pageVisible: function() { return true }
-    }
-
-    ListElement {
-        name: qsTr("Video")
-        url: "qrc:/qml/QGroundControl/AppSettings/VideoSettings.qml"
-        iconUrl: "qrc:/InstrumentValueIcons/camera.svg"
-        pageVisible: function() { return QGroundControl.settingsManager.videoSettings.visible }
-    }
-
-    ListElement {
         name: qsTr("Telemetry")
         url: "qrc:/qml/QGroundControl/AppSettings/TelemetrySettings.qml"
         iconUrl: "qrc:/InstrumentValueIcons/drone.svg"
@@ -49,23 +35,9 @@ ListModel {
     }
 
     ListElement {
-        name: qsTr("ADSB Server")
-        url: "qrc:/qml/QGroundControl/AppSettings/ADSBServerSettings.qml"
-        iconUrl: "qrc:/InstrumentValueIcons/airplane.svg"
-        pageVisible: function() { return true }
-    }
-
-    ListElement {
         name: qsTr("Comm Links")
         url: "qrc:/qml/QGroundControl/AppSettings/LinkSettings.qml"
         iconUrl: "qrc:/InstrumentValueIcons/usb.svg"
-        pageVisible: function() { return true }
-    }
-
-    ListElement {
-        name: qsTr("Maps")
-        url: "qrc:/qml/QGroundControl/AppSettings/MapSettings.qml"
-        iconUrl: "qrc:/InstrumentValueIcons/globe.svg"
         pageVisible: function() { return true }
     }
 
@@ -79,13 +51,6 @@ ListModel {
                         QGroundControl.px4ProFirmwareSupported && 
                         (activeVehicle ? activeVehicle.px4Firmware : true)
         }
-    }
-
-    ListElement {
-        name: qsTr("Remote ID")
-        url: "qrc:/qml/QGroundControl/AppSettings/RemoteIDSettings.qml"
-        iconUrl: "qrc:/qmlimages/RidIconManNoID.svg"
-        pageVisible: function() { return true }
     }
 
     ListElement {

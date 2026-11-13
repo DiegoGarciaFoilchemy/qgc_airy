@@ -10,7 +10,6 @@
 #include "CameraCalc.h"
 #include "JsonHelper.h"
 #include "Vehicle.h"
-#include "CameraMetaData.h"
 #include "PlanMasterController.h"
 
 #include <QtQml/QQmlEngine>
@@ -18,7 +17,6 @@
 CameraCalc::CameraCalc(PlanMasterController* masterController, const QString& settingsGroup, QObject* parent)
     : CameraSpec                    (settingsGroup, parent)
     , _distanceMode                 (masterController->missionController()->globalAltitudeModeDefault())
-    , _knownCameraList              (masterController->controllerVehicle()->staticCameraList())
     , _metaDataMap                  (FactMetaData::createMapFromJsonFile(QStringLiteral(":/json/CameraCalc.FactMetaData.json"), this))
     , _cameraNameFact               (settingsGroup, _metaDataMap[cameraNameName])
     , _valueSetIsDistanceFact       (settingsGroup, _metaDataMap[valueSetIsDistanceName])
@@ -59,12 +57,6 @@ CameraCalc::CameraCalc(PlanMasterController* masterController, const QString& se
     // Build the brand list from known cameras
     _cameraBrandList.append(xlatManualCameraName());
     _cameraBrandList.append(xlatCustomCameraName());
-    for (int cameraIndex=0; cameraIndex<_knownCameraList.count(); cameraIndex++) {
-        CameraMetaData* cameraMetaData = _knownCameraList[cameraIndex].value<CameraMetaData*>();
-        if (!_cameraBrandList.contains(cameraMetaData->brand)) {
-            _cameraBrandList.append(cameraMetaData->brand);
-        }
-    }
 
     _cameraNameChanged();
     _setBrandModelFromCanonicalName(_cameraNameFact.rawValue().toString());
@@ -87,35 +79,9 @@ void CameraCalc::_cameraNameChanged(void)
             valueSetIsDistance()->setRawValue(true);
         }
     } else {
-        // Look for known camera
-        CameraMetaData* knownCameraMetaData = nullptr;
-        for (int cameraIndex=0; cameraIndex<_knownCameraList.count(); cameraIndex++) {
-            CameraMetaData* cameraMetaData = _knownCameraList[cameraIndex].value<CameraMetaData*>();
-            if (cameraName == cameraMetaData->canonicalName) {
-                knownCameraMetaData = cameraMetaData;
-                break;
-            }
-        }
-
-        if (!knownCameraMetaData) {
-            // Lookup failed. Force to custom as fallback.
-            // This will cause another camera changed signal which will recurse back into this routine
-            _cameraNameFact.setRawValue(canonicalCustomCameraName());
-            return;
-        }
-
-        _disableRecalc = true;
-
-        sensorWidth()->setRawValue          (knownCameraMetaData->sensorWidth);
-        sensorHeight()->setRawValue         (knownCameraMetaData->sensorHeight);
-        imageWidth()->setRawValue           (knownCameraMetaData->imageWidth);
-        imageHeight()->setRawValue          (knownCameraMetaData->imageHeight);
-        focalLength()->setRawValue          (knownCameraMetaData->focalLength);
-        landscape()->setRawValue            (knownCameraMetaData->landscape);
-        fixedOrientation()->setRawValue     (knownCameraMetaData->fixedOrientation);
-        minTriggerInterval()->setRawValue   (knownCameraMetaData->minTriggerInterval);
-
-        _disableRecalc = false;
+        // No camera metadata is available in this build. Force to custom as fallback.
+        _cameraNameFact.setRawValue(canonicalCustomCameraName());
+        return;
     }
 
     _recalcTriggerDistance();
@@ -325,17 +291,6 @@ void CameraCalc::setCameraBrand(const QString& cameraBrand)
         _cameraBrand = cameraBrand;
         _cameraModel.clear();
 
-        if (_cameraBrand != xlatManualCameraName() && _cameraBrand != xlatCustomCameraName()) {
-            CameraMetaData* firstCameraMetaData = nullptr;
-            for (int cameraIndex=0; cameraIndex<_knownCameraList.count(); cameraIndex++) {
-                firstCameraMetaData = _knownCameraList[cameraIndex].value<CameraMetaData*>();
-                if (firstCameraMetaData->brand == _cameraBrand) {
-                    break;
-                }
-            }
-            newCameraName = firstCameraMetaData->canonicalName;
-            _cameraModel = firstCameraMetaData->model;
-        }
         emit cameraBrandChanged();
         emit cameraModelChanged();
 
@@ -350,15 +305,6 @@ void CameraCalc::setCameraModel(const QString& cameraModel)
     if (cameraModel != _cameraModel) {
         _cameraModel = cameraModel;
         emit cameraModelChanged();
-
-        for (int cameraIndex=0; cameraIndex<_knownCameraList.count(); cameraIndex++) {
-            CameraMetaData* cameraMetaData = _knownCameraList[cameraIndex].value<CameraMetaData*>();
-            if (cameraMetaData->brand == _cameraBrand && cameraMetaData->model == _cameraModel) {
-                _cameraNameFact.setRawValue(cameraMetaData->canonicalName);
-                break;
-            }
-        }
-
     }
 }
 
@@ -368,16 +314,6 @@ void CameraCalc::_setBrandModelFromCanonicalName(const QString& cameraName)
     _cameraModel.clear();
     _cameraModelList.clear();
 
-    if (cameraName != canonicalManualCameraName() && cameraName != canonicalCustomCameraName()) {
-        for (int cameraIndex=0; cameraIndex<_knownCameraList.count(); cameraIndex++) {
-            CameraMetaData* cameraMetaData = _knownCameraList[cameraIndex].value<CameraMetaData*>();
-            if (cameraMetaData->canonicalName == cameraName) {
-                _cameraBrand = cameraMetaData->brand;
-                _cameraModel = cameraMetaData->model;
-                break;
-            }
-        }
-    }
     emit cameraBrandChanged();
     emit cameraModelChanged();
 
@@ -388,12 +324,6 @@ void CameraCalc::_rebuildCameraModelList(void)
 {
     _cameraModelList.clear();
 
-    for (int cameraIndex=0; cameraIndex<_knownCameraList.count(); cameraIndex++) {
-        CameraMetaData* cameraMetaData = _knownCameraList[cameraIndex].value<CameraMetaData*>();
-        if (cameraMetaData->brand == _cameraBrand) {
-            _cameraModelList.append(cameraMetaData->model);
-        }
-    }
 
     emit cameraModelListChanged();
 }
@@ -419,14 +349,6 @@ QString CameraCalc::_validCanonicalCameraName(const QString& cameraName)
         } else if (cameraName == xlatCustomCameraName()) {
             canonicalCameraName = canonicalCustomCameraName();
         } else {
-            // Look for known camera
-            for (int cameraIndex=0; cameraIndex<_knownCameraList.count(); cameraIndex++) {
-                CameraMetaData* cameraMetaData = _knownCameraList[cameraIndex].value<CameraMetaData*>();
-                if (cameraName == cameraMetaData->canonicalName || cameraName == cameraMetaData->deprecatedTranslatedName) {
-                    return cameraMetaData->canonicalName;
-                }
-            }
-
             canonicalCameraName = canonicalCustomCameraName();
         }
     }

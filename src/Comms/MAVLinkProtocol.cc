@@ -14,6 +14,7 @@
 #include "QGCLoggingCategory.h"
 #include "QGCTemporaryFile.h"
 #include "SettingsManager.h"
+#include "QGCClock.h"
 #include "MavlinkSettings.h"
 #include "AppSettings.h"
 #include "QmlObjectListModel.h"
@@ -87,7 +88,7 @@ void MAVLinkProtocol::logSentBytes(const LinkInterface *link, const QByteArray &
         return;
     }
 
-    const quint64 time = static_cast<quint64>(QDateTime::currentMSecsSinceEpoch() * 1000);
+    const quint64 time = static_cast<quint64>(QGCClock::currentMSecsSinceEpoch()) * 1000;
     uint8_t bytes_time[sizeof(quint64)]{};
     qToBigEndian(time, bytes_time);
 
@@ -99,7 +100,10 @@ void MAVLinkProtocol::logSentBytes(const LinkInterface *link, const QByteArray &
         qgcApp()->showAppMessage(message, getName());
         _stopLogging();
         _logSuspendError = true;
+        return;
     }
+
+    (void) _rotateLogFileIfNeeded();
 }
 
 void MAVLinkProtocol::receiveBytes(LinkInterface *link, const QByteArray &data)
@@ -225,7 +229,7 @@ void MAVLinkProtocol::_forwardSupport(const mavlink_message_t &message)
 void MAVLinkProtocol::_logData(LinkInterface *link, const mavlink_message_t &message)
 {
     if (!_logSuspendError && !_logSuspendReplay && _tempLogFile->isOpen()) {
-        const quint64 timestamp = static_cast<quint64>(QDateTime::currentMSecsSinceEpoch() * 1000);
+        const quint64 timestamp = static_cast<quint64>(QGCClock::currentMSecsSinceEpoch()) * 1000;
         uint8_t buf[MAVLINK_MAX_PACKET_LEN + sizeof(timestamp)]{};
         qToBigEndian(timestamp, buf);
 
@@ -237,6 +241,8 @@ void MAVLinkProtocol::_logData(LinkInterface *link, const mavlink_message_t &mes
             _stopLogging();
             _logSuspendError = true;
         }
+
+        (void) _rotateLogFileIfNeeded();
 
         if ((message.msgid == MAVLINK_MSG_ID_HEARTBEAT) && !_vehicleWasArmed) {
             if (mavlink_msg_heartbeat_get_base_mode(&message) & MAV_MODE_FLAG_DECODE_POSITION_SAFETY) {
@@ -316,11 +322,12 @@ void MAVLinkProtocol::_startLogging()
         return;
     }
 
-#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+    // When the operator disables telemetry saving, do not open a temporary log at all.
+    // The temporary file grows without limit during a session and sits in a RAM disk on
+    // write protected machines.
     if (!SettingsManager::instance()->mavlinkSettings()->telemetrySave()->rawValue().toBool()) {
         return;
     }
-#endif
 
     if (_tempLogFile->isOpen()) {
         return;
@@ -404,9 +411,9 @@ void MAVLinkProtocol::_saveTelemetryLog(const QString &tempLogfile)
         const QString dtFormat("yyyy-MM-dd hh-mm-ss");
 
         int tryIndex = 1;
-        QString saveFileName = nameFormat.arg(QDateTime::currentDateTime().toString(dtFormat), QStringLiteral(""), AppSettings::telemetryFileExtension);
+        QString saveFileName = nameFormat.arg(QGCClock::currentDateTime().toString(dtFormat), QStringLiteral(""), AppSettings::telemetryFileExtension);
         while (saveDir.exists(saveFileName)) {
-            saveFileName = nameFormat.arg(QDateTime::currentDateTime().toString(dtFormat), QStringLiteral(".%1").arg(tryIndex++), AppSettings::telemetryFileExtension);
+            saveFileName = nameFormat.arg(QGCClock::currentDateTime().toString(dtFormat), QStringLiteral(".%1").arg(tryIndex++), AppSettings::telemetryFileExtension);
         }
 
         const QString saveFilePath = saveDir.absoluteFilePath(saveFileName);
@@ -414,10 +421,59 @@ void MAVLinkProtocol::_saveTelemetryLog(const QString &tempLogfile)
         if (!tempFile.copy(saveFilePath)) {
             const QString error = tr("Unable to save telemetry log. Error copying telemetry to '%1': '%2'.").arg(saveFilePath, tempFile.errorString());
             qgcApp()->showAppMessage(error);
+        } else {
+            _pruneTelemetryLogs(saveDirPath);
         }
     }
 
     (void) QFile::remove(tempLogfile);
+}
+
+bool MAVLinkProtocol::_rotateLogFileIfNeeded()
+{
+    if (!_tempLogFile->isOpen() || (_tempLogFile->size() < kMaxTempLogSize)) {
+        return false;
+    }
+
+    // A long session must not fill the temporary directory, which is a RAM disk on
+    // write protected machines. Close the full log, save it per the settings and
+    // start a new one.
+    const QString fileName = _tempLogFile->fileName();
+    (void) _tempLogFile->flush();
+    _tempLogFile->close();
+
+    auto appSettings = SettingsManager::instance()->appSettings();
+    auto mavlinkSettings = SettingsManager::instance()->mavlinkSettings();
+
+    const bool saveLog = (_vehicleWasArmed || mavlinkSettings->telemetrySaveNotArmed()->rawValue().toBool()) &&
+                        mavlinkSettings->telemetrySave()->rawValue().toBool() &&
+                        !appSettings->disableAllPersistence()->rawValue().toBool();
+    if (saveLog) {
+        _saveTelemetryLog(fileName);
+    } else {
+        (void) QFile::remove(fileName);
+    }
+
+    _startLogging();
+
+    return true;
+}
+
+void MAVLinkProtocol::_pruneTelemetryLogs(const QString &saveDirPath)
+{
+    const QDir saveDir(saveDirPath);
+    const QStringList filters(QStringList(QStringLiteral("*.%1").arg(AppSettings::telemetryFileExtension)));
+    const QFileInfoList logs = saveDir.entryInfoList(filters, QDir::Files, QDir::Time);
+
+    // Keep the newest logs up to the size limit and delete the rest. A rate based cap would
+    // let a long session fill the small RAM disk that this application runs on.
+    qint64 totalSize = 0;
+    for (const QFileInfo &logInfo : logs) {
+        totalSize += logInfo.size();
+        if (totalSize > kMaxSavedTelemetryLogsSize) {
+            (void) QFile::remove(logInfo.absoluteFilePath());
+        }
+    }
 }
 
 bool MAVLinkProtocol::_checkTelemetrySavePath()

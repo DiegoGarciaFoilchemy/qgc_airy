@@ -7,7 +7,6 @@
         <file alias="OfflineVehicleFirstRunPrompt.qml">src/FirstRunPromptDialogs/OfflineVehicleFirstRunPrompt.qml</file>
     </qresource>
     <qresource prefix="/json">
-        <file alias="ADSBVehicleManager.SettingsGroup.json">src/Settings/ADSBVehicleManager.SettingsGroup.json</file>
         <file alias="APMMavlinkStreamRate.SettingsGroup.json">src/Settings/APMMavlinkStreamRate.SettingsGroup.json</file>
         <file alias="App.SettingsGroup.json">src/Settings/App.SettingsGroup.json</file>
         <file alias="AutoConnect.SettingsGroup.json">src/Settings/AutoConnect.SettingsGroup.json</file>
@@ -19,14 +18,11 @@
         <file alias="CameraSpec.FactMetaData.json">src/MissionManager/CameraSpec.FactMetaData.json</file>
         <file alias="CorridorScan.SettingsGroup.json">src/MissionManager/CorridorScan.SettingsGroup.json</file>
         <file alias="MavlinkActions.SettingsGroup.json">src/Settings/MavlinkActions.SettingsGroup.json</file>
-        <file alias="RemoteID.SettingsGroup.json">src/Settings/RemoteID.SettingsGroup.json</file>
         <file alias="EditPositionDialog.FactMetaData.json">src/QmlControls/EditPositionDialog.FactMetaData.json</file>
         <file alias="FirmwareUpgrade.SettingsGroup.json">src/Settings/FirmwareUpgrade.SettingsGroup.json</file>
-        <file alias="FlightMap.SettingsGroup.json">src/Settings/FlightMap.SettingsGroup.json</file>
         <file alias="FlightMode.SettingsGroup.json">src/Settings/FlightMode.SettingsGroup.json</file>
         <file alias="FlyView.SettingsGroup.json">src/Settings/FlyView.SettingsGroup.json</file>
         <file alias="FWLandingPattern.FactMetaData.json">src/MissionManager/FWLandingPattern.FactMetaData.json</file>
-        <file alias="Maps.SettingsGroup.json">src/Settings/Maps.SettingsGroup.json</file>
         <file alias="MavCmdInfoCommon.json">src/MissionManager/MavCmdInfoCommon.json</file>
         <file alias="MavCmdInfoFixedWing.json">src/MissionManager/MavCmdInfoFixedWing.json</file>
         <file alias="MavCmdInfoMultiRotor.json">src/MissionManager/MavCmdInfoMultiRotor.json</file>
@@ -35,7 +31,6 @@
         <file alias="MavCmdInfoVTOL.json">src/MissionManager/MavCmdInfoVTOL.json</file>
         <file alias="Mavlink.SettingsGroup.json">src/Settings/Mavlink.SettingsGroup.json</file>
         <file alias="MissionSettings.FactMetaData.json">src/MissionManager/MissionSettings.FactMetaData.json</file>
-        <file alias="OfflineMaps.SettingsGroup.json">src/Settings/OfflineMaps.SettingsGroup.json</file>
         <file alias="PlanView.SettingsGroup.json">src/Settings/PlanView.SettingsGroup.json</file>
         <file alias="QGCMapCircle.Facts.json">src/QmlControls/QGCMapCircle.Facts.json</file>
         <file alias="RallyPoint.FactMetaData.json">src/MissionManager/RallyPoint.FactMetaData.json</file>
@@ -67,7 +62,6 @@
         <file alias="Vehicle/HygrometerFact.json">src/Vehicle/FactGroups/HygrometerFact.json</file>
         <file alias="Vehicle/GeneratorFact.json">src/Vehicle/FactGroups/GeneratorFact.json</file>
         <file alias="Vehicle/EFIFact.json">src/Vehicle/FactGroups/EFIFact.json</file>
-        <file alias="Vehicle/GimbalFact.json">src/Gimbal/GimbalFact.json</file>
         <file alias="Vehicle/GerrisBcmFact.json">src/Vehicle/FactGroups/GerrisBcmFact.json</file>
         <file alias="Vehicle/GerrisInverterFact.json">src/Vehicle/FactGroups/GerrisInverterFact.json</file>
         <file alias="Vehicle/GerrisDcdcFact.json">src/Vehicle/FactGroups/GerrisDcdcFact.json</file>
@@ -75,10 +69,7 @@
         <file alias="Vehicle/GerrisChargerFact.json">src/Vehicle/FactGroups/GerrisChargerFact.json</file>
         <file alias="Vehicle/GerrisAlarmsFact.json">src/Vehicle/FactGroups/GerrisAlarmsFact.json</file>
         <file alias="Vehicle/GerrisWarningsFact.json">src/Vehicle/FactGroups/GerrisWarningsFact.json</file>
-        <file alias="Video.SettingsGroup.json">src/Settings/Video.SettingsGroup.json</file>
         <file alias="VTOLLandingPattern.FactMetaData.json">src/MissionManager/VTOLLandingPattern.FactMetaData.json</file>
-        <file alias="GimbalController.SettingsGroup.json">src/Settings/GimbalController.SettingsGroup.json</file>
-        <file alias="CameraMetaData.json">src/Camera/CameraMetaData.json</file>
     </qresource>
     <qresource prefix="/MockLink">
         <file alias="APMArduSubMockLink.params">src/Comms/MockLink/APMArduSubMockLink.params</file>

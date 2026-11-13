@@ -55,13 +55,6 @@ SettingsPage {
             visible:    _appSettings.followTarget.visible
         }
 
-        FactCheckBoxSlider {
-            Layout.fillWidth: true
-            text:           qsTr("Mute all audio output")
-            fact:       _audioMuted
-            visible:    _audioMuted.visible
-            property Fact _audioMuted: _appSettings.audioMuted
-        }
 
         FactCheckBoxSlider {
             Layout.fillWidth: true

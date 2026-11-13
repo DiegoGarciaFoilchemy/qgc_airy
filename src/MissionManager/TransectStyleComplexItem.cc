@@ -563,64 +563,16 @@ void TransectStyleComplexItem::_queryTransectsPathHeightInfo(void)
 
 void TransectStyleComplexItem::_reallyQueryTransectsPathHeightInfo(void)
 {
-    qCDebug(TransectStyleComplexItemLog) << "_reallyQueryTransectsPathHeightInfo";
-
-    // Clear any previous queries
-    if (_currentTerrainPolyPathQuery) {
-        disconnect(_currentTerrainPolyPathQuery);
-        _currentTerrainPolyPathQuery = nullptr;
-    }
-    if (_currentTerrainAtCoordinateQuery) {
-        disconnect(_currentTerrainAtCoordinateQuery);
-        _currentTerrainAtCoordinateQuery = nullptr;
-    }
-
-    // Append all transects into a single PolyPath query
-    QList<QGeoCoordinate> transectPoints;
-    for (const QList<CoordInfo_t>& transect: _transects) {
-        for (const CoordInfo_t& coordInfo: transect) {
-            transectPoints.append(coordInfo.coord);
-        }
-    }
-
-    if (transectPoints.count() > 1) {
-        _currentTerrainPolyPathQuery = new TerrainPolyPathQuery(true /* autoDelete */);
-        connect(_currentTerrainPolyPathQuery, &TerrainPolyPathQuery::terrainDataReceived, this, &TransectStyleComplexItem::_polyPathTerrainData);
-        _currentTerrainPolyPathQuery->requestData(transectPoints);
-    }
+    // Terrain data is not available in this build.
+    _rgPathHeightInfo.clear();
 }
 
 void TransectStyleComplexItem::_queryMissionItemCoordHeights(void)
 {
-    qCDebug(TransectStyleComplexItemLog) << "_queryMissionItemCoordHeights";
-
     _rgFlyThroughMissionItemCoords.clear();
-
-    if (_currentTerrainAtCoordinateQuery) {
-        qCWarning(TransectStyleComplexItemLog) << "Internal error: _queryMissionItemCoordHeights called multiple times";
-        // We are already waiting on another query. We don't care about those results any more.
-        disconnect(_currentTerrainPolyPathQuery);
-        _currentTerrainPolyPathQuery = nullptr;
-    }
-
-    // We need terrain heights below each mission item we fly through which is terrain frame
-    for (const MissionItem* missionItem: _loadedMissionItems) {
-        if (missionItem->frame() == MAV_FRAME_GLOBAL_TERRAIN_ALT) {
-            const MissionCommandUIInfo* uiInfo = MissionCommandTree::instance()->getUIInfo(_controllerVehicle, QGCMAVLink::VehicleClassGeneric, missionItem->command());
-            if (uiInfo && uiInfo->specifiesCoordinate() && !uiInfo->isStandaloneCoordinate()) {
-                _rgFlyThroughMissionItemCoords.append(missionItem->coordinate());
-            }
-        }
-    }
-
-    if (_rgFlyThroughMissionItemCoords.count()) {
-        _currentTerrainAtCoordinateQuery = new TerrainAtCoordinateQuery(true /* autoDelete */);
-        connect(_currentTerrainAtCoordinateQuery, &TerrainAtCoordinateQuery::terrainDataReceived, this, &TransectStyleComplexItem::_missionItemCoordTerrainData);
-        _currentTerrainAtCoordinateQuery->requestData(_rgFlyThroughMissionItemCoords);
-    }
 }
 
-void TransectStyleComplexItem::_polyPathTerrainData(bool success, const QList<TerrainPathQuery::PathHeightInfo_t>& rgPathHeightInfo)
+void TransectStyleComplexItem::_polyPathTerrainData(bool success, const QList<TransectPathHeightInfo>& rgPathHeightInfo)
 {
     qCDebug(TransectStyleComplexItemLog) << "_polyPathTerrainData" << success;
 
@@ -633,7 +585,6 @@ void TransectStyleComplexItem::_polyPathTerrainData(bool success, const QList<Te
         _adjustForAvailableTerrainData();
         emit readyForSaveStateChanged();
     }
-    _currentTerrainPolyPathQuery = nullptr;
 }
 
 void TransectStyleComplexItem::_missionItemCoordTerrainData(bool success, QList<double> heights)
@@ -649,7 +600,6 @@ void TransectStyleComplexItem::_missionItemCoordTerrainData(bool success, QList<
         _adjustForAvailableTerrainData();
         emit readyForSaveStateChanged();
     }
-    _currentTerrainPolyPathQuery = nullptr;
 }
 
 TransectStyleComplexItem::ReadyForSaveState TransectStyleComplexItem::readyForSaveState(void) const
@@ -727,7 +677,7 @@ double TransectStyleComplexItem::_altitudeBetweenCoords(const QGeoCoordinate& fr
 ///     @param fromIndex Last height index to consider
 ///     @param[out] maxHeight Maximum height
 /// @return index within PathHeightInfo_t.heights which contains maximum height, -1 no height data in between from and to indices
-int TransectStyleComplexItem::_maxPathHeight(const TerrainPathQuery::PathHeightInfo_t& pathHeightInfo, int fromIndex, int toIndex, double& maxHeight)
+int TransectStyleComplexItem::_maxPathHeight(const TransectPathHeightInfo& pathHeightInfo, int fromIndex, int toIndex, double& maxHeight)
 {
     maxHeight = qQNaN();
 

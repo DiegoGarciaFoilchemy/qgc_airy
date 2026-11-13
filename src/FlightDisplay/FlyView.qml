@@ -12,7 +12,6 @@ import QtQuick.Controls
 import QtQuick.Dialogs
 import QtQuick.Layouts
 
-import QtLocation
 import QtPositioning
 import QtQuick.Window
 import QtQml.Models
@@ -79,7 +78,7 @@ Item {
 
     FlyViewToolBar {
         id:         toolbar
-        visible:    !QGroundControl.videoManager.fullScreen
+        visible:    true
     }
     
 

@@ -96,7 +96,6 @@ void QGCLogging::_threadsafeLog(const QString &message)
     endInsertRows();
 
     // Trim old entries to cap memory usage
-    static constexpr const int kMaxLogRows = kMaxLogFileSize / 100;
     if (rowCount() > kMaxLogRows) {
         const int removeCount = rowCount() - kMaxLogRows;
         beginRemoveRows(QModelIndex(), 0, removeCount - 1);
@@ -104,8 +103,11 @@ void QGCLogging::_threadsafeLog(const QString &message)
         endRemoveRows();
     }
 
-    // Queue for disk flush
+    // Queue for disk flush. A stalled or full disk must not grow this list without limit.
     _pendingDiskWrites.append(message);
+    if (_pendingDiskWrites.size() > kMaxPendingDiskWrites) {
+        _pendingDiskWrites.removeFirst();
+    }
 }
 
 void QGCLogging::_rotateLogs()

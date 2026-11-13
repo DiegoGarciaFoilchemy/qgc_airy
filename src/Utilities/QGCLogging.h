@@ -60,7 +60,9 @@ private:
     QStringList _pendingDiskWrites;
     bool _ioError = false;
 
-    static constexpr int kMaxLogFileSize = 10LL * 1024 * 1024;
-    static constexpr int kMaxBackupFiles = 5;
+    static constexpr int kMaxLogFileSize = 2LL * 1024 * 1024;
+    static constexpr int kMaxBackupFiles = 2;
     static constexpr int kFlushIntervalMSecs = 1000;
+    static constexpr int kMaxLogRows = 5000;
+    static constexpr int kMaxPendingDiskWrites = 5000;
 };

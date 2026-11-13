@@ -184,8 +184,6 @@ find_package(Qt6
         Core5Compat
         Gui
         LinguistTools
-        Location
-        Multimedia
         Network
         OpenGL
         Positioning
@@ -197,12 +195,10 @@ find_package(Qt6
         Sensors
         Sql
         Svg
-        TextToSpeech
         Widgets
         Xml
     OPTIONAL_COMPONENTS
         Bluetooth
-        MultimediaQuickPrivate
         Quick3D
         SerialPort
         Test
@@ -555,19 +551,15 @@ qt_add_translations(${CMAKE_PROJECT_NAME}
 )
 
 set_source_files_properties(resources/qtquickcontrols2.conf PROPERTIES QT_RESOURCE_ALIAS qtquickcontrols2.conf)
-set_source_files_properties(${SDL_GAMECONTROLLERDB_PATH} PROPERTIES QT_RESOURCE_ALIAS gamecontrollerdb.txt)
 qt_add_resources(${CMAKE_PROJECT_NAME} "qgcresources_cmake"
     PREFIX "/"
     FILES
         resources/qtquickcontrols2.conf
-        ${SDL_GAMECONTROLLERDB_PATH}
-        ${QGC_GSTREAMER_SHADER_RESOURCES}
 )
 
 # cmake_print_variables(QT_ALL_PLUGIN_TYPES_FOUND_VIA_FIND_PACKAGE)
 qt_import_plugins(${CMAKE_PROJECT_NAME}
     INCLUDE Qt6::QSvgPlugin
-    EXCLUDE_BY_TYPE geoservices
     INCLUDE_BY_TYPE sqldrivers Qt6::QSQLiteDriverPlugin
     # INCLUDE_BY_TYPE styles Qt6::qtquickcontrols2basicstyleplugin Qt6::qtquickcontrols2basicstyleimplplugin
 )

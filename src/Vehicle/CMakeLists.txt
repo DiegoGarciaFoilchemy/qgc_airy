@@ -10,12 +10,8 @@ target_sources(${CMAKE_PROJECT_NAME}
         MAVLinkLogManager.h
         MultiVehicleManager.cc
         MultiVehicleManager.h
-        RemoteIDManager.cc
-        RemoteIDManager.h
         StandardModes.cc
         StandardModes.h
-        TerrainProtocolHandler.cc
-        TerrainProtocolHandler.h
         TrajectoryPoints.cc
         TrajectoryPoints.h
         Vehicle.cc

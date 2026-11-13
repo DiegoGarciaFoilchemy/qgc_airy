@@ -1,7 +1,5 @@
 target_sources(${CMAKE_PROJECT_NAME}
     PRIVATE
-        JoystickConfigController.cc
-        JoystickConfigController.h
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
@@ -28,11 +26,6 @@ qt_add_qml_module(VehicleSetupModule
     RESOURCE_PREFIX /qml
     QML_FILES
         FirmwareUpgrade.qml
-        JoystickConfig.qml
-        JoystickConfigAdvanced.qml
-        JoystickConfigButtons.qml
-        JoystickConfigCalibration.qml
-        JoystickConfigGeneral.qml
         OpticalFlowSensor.qml
         SetupParameterEditor.qml
         SetupView.qml

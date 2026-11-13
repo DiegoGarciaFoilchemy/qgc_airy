@@ -51,7 +51,6 @@
 #include "VehicleGerrisChargerFactGroup.h"
 #include "VehicleGerrisAlarmsFactGroup.h"
 #include "VehicleGerrisWarningsFactGroup.h"
-#include "GimbalController.h"
 
 class Actuators;
 class AutoPilotPlugin;
@@ -64,24 +63,18 @@ class GeoFenceManager;
 class ImageProtocolManager;
 class StatusTextHandler;
 class InitialConnectStateMachine;
-class Joystick;
 class LinkInterface;
 class MAVLinkLogManager;
 class MissionManager;
 class ParameterManager;
-class QGCCameraManager;
 class RallyPointManager;
-class RemoteIDManager;
 class RequestMessageTest;
 class SendMavCommandWithHandlerTest;
 class SendMavCommandWithSignallingTest;
 class StandardModes;
-class TerrainAtCoordinateQuery;
-class TerrainProtocolHandler;
 class TrajectoryPoints;
 class VehicleBatteryFactGroup;
 class VehicleObjectAvoidance;
-class GimbalController;
 #ifdef QGC_UTM_ADAPTER
 class UTMSPVehicle;
 #endif
@@ -102,8 +95,6 @@ class Vehicle : public VehicleFactGroup
     Q_MOC_INCLUDE("ParameterManager.h")
     Q_MOC_INCLUDE("VehicleObjectAvoidance.h")
     Q_MOC_INCLUDE("Autotune.h")
-    Q_MOC_INCLUDE("RemoteIDManager.h")
-    Q_MOC_INCLUDE("QGCCameraManager.h")
     Q_MOC_INCLUDE("Actuators.h")
 
     friend class InitialConnectStateMachine;
@@ -112,7 +103,6 @@ class Vehicle : public VehicleFactGroup
     friend class SendMavCommandWithSignallingTest;  // Unit test
     friend class SendMavCommandWithHandlerTest;     // Unit test
     friend class RequestMessageTest;                // Unit test
-    friend class GimbalController;                  // Allow GimbalController to call _addFactGroup
 
 public:
     Vehicle(LinkInterface*          link,
@@ -151,7 +141,6 @@ public:
     Q_PROPERTY(QStringList          flightModes                 READ flightModes                                                    NOTIFY flightModesChanged)
     Q_PROPERTY(QString              flightMode                  READ flightMode                 WRITE setFlightMode                 NOTIFY flightModeChanged)
     Q_PROPERTY(TrajectoryPoints*    trajectoryPoints            MEMBER _trajectoryPoints                                            CONSTANT)
-    Q_PROPERTY(QmlObjectListModel*  cameraTriggerPoints         READ cameraTriggerPoints                                            CONSTANT)
     Q_PROPERTY(float                latitude                    READ latitude                                                       NOTIFY coordinateChanged)
     Q_PROPERTY(float                longitude                   READ longitude                                                      NOTIFY coordinateChanged)
     Q_PROPERTY(bool                 joystickEnabled             READ joystickEnabled            WRITE setJoystickEnabled            NOTIFY joystickEnabledChanged)
@@ -210,8 +199,6 @@ public:
     Q_PROPERTY(QVariantList         toolIndicators              READ toolIndicators                                                 NOTIFY toolIndicatorsChanged)
     Q_PROPERTY(QVariantList         modeIndicators              READ modeIndicators                                                 NOTIFY modeIndicatorsChanged)
     Q_PROPERTY(bool              initialPlanRequestComplete     READ initialPlanRequestComplete                                     NOTIFY initialPlanRequestCompleteChanged)
-    Q_PROPERTY(QVariantList         staticCameraList            READ staticCameraList                                               CONSTANT)
-    Q_PROPERTY(QGCCameraManager*    cameraManager               READ cameraManager                                                  NOTIFY cameraManagerChanged)
     Q_PROPERTY(QString              hobbsMeter                  READ hobbsMeter                                                     NOTIFY hobbsMeterChanged)
     Q_PROPERTY(bool                 inFwdFlight                 READ inFwdFlight                                                    NOTIFY inFwdFlightChanged)
     Q_PROPERTY(bool                 vtolInFwdFlight             READ vtolInFwdFlight            WRITE setVtolInFwdFlight            NOTIFY vtolInFwdFlightChanged)
@@ -220,7 +207,6 @@ public:
     Q_PROPERTY(quint64              mavlinkReceivedCount        READ mavlinkReceivedCount                                           NOTIFY mavlinkStatusChanged)
     Q_PROPERTY(quint64              mavlinkLossCount            READ mavlinkLossCount                                               NOTIFY mavlinkStatusChanged)
     Q_PROPERTY(float                mavlinkLossPercent          READ mavlinkLossPercent                                             NOTIFY mavlinkStatusChanged)
-    Q_PROPERTY(GimbalController*    gimbalController            READ gimbalController                                               CONSTANT)
     Q_PROPERTY(bool                 hasGripper                  READ hasGripper                                                     CONSTANT)
     Q_PROPERTY(bool                 isROIEnabled                READ isROIEnabled                                                   NOTIFY isROIEnabledChanged)
     Q_PROPERTY(CheckList            checkListState              READ checkListState             WRITE setCheckListState             NOTIFY checkListStateChanged)
@@ -255,7 +241,6 @@ public:
     Q_PROPERTY(VehicleLinkManager*      vehicleLinkManager  READ vehicleLinkManager CONSTANT)
     Q_PROPERTY(VehicleObjectAvoidance*  objectAvoidance     READ objectAvoidance    CONSTANT)
     Q_PROPERTY(Autotune*                autotune            READ autotune           CONSTANT)
-    Q_PROPERTY(RemoteIDManager*         remoteIDManager     READ remoteIDManager    CONSTANT)
 
     // FactGroup object model properties
 
@@ -297,7 +282,6 @@ public:
     /// Resets link status counters
     Q_INVOKABLE void resetCounters  ();
 
-    Q_INVOKABLE void virtualTabletJoystickValue(double roll, double pitch, double yaw, double thrust);
 
     /// Command vehicle to return to launch
     Q_INVOKABLE void guidedModeRTL(bool smartRTL);
@@ -415,14 +399,11 @@ public:
     /// Removes the vehicle from the system
     Q_INVOKABLE void closeVehicle(void) { _vehicleLinkManager->closeVehicle(); }
 
-    /// Trigger camera using MAV_CMD_DO_DIGICAM_CONTROL command
-    Q_INVOKABLE void triggerSimpleCamera(void);
 
     /// Set home from flight map coordinate
     Q_INVOKABLE void doSetHome(const QGeoCoordinate& coord);
 
     /// Save the joystick enable setting to the settings group
-    Q_INVOKABLE void saveJoystickSettings(void);
 
     Q_INVOKABLE void sendSetupSigning();
 
@@ -453,7 +434,6 @@ public:
 
     bool joystickEnabled            () const;
     void setJoystickEnabled         (bool enabled);
-    void sendJoystickDataThreadSafe (float roll, float pitch, float yaw, float thrust, quint16 buttons);
 
     // Property accesors
     int id() const{ return _id; }
@@ -520,7 +500,6 @@ public:
     QString prearmError() const { return _prearmError; }
     void setPrearmError(const QString& prearmError);
 
-    QmlObjectListModel* cameraTriggerPoints () { return &_cameraTriggerPoints; }
 
     //-- Mavlink Logging
     void startMavlinkLog();
@@ -633,7 +612,6 @@ public:
     ComponentInformationManager*    compInfoManager     () { return _componentInformationManager; }
     VehicleObjectAvoidance*         objectAvoidance     () { return _objectAvoidance; }
     Autotune*                       autotune            () const { return _autotune; }
-    RemoteIDManager*                remoteIDManager     () { return _remoteIDManager; }
 
     static void showCommandAckError(const mavlink_command_ack_t& ack);
 
@@ -782,12 +760,10 @@ public:
     QVariant                    mainStatusIndicatorContentItem  ();
     const QVariantList&         toolIndicators                  ();
     const QVariantList&         modeIndicators                  ();
-    const QVariantList&         staticCameraList                () const;
 
     bool capabilitiesKnown      () const { return _capabilityBitsKnown; }
     uint64_t capabilityBits     () const { return _capabilityBits; }    // Change signalled by capabilityBitsChanged
 
-    QGCCameraManager*           cameraManager       () { return _cameraManager; }
     QString                     hobbsMeter          ();
 
     /// The vehicle is responsible for making the initial request for the Plan.
@@ -805,11 +781,7 @@ public:
     /// Vehicle is about to be deleted
     void prepareDelete();
 
-    /// Delete gimbal controller, handy for RequestMessageTest.cc, otherwise gimbal controller message requests will mess with this test
-    void deleteGimbalController();
 
-    /// Delete camera manager, just for testing
-    void deleteCameraManager();
 
     quint64     mavlinkSentCount        () const{ return _mavlinkSentCount; }        /// Calculated total number of messages sent to us
     quint64     mavlinkReceivedCount    () const{ return _mavlinkReceivedCount; }    /// Total number of sucessful messages received
@@ -828,7 +800,6 @@ public:
 
     HealthAndArmingCheckReport* healthAndArmingCheckReport() { return &_healthAndArmingCheckReport; }
 
-    GimbalController* gimbalController  () { return _gimbalController; }
 
 public slots:
     void setVtolInFwdFlight                 (bool vtolInFwdFlight);
@@ -854,7 +825,6 @@ signals:
     void defaultHoverSpeedChanged       (double hoverSpeed);
     void firmwareTypeChanged            ();
     void vehicleTypeChanged             ();
-    void cameraManagerChanged           ();
     void hobbsMeterChanged              ();
     void capabilitiesKnownChanged       (bool capabilitiesKnown);
     void initialPlanRequestCompleteChanged(bool initialPlanRequestComplete);
@@ -943,7 +913,6 @@ private slots:
     void _firstGeoFenceLoadComplete         ();
     void _firstRallyPointLoadComplete       ();
     void _sendMavCommandResponseTimeoutCheck();
-    void _clearCameraTriggerPoints          ();
     void _updateDistanceHeadingToHome       ();
     void _updateMissionItemIndex            ();
     void _updateHeadingToNextWP             ();
@@ -956,14 +925,10 @@ private slots:
     void _orbitTelemetryTimeout             ();
     void _updateFlightTime                  ();
     void _gotProgressUpdate                 (float progressValue);
-    void _doSetHomeTerrainReceived          (bool success, QList<double> heights);
     void _updateAltAboveTerrain             ();
-    void _altitudeAboveTerrainReceived      (bool sucess, QList<double> heights);
 
 private:
-    void _loadJoystickSettings          ();
     void _activeVehicleChanged          (Vehicle* newActiveVehicle);
-    void _captureJoystick               ();
     void _handlePing                    (LinkInterface* link, mavlink_message_t& message);
     void _handleHomePosition            (mavlink_message_t& message);
     void _handleHeartbeat               (mavlink_message_t& message);
@@ -975,24 +940,21 @@ private:
     void _handleExtendedSysState        (mavlink_message_t& message);
     void _handleCommandAck              (mavlink_message_t& message);
     void _handleGpsRawInt               (mavlink_message_t& message);
+    void _handleSystemTime              (mavlink_message_t& message);
     void _handleGlobalPositionInt       (mavlink_message_t& message);
     void _handleHighLatency             (mavlink_message_t& message);
     void _handleHighLatency2            (mavlink_message_t& message);
     void _handleOrbitExecutionStatus    (const mavlink_message_t& message);
-    void _handleGimbalOrientation       (const mavlink_message_t& message);
     void _handleObstacleDistance        (const mavlink_message_t& message);
     void _handleFenceStatus             (const mavlink_message_t& message);
     void _handleEvent(uint8_t comp_id, std::unique_ptr<events::parser::ParsedEvent> event);
     // ArduPilot dialect messages
 #if !defined(QGC_NO_ARDUPILOT_DIALECT)
-    void _handleCameraFeedback          (const mavlink_message_t& message);
 #endif
-    void _handleCameraImageCaptured     (const mavlink_message_t& message);
     void _handleCommandLong             (const mavlink_message_t& message);
     void _missionManagerError           (int errorCode, const QString& errorMsg);
     void _geoFenceManagerError          (int errorCode, const QString& errorMsg);
     void _rallyPointManagerError        (int errorCode, const QString& errorMsg);
-    void _say                           (const QString& text);
     QString _vehicleIdSpeech            ();
     void _handleMavlinkLoggingData      (mavlink_message_t& message);
     void _handleMavlinkLoggingDataAcked (mavlink_message_t& message);
@@ -1070,7 +1032,6 @@ private:
 
     SysStatusSensorInfo _sysStatusSensorInfo;
 
-    QGCCameraManager* _cameraManager = nullptr;
 
     QString             _prearmError;
     QTimer              _prearmErrorTimer;
@@ -1082,7 +1043,6 @@ private:
     ComponentInformationManager*    _componentInformationManager    = nullptr;
     VehicleObjectAvoidance*         _objectAvoidance                = nullptr;
     Autotune*                       _autotune                       = nullptr;
-    GimbalController*               _gimbalController               = nullptr;
 
 #ifdef QGC_UTM_ADAPTER
     UTMSPVehicle*                    _utmspVehicle                    = nullptr;
@@ -1111,8 +1071,6 @@ private:
     QElapsedTimer                   _flightTimer;
     QTimer                          _flightTimeUpdater;
     TrajectoryPoints*               _trajectoryPoints = nullptr;
-    QmlObjectListModel              _cameraTriggerPoints;
-    //QMap<QString, ADSBVehicle*>     _trafficVehicleMap;
 
     bool _allLinksRemovedSent = false; ///< true: allLinkRemoved signal already sent one time
 
@@ -1124,7 +1082,6 @@ private:
     bool                _heardFrom = false;
 
     bool                _isROIEnabled   = false;
-    Joystick*           _activeJoystick = nullptr;
 
     bool _checkLatestStableFWDone = false;
     int _firmwareMajorVersion = versionNotSetValue;
@@ -1242,7 +1199,6 @@ private:
     // FactGroup facts
 
     const QString _settingsGroup =               QStringLiteral("Vehicle%1");        // %1 replaced with mavlink system id
-    const QString _joystickEnabledSettingsKey =  QStringLiteral("JoystickEnabled");
 
     const QString _vehicleFactGroupName =            QStringLiteral("vehicle");
     const QString _gpsFactGroupName =                QStringLiteral("gps");
@@ -1297,7 +1253,6 @@ private:
     // TerrainFactGroup                _terrainFactGroup;
     QmlObjectListModel              _batteryFactGroupListModel;
 
-    TerrainProtocolHandler* _terrainProtocolHandler = nullptr;
 
     MissionManager*                 _missionManager             = nullptr;
     GeoFenceManager*                _geoFenceManager            = nullptr;
@@ -1306,16 +1261,12 @@ private:
     FTPManager*                     _ftpManager                 = nullptr;
     InitialConnectStateMachine*     _initialConnectStateMachine = nullptr;
     Actuators*                      _actuators                  = nullptr;
-    RemoteIDManager*                _remoteIDManager            = nullptr;
     StandardModes*                  _standardModes              = nullptr;
 
     // Terrain query members, used to get terrain altitude for doSetHome()
-    TerrainAtCoordinateQuery*   _currentDoSetHomeTerrainAtCoordinateQuery = nullptr;
-    QGeoCoordinate              _doSetHomeCoordinate;
 
     // Terrain query members, used to get altitude above terrain Fact
     QElapsedTimer               _altitudeAboveTerrQueryTimer;
-    TerrainAtCoordinateQuery*   _altitudeAboveTerrTerrainAtCoordinateQuery = nullptr;
     // We use this to limit above terrain altitude queries based on distance and altitude change
     QGeoCoordinate              _altitudeAboveTerrLastCoord;
     float                       _altitudeAboveTerrLastRelAlt = qQNaN();

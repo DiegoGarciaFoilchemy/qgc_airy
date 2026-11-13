@@ -158,7 +158,6 @@ private:
     bool _error = false;
     bool _showErrorsInToolbar = false;
     QElapsedTimer _msecsElapsedTime;
-    bool _videoManagerInitialized = false;
 
     QList<QPair<QString /* title */, QString /* message */>> _delayedAppMessages;
 

@@ -51,8 +51,6 @@ target_sources(${CMAKE_PROJECT_NAME}
         RCToParamDialogController.h
         ScreenToolsController.cc
         ScreenToolsController.h
-        TerrainProfile.cc
-        TerrainProfile.h
         ToolStripAction.cc
         ToolStripAction.h
         ToolStripActionList.cc
@@ -179,37 +177,19 @@ qt_add_qml_module(QGroundControlControlsModule
         CameraCalcCamera.qml
         CameraCalcGrid.qml
         CameraSection.qml
-        CorridorScanEditor.qml
-        CorridorScanMapVisual.qml
         FWLandingPatternEditor.qml
-        FWLandingPatternMapVisual.qml
         GeoFenceEditor.qml
-        GeoFenceMapVisuals.qml
         MissionItemEditor.qml
-        MissionItemMapVisual.qml
         MissionItemStatus.qml
         MissionSettingsEditor.qml
         PlanEditToolbar.qml
         PlanToolBarIndicators.qml
-        PlanView.qml
         RallyPointEditorHeader.qml
         RallyPointItemEditor.qml
-        RallyPointMapVisuals.qml
         SimpleItemEditor.qml
-        SimpleItemMapVisual.qml
-        StructureScanEditor.qml
-        StructureScanMapVisual.qml
-        SurveyItemEditor.qml
-        SurveyMapVisual.qml
-        TakeoffItemMapVisual.qml
-        TerrainStatus.qml
-        TransectStyleComplexItemEditor.qml
         TransectStyleComplexItemStats.qml
         TransectStyleComplexItemTabBar.qml
-        TransectStyleComplexItemTerrainFollow.qml
-        TransectStyleMapVisuals.qml
         VTOLLandingPatternEditor.qml
-        VTOLLandingPatternMapVisual.qml
 
         # src/UI/preferences/
         OfflineMapInfo.qml
@@ -225,12 +205,10 @@ qt_add_qml_module(QGroundControlControlsModule
         MainStatusIndicator.qml
         MainStatusIndicatorOfflinePage.qml
         PlanViewToolBar.qml
-        RemoteIDIndicatorPage.qml
         SignalStrength.qml
         VehicleMessageList.qml
 
         # src/QtLocationPlugin/QMLControl/
-        OfflineMapEditor.qml
 
     NO_PLUGIN # Required by Qt 6.6.3. TODO: Remove when no longer supported.
 )

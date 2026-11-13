@@ -102,9 +102,6 @@
         <file alias="radioYawLeft.png">resources/calibration/mode2/radioYawLeft.png</file>
         <file alias="radioYawRight.png">resources/calibration/mode2/radioYawRight.png</file>
     </qresource>
-    <qresource prefix="/res/audio">
-        <file alias="Alert">resources/audio/alert.wav</file>
-    </qresource>
     <qresource prefix="/opengl">
         <file>resources/opengl/buglist.json</file>
     </qresource>

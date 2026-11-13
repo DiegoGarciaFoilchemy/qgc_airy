@@ -15,14 +15,11 @@
 #include <QtPositioning/QGeoCoordinate>
 
 #include "QGCMAVLink.h"
-#include "FollowMe.h"
 #include "FactMetaData.h"
 
 class VehicleComponent;
 class AutoPilotPlugin;
 class Vehicle;
-class MavlinkCameraControl;
-class QGCCameraManager;
 class Autotune;
 class LinkInterface;
 class FactGroup;
@@ -353,11 +350,7 @@ public:
     /// @return A list of QUrl with the indicators
     virtual const QVariantList &modeIndicators(const Vehicle *vehicle);
 
-    /// Creates vehicle camera manager.
-    virtual QGCCameraManager *createCameraManager(Vehicle *vehicle) const;
 
-    /// Camera control.
-    virtual MavlinkCameraControl *createCameraControl(const mavlink_camera_information_t *info, Vehicle *vehicle, int compID, QObject *parent = nullptr) const;
 
     /// Returns a pointer to a dictionary of firmware-specific FactGroups
     virtual QMap<QString, FactGroup*> *factGroups() { return nullptr; }
@@ -395,7 +388,6 @@ public:
     virtual void adjustMetaData(MAV_TYPE /*vehicleType*/, FactMetaData* /*metaData*/) {}
 
     /// Sends the appropriate mavlink message for follow me support
-    virtual void sendGCSMotionReport(Vehicle *vehicle, const FollowMe::GCSMotionReport &motionReport, uint8_t estimationCapabilities) const;
 
     /// gets hobbs meter from autopilot. This should be reimplmeented for each firmware
     virtual QString getHobbsMeter(Vehicle *vehicle) const { Q_UNUSED(vehicle); return QStringLiteral("Not Supported"); }

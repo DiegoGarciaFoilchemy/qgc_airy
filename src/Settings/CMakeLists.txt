@@ -1,7 +1,5 @@
 target_sources(${CMAKE_PROJECT_NAME}
     PRIVATE
-        ADSBVehicleManagerSettings.cc
-        ADSBVehicleManagerSettings.h
         AppSettings.cc
         AppSettings.h
         AutoConnectSettings.cc
@@ -14,22 +12,14 @@ target_sources(${CMAKE_PROJECT_NAME}
         MavlinkActionsSettings.h
         FirmwareUpgradeSettings.cc
         FirmwareUpgradeSettings.h
-        FlightMapSettings.cc
-        FlightMapSettings.h
         FlightModeSettings.cc
         FlightModeSettings.h
         FlyViewSettings.cc
         FlyViewSettings.h
-        GimbalControllerSettings.cc
-        GimbalControllerSettings.h
         MavlinkSettings.cc
         MavlinkSettings.h
-        OfflineMapsSettings.cc
-        OfflineMapsSettings.h
         PlanViewSettings.cc
         PlanViewSettings.h
-        RemoteIDSettings.cc
-        RemoteIDSettings.h
         RTKSettings.cc
         RTKSettings.h
         SettingsGroup.cc
@@ -38,10 +28,6 @@ target_sources(${CMAKE_PROJECT_NAME}
         SettingsManager.h
         UnitsSettings.cc
         UnitsSettings.h
-        VideoSettings.cc
-        VideoSettings.h
-        MapsSettings.cc
-        MapsSettings.h
         Viewer3DSettings.cc
         Viewer3DSettings.h
 )

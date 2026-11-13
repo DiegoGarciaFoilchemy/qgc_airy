@@ -9,9 +9,9 @@
 
 #pragma once
 
-#include "TerrainQuery.h"
 
 #include <QtCore/QObject>
+#include <QtCore/QVariantList>
 #include <QtPositioning/QGeoCoordinate>
 #include <QtCore/QTimer>
 #include <QtCore/QLoggingCategory>
@@ -80,8 +80,6 @@ signals:
     void terrainCollisionChanged    (bool terrainCollision);
 
 private slots:
-    void _sendTerrainPathQuery      (void);
-    void _terrainDataReceived       (bool success, const TerrainPathQuery::PathHeightInfo_t& pathHeightInfo);
     void _updateTotalDistance       (void);
     void _updateTerrainCollision    (void);
 
@@ -93,8 +91,6 @@ private:
     bool                _queryTerrainData;
     bool                _terrainCollision =             false;
     bool                _specialVisual =                false;
-    QTimer              _delayedTerrainPathQueryTimer;
-    TerrainPathQuery*   _currentTerrainPathQuery =      nullptr;
     QVariantList        _amslTerrainHeights;
     double              _distanceBetween =              0;
     double              _finalDistanceBetween =         0;

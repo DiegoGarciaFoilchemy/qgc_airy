@@ -9,6 +9,7 @@
 
 #include "VehicleClockFactGroup.h"
 #include "QGCApplication.h"
+#include "QGCClock.h"
 
 VehicleClockFactGroup::VehicleClockFactGroup(QObject *parent)
     : FactGroup(1000, QStringLiteral(":/json/Vehicle/ClockFact.json"), parent)
@@ -24,9 +25,10 @@ VehicleClockFactGroup::VehicleClockFactGroup(QObject *parent)
 
 void VehicleClockFactGroup::_updateAllValues()
 {
-    currentTime()->setRawValue(QTime::currentTime().toString());
-    currentUTCTime()->setRawValue(QDateTime::currentDateTimeUtc().time().toString());
-    currentDate()->setRawValue(QDateTime::currentDateTime().toString(qgcApp()->getCurrentLanguage().dateFormat(QLocale::ShortFormat)));
+    const qint64 nowMsecs = QGCClock::currentMSecsSinceEpoch();
+    currentTime()->setRawValue(QDateTime::fromMSecsSinceEpoch(nowMsecs).time().toString());
+    currentUTCTime()->setRawValue(QDateTime::fromMSecsSinceEpoch(nowMsecs).toUTC().time().toString());
+    currentDate()->setRawValue(QDateTime::fromMSecsSinceEpoch(nowMsecs).toString(qgcApp()->getCurrentLanguage().dateFormat(QLocale::ShortFormat)));
 
     _setTelemetryAvailable(true);
 

@@ -58,20 +58,12 @@ void QGCPositionManager::init()
 
 void QGCPositionManager::_setupPositionSources()
 {
+    // The system position source is disabled in this build. NMEA input can still set a source.
     _defaultSource = QGCCorePlugin::instance()->createPositionSource(this);
     if (_defaultSource) {
         _usingPluginSource = true;
-    } else {
-        qCDebug(QGCPositionManagerLog) << Q_FUNC_INFO << QGeoPositionInfoSource::availableSources();
-
-        _defaultSource = QGeoPositionInfoSource::createDefaultSource(this);
-        if (!_defaultSource) {
-            qCWarning(QGCPositionManagerLog) << Q_FUNC_INFO << "No default source available";
-            return;
-        }
+        _setPositionSource(QGCPositionSource::InternalGPS);
     }
-
-    _setPositionSource(QGCPositionSource::InternalGPS);
 }
 
 void QGCPositionManager::_handlePermissionStatus(Qt::PermissionStatus permissionStatus)

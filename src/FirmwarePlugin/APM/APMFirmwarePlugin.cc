@@ -1139,55 +1139,6 @@ void APMFirmwarePlugin::_handleRCChannelsRaw(Vehicle *vehicle, mavlink_message_t
     }
 }
 
-void APMFirmwarePlugin::sendGCSMotionReport(Vehicle *vehicle, const FollowMe::GCSMotionReport &motionReport, uint8_t estimationCapabilities) const
-{
-    if (!vehicle->homePosition().isValid()) {
-        static bool sentOnce = false;
-        if (!sentOnce) {
-            sentOnce = true;
-            qgcApp()->showAppMessage(QStringLiteral("Follow failed: Home position not set."));
-        }
-        return;
-    }
-
-    if (!(estimationCapabilities & (FollowMe::POS | FollowMe::VEL | FollowMe::HEADING))) {
-        static bool sentOnce = false;
-        if (!sentOnce) {
-            sentOnce = true;
-            qCWarning(APMFirmwarePluginLog) << "estimateCapabilities" << estimationCapabilities;
-            qgcApp()->showAppMessage(QStringLiteral("Follow failed: Ground station cannot provide required position information."));
-        }
-        return;
-    }
-
-    SharedLinkInterfacePtr sharedLink = vehicle->vehicleLinkManager()->primaryLink().lock();
-    if (!sharedLink) {
-        return;
-    }
-
-    const mavlink_global_position_int_t globalPositionInt = {
-        static_cast<uint32_t>(qgcApp()->msecsSinceBoot()),                  /*< [ms] Timestamp (time since system boot).*/
-        motionReport.lat_int,                                               /*< [degE7] Latitude, expressed*/
-        motionReport.lon_int,                                               /*< [degE7] Longitude, expressed*/
-        static_cast<int32_t>(vehicle->homePosition().altitude() * 1000),    /*< [mm] Altitude (MSL).*/
-        static_cast<int32_t>(0),                                            /*< [mm] Altitude above home*/
-        static_cast<int16_t>(motionReport.vxMetersPerSec * 100),            /*< [cm/s] Ground X Speed (Latitude, positive north)*/
-        static_cast<int16_t>(motionReport.vyMetersPerSec * 100),            /*< [cm/s] Ground Y Speed (Longitude, positive east)*/
-        static_cast<int16_t>(motionReport.vzMetersPerSec * 100),            /*< [cm/s] Ground Z Speed (Altitude, positive down)*/
-        static_cast<uint16_t>(motionReport.headingDegrees * 100.0)          /*< [cdeg] Vehicle heading (yaw angle)*/
-    };
-
-    mavlink_message_t message{};
-    (void) mavlink_msg_global_position_int_encode_chan(
-        static_cast<uint8_t>(MAVLinkProtocol::instance()->getSystemId()),
-        static_cast<uint8_t>(MAVLinkProtocol::getComponentId()),
-        sharedLink->mavlinkChannel(),
-        &message,
-        &globalPositionInt
-    );
-    (void) vehicle->sendMessageOnLinkThreadSafe(sharedLink.get(), message);
-}
-
 uint8_t APMFirmwarePlugin::_reencodeMavlinkChannel()
 {
     // This mutex is only to guard against a race on allocating the channel id

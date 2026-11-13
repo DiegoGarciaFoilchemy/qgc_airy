@@ -9,6 +9,7 @@
 
 #include "MAVLinkLogManager.h"
 #include "QGCLoggingCategory.h"
+#include "QGCClock.h"
 #include "QmlObjectListModel.h"
 #include "SettingsManager.h"
 #include "AppSettings.h"
@@ -124,7 +125,7 @@ bool MAVLinkLogProcessor::create(MAVLinkLogManager *manager, QStringView path, u
         "%s/%03d-%s%s",
         path.toLatin1().constData(),
         id,
-        QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss-zzz").toLocal8Bit().constData(),
+        QGCClock::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss-zzz").toLocal8Bit().constData(),
         manager->logExtension().toLocal8Bit().constData()
     );
 

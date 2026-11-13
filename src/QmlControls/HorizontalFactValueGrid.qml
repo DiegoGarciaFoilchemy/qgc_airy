@@ -17,7 +17,6 @@ import QGroundControl.Controls
 import QGroundControl.ScreenTools
 import QGroundControl.Controllers
 import QGroundControl.Palette
-import QGroundControl.FlightMap
 import QGroundControl
 
 T.HorizontalFactValueGrid {

@@ -10,7 +10,6 @@
 #pragma once
 
 #include "FirmwarePlugin.h"
-#include "FollowMe.h"
 #include "QGCMAVLink.h"
 
 #include <QtCore/QLoggingCategory>
@@ -78,7 +77,6 @@ public:
     bool fixedWingAirSpeedLimitsAvailable(Vehicle *vehicle) const override;
     void guidedModeChangeEquivalentAirspeedMetersSecond(Vehicle* vehicle, double airspeed_equiv) const override;
     QVariant mainStatusIndicatorContentItem(const Vehicle* vehicle) const override;
-    void sendGCSMotionReport(Vehicle *vehicle, const FollowMe::GCSMotionReport& motionReport, uint8_t estimatationCapabilities) const override;
 
     // support for changing speed in Copter guide mode:
     bool mulirotorSpeedLimitsAvailable(Vehicle *vehicle) const override;

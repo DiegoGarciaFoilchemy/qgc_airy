@@ -11,7 +11,6 @@
 #include "Vehicle.h"
 #include "LinkManager.h"
 #include "QGCApplication.h"
-#include "AudioOutput.h"
 #ifndef QGC_NO_SERIAL_LINK
     #include "SerialLink.h"
 #endif
@@ -83,12 +82,7 @@ void VehicleLinkManager::_commRegainedOnLink(LinkInterface *link)
         primarySwitchMessage = tr("%1Switching communication to new primary link").arg(_vehicle->_vehicleIdSpeech());
     }
 
-    if (!commRegainedMessage.isEmpty()) {
-        AudioOutput::instance()->say(commRegainedMessage.toLower());
-    }
-
     if (!primarySwitchMessage.isEmpty()) {
-        AudioOutput::instance()->say(primarySwitchMessage.toLower());
         qgcApp()->showAppMessage(primarySwitchMessage);
     }
 
@@ -125,12 +119,6 @@ void VehicleLinkManager::_commLostCheck()
             linkInfo.commLost = true;
             linkStatusChange = true;
 
-            // Notify the user of individual link communication loss
-            const bool isPrimaryLink = linkInfo.link.get() == _primaryLink.lock().get();
-            if (_rgLinkInfo.count() > 1) {
-                const QString msg = tr("%1Communication lost on %2 link.").arg(_vehicle->_vehicleIdSpeech()).arg(isPrimaryLink ? tr("primary") : tr("secondary"));
-                AudioOutput::instance()->say(msg.toLower());
-            }
         }
     }
 
@@ -140,7 +128,6 @@ void VehicleLinkManager::_commLostCheck()
 
     if (_updatePrimaryLink()) {
         QString msg = tr("%1Switching communication to secondary link.").arg(_vehicle->_vehicleIdSpeech());
-        AudioOutput::instance()->say(msg.toLower());
         qgcApp()->showAppMessage(msg);
     }
 
@@ -162,8 +149,6 @@ void VehicleLinkManager::_commLostCheck()
             closeVehicle();
             return;
         }
-
-        AudioOutput::instance()->say(tr("%1Communication lost").arg(_vehicle->_vehicleIdSpeech()).toLower());
 
         _communicationLost = true;
         emit communicationLostChanged(_communicationLost);
