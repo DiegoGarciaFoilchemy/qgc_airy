@@ -244,8 +244,8 @@ Item {
                     { label: "Ultrasonic bow stbd State", fact: vehicle ? vehicle.uss1State : null, decimals: 0, unit: "", isState: true },
                     { label: "Ultrasonic bow port Distance", fact: vehicle ? vehicle.uss2Distance : null, decimals: 2, unit: "m" },
                     { label: "Ultrasonic bow port State", fact: vehicle ? vehicle.uss2State : null, decimals: 0, unit: "", isState: true },
-                    { label: "Ultrasonic aft Distance", fact: vehicle ? vehicle.uss3Distance : null, decimals: 2, unit: "m" },
-                    { label: "Ultrasonic aft State", fact: vehicle ? vehicle.uss3State : null, decimals: 0, unit: "", isState: true }
+                    // { label: "Ultrasonic aft Distance", fact: vehicle ? vehicle.uss3Distance : null, decimals: 2, unit: "m" },
+                    // { label: "Ultrasonic aft State", fact: vehicle ? vehicle.uss3State : null, decimals: 0, unit: "", isState: true }
                 ]
             }
         ]

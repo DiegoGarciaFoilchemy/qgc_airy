@@ -46,19 +46,63 @@ RowLayout {
         horizontalAlignment: Text.AlignHCenter
         text:               mainStatusText()
         color:              "white"
-        font.pixelSize:     48
+        font.pixelSize:     mainStatusLabel.statusPixelSize()
         font.bold:          true
 
+        property int    _statusPixelSize:   48
+        property int    _readyPixelSize:    41
+        property int    _notReadyPixelSize: 30
+
+        // The ready state uses its own background color so that it differs
+        // from the armed state, which uses green.
+        property color  _readyBackgroundColor: "#0080ff"
+
         property string _commLostText:      qsTr("Comms Lost")
-        property string _readyToFlyText:    qsTr(" OFF")
-        property string _notReadyToFlyText: qsTr(" OFF")
+        property string _readyToFlyText:    qsTr(" READY")
+        property string _notReadyText:      qsTr("NOT\nREADY")
         property string _disconnectedText:  qsTr("Disconnected")
-        property string _armedText:         qsTr(" ON")
+        property string _armedText:         qsTr(" FOIL")
         property string _flyingText:        qsTr("Flying")
         property string _landingText:       qsTr("Landing")
 
+        // The ready text is one long word, so it uses a slightly smaller size.
+        // The not ready text is shorter and uses two lines.
+        function statusPixelSize() {
+            if (mainStatusLabel.text === mainStatusLabel._notReadyText) {
+                return mainStatusLabel._notReadyPixelSize
+            }
+            if (mainStatusLabel.text === mainStatusLabel._readyToFlyText) {
+                return mainStatusLabel._readyPixelSize
+            }
+            return mainStatusLabel._statusPixelSize
+        }
+
+        // State value 255 means that the subsystem is off. A missing state
+        // also means that the subsystem is not available.
+        function _stateIsOk(stateFact) {
+            if (!stateFact) {
+                return false
+            }
+            var stateValue = stateFact.rawValue
+            if (stateValue === undefined || stateValue === null) {
+                return false
+            }
+            return stateValue !== 255
+        }
+
+        // The boat is ready when the attitude, heave, speed and joystick
+        // states all report a value other than 255.
+        function _boatReady() {
+            if (!_activeVehicle) {
+                return false
+            }
+            return _stateIsOk(_activeVehicle.attitudeState)
+                && _stateIsOk(_activeVehicle.heaveState)
+                && _stateIsOk(_activeVehicle.speedState)
+                && _stateIsOk(_activeVehicle.joystickState)
+        }
+
         function mainStatusText() {
-            var statusText
             if (_activeVehicle) {
                 if (_communicationLost) {
                     _mainStatusBGColor = "red"
@@ -66,56 +110,14 @@ RowLayout {
                 }
                 if (_activeVehicle.armed) {
                     _mainStatusBGColor = "green"
-
-                    if (_healthAndArmingChecksSupported) {
-                        if (_activeVehicle.healthAndArmingCheckReport.canArm) {
-                            if (_activeVehicle.healthAndArmingCheckReport.hasWarningsOrErrors) {
-                                _mainStatusBGColor = "yellow"
-                            }
-                        } else {
-                            _mainStatusBGColor = "red"
-                        }
-                    }
-
-                    if (_activeVehicle.flying) {
-                        return mainStatusLabel._flyingText
-                    } else if (_activeVehicle.landing) {
-                        return mainStatusLabel._landingText
-                    } else {
-                        return mainStatusLabel._armedText
-                    }
-                } else {
-                    if (_healthAndArmingChecksSupported) {
-                        if (_activeVehicle.healthAndArmingCheckReport.canArm) {
-                            if (_activeVehicle.healthAndArmingCheckReport.hasWarningsOrErrors) {
-                                _mainStatusBGColor = "yellow"
-                            } else {
-                                _mainStatusBGColor = "green"
-                            }
-                            return mainStatusLabel._readyToFlyText
-                        } else {
-                            _mainStatusBGColor = "red"
-                            return mainStatusLabel._notReadyToFlyText
-                        }
-                    } else if (_activeVehicle.readyToFlyAvailable) {
-                        if (_activeVehicle.readyToFly) {
-                            _mainStatusBGColor = "green"
-                            return mainStatusLabel._readyToFlyText
-                        } else {
-                            _mainStatusBGColor = "yellow"
-                            return mainStatusLabel._notReadyToFlyText
-                        }
-                    } else {
-                        // Best we can do is determine readiness based on AutoPilot component setup and health indicators from SYS_STATUS
-                        if (_activeVehicle.allSensorsHealthy && _activeVehicle.autopilotPlugin.setupComplete) {
-                            _mainStatusBGColor = "green"
-                            return mainStatusLabel._readyToFlyText
-                        } else {
-                            _mainStatusBGColor = "yellow"
-                            return mainStatusLabel._notReadyToFlyText
-                        }
-                    }
+                    return mainStatusLabel._armedText
                 }
+                if (_boatReady()) {
+                    _mainStatusBGColor = mainStatusLabel._readyBackgroundColor
+                    return mainStatusLabel._readyToFlyText
+                }
+                _mainStatusBGColor = "red"
+                return mainStatusLabel._notReadyText
             } else {
                 _mainStatusBGColor = qgcPal.brandingPurple
                 return mainStatusLabel._disconnectedText
