@@ -25,8 +25,12 @@ cmake_dependent_option(QGC_BUILD_TESTING "Enable testing" ON "CMAKE_BUILD_TYPE S
 cmake_dependent_option(QGC_DEBUG_QML "Build QGroundControl with QML debugging/profiling support." OFF "CMAKE_BUILD_TYPE STREQUAL Debug" OFF)
 
 # Features
+# Semicolon separated list of translation locales built into the binary.
+# English is built in. Add or remove locales here.
+set(QGC_LANGUAGES "es_ES" CACHE STRING "Translation locales to build")
+
 option(QGC_UTM_ADAPTER "Enable UTM Adapter" OFF)
-option(QGC_VIEWER3D "Enable Viewer3D" ON) # Qt6Quick3D_FOUND
+option(QGC_VIEWER3D "Enable Viewer3D" OFF) # Qt6Quick3D_FOUND
 # option(QGC_DISABLE_MAVLINK_INSPECTOR "Disable Mavlink Inspector" OFF) # This removes QtCharts which is GPL licensed
 
 # Comms

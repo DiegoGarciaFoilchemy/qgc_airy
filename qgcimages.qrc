@@ -91,12 +91,6 @@
     <file alias="FollowComponentIcon.png">src/AutoPilotPlugins/Common/Images/FlightModesComponentIcon.png</file>
     <file alias="FlightModesComponentIcon.png">src/AutoPilotPlugins/Common/Images/FlightModesComponentIcon.png</file>
     <file alias="FloatingWindow.svg">src/AnalyzeView/FloatingWindow.svg</file>
-    <file alias="Frames/BlueROV1.png">src/AutoPilotPlugins/APM/Images/bluerov-frame.png</file>
-    <file alias="Frames/SimpleROV-3.png">src/AutoPilotPlugins/APM/Images/simple3-frame.png</file>
-    <file alias="Frames/SimpleROV-4.png">src/AutoPilotPlugins/APM/Images/simple4-frame.png</file>
-    <file alias="Frames/SimpleROV-5.png">src/AutoPilotPlugins/APM/Images/simple5-frame.png</file>
-    <file alias="Frames/Vectored.png">src/AutoPilotPlugins/APM/Images/vectored-frame.png</file>
-    <file alias="Frames/Vectored6DOF.png">src/AutoPilotPlugins/APM/Images/vectored6dof-frame.png</file>
     <file alias="Gears.svg">src/UI/toolbar/Images/Gears.svg</file>
     <file alias="GeoFence.svg">src/AutoPilotPlugins/PX4/Images/GeoFence.svg</file>
     <file alias="GeoFenceLight.svg">src/AutoPilotPlugins/PX4/Images/GeoFenceLight.svg</file>
@@ -111,7 +105,6 @@
     <file alias="Joystick.png">src/UI/toolbar/Images/Joystick.png</file>
     <file alias="LandMode.svg">src/AutoPilotPlugins/PX4/Images/LandMode.svg</file>
     <file alias="LandModeCopter.svg">src/AutoPilotPlugins/PX4/Images/LandModeCopter.svg</file>
-    <file alias="LightsComponentIcon.png">src/AutoPilotPlugins/APM/Images/LightsComponentIcon.png</file>
     <file alias="LogDownloadIcon.svg">src/AnalyzeView/LogDownloadIcon.svg</file>
     <file alias="LowBattery.svg">src/AutoPilotPlugins/PX4/Images/LowBattery.svg</file>
     <file alias="LowBatteryLight.svg">src/AutoPilotPlugins/PX4/Images/LowBatteryLight.svg</file>
@@ -186,9 +179,6 @@
     <file alias="Signal60.svg">src/UI/toolbar/Images/Signal60.svg</file>
     <file alias="Signal80.svg">src/UI/toolbar/Images/Signal80.svg</file>
     <file alias="StationMode.svg">src/AutoPilotPlugins/Common/Images/StationMode.svg</file>
-    <file alias="SubFrameComponentIcon.png">src/AutoPilotPlugins/APM/Images/SubFrameComponentIcon.png</file>
-    <file alias="ForwardingSupportIcon.svg">src/AutoPilotPlugins/APM/Images/ForwardingSupportIcon.svg</file>
-    <file alias="ForwardingSupportIconGreen.svg">src/AutoPilotPlugins/APM/Images/ForwardingSupportIconGreen.svg</file>
     <file alias="subMenuButtonImage.png">resources/CogWheels.png</file>
     <file alias="subVehicleArrowOpaque.png">src/FlightMap/Images/sub.png</file>
     <file alias="TelemRSSI.svg">src/UI/toolbar/Images/TelemRSSI.svg</file>
@@ -214,7 +204,6 @@
     <file alias="Yield.svg">src/UI/toolbar/Images/Yield.svg</file>
     <file alias="ZoomMinus.svg">src/FlightMap/Images/ZoomMinus.svg</file>
     <file alias="ZoomPlus.svg">src/FlightMap/Images/ZoomPlus.svg</file>
-    <file alias="Viewer3D/City3DMapIcon.svg">src/Viewer3D/Images/city_3d_map_icon.svg</file>
     <file alias="boat_side.svg">src/FlightMap/Images/boat_side.svg</file>
     <file alias="boat_rear.svg">src/FlightMap/Images/boat_rear.svg</file>
     <file alias="vesselOutline.svg">src/FlightMap/Images/vesselOutline.svg</file>

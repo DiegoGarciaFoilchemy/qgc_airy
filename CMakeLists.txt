@@ -528,7 +528,19 @@ if(QGC_CUSTOM_BUILD)
     target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CUSTOM_INCLUDE_DIRECTORIES})
 endif()
 
-file(GLOB TS_SOURCES ${CMAKE_SOURCE_DIR}/translations/qgc_*.ts)
+# Only the locales listed in QGC_LANGUAGES are compiled into the binary.
+# English is built in and needs no translation file.
+set(TS_SOURCES)
+foreach(QGC_LANG IN LISTS QGC_LANGUAGES)
+    foreach(QGC_TS_PREFIX source json)
+        set(QGC_TS_FILE "${CMAKE_SOURCE_DIR}/translations/qgc_${QGC_TS_PREFIX}_${QGC_LANG}.ts")
+        if(EXISTS "${QGC_TS_FILE}")
+            list(APPEND TS_SOURCES "${QGC_TS_FILE}")
+        else()
+            message(WARNING "Missing translation file: ${QGC_TS_FILE}")
+        endif()
+    endforeach()
+endforeach()
 set_source_files_properties(${TS_SOURCES} PROPERTIES OUTPUT_LOCATION "${CMAKE_BINARY_DIR}/i18n")
 qt_add_translations(${CMAKE_PROJECT_NAME}
     # TS_FILE_BASE ${CMAKE_PROJECT_NAME}

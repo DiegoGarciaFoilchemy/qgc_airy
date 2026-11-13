@@ -219,16 +219,6 @@ void QGCApplication::setLanguage()
     if (possibleLocale != QLocale::AnyLanguage) {
         _locale = QLocale(possibleLocale);
     }
-    //-- We have specific fonts for Korean
-    if (_locale == QLocale::Korean) {
-        qCDebug(QGCApplicationLog) << "Loading Korean fonts" << _locale.name();
-        if(QFontDatabase::addApplicationFont(":/fonts/NanumGothic-Regular") < 0) {
-            qCWarning(QGCApplicationLog) << "Could not load /fonts/NanumGothic-Regular font";
-        }
-        if(QFontDatabase::addApplicationFont(":/fonts/NanumGothic-Bold") < 0) {
-            qCWarning(QGCApplicationLog) << "Could not load /fonts/NanumGothic-Bold font";
-        }
-    }
     qCDebug(QGCApplicationLog) << "Loading localizations for" << _locale.name();
     removeTranslator(JsonHelper::translator());
     removeTranslator(&_qgcTranslatorSourceCode);

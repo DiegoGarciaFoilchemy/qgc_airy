@@ -22,21 +22,15 @@
 #include <QtCore/QDir>
 #include <QtCore/QSettings>
 
-// Release languages are 90%+ complete
+// Only the locales built by QGC_LANGUAGES are offered in the UI.
+// English is built in. Spanish ships qgc_source_es_ES and qgc_json_es_ES.
 QList<QLocale::Language> AppSettings::_rgReleaseLanguages = {
     QLocale::English,
-    QLocale::Azerbaijani,    
-    QLocale::Chinese,
-    QLocale::Japanese,
-    QLocale::Korean,
-    QLocale::Portuguese,
-    QLocale::Russian,
+    QLocale::Spanish,
 };
 
 // Partial languages are 40%+ complete
-QList<QLocale::Language> AppSettings::_rgPartialLanguages = {
-    QLocale::Ukrainian,
-};
+QList<QLocale::Language> AppSettings::_rgPartialLanguages = {};
 
 AppSettings::LanguageInfo_t AppSettings::_rgLanguageInfo[] = {
     { QLocale::AnyLanguage,     "System" },                     // Must be first
@@ -52,7 +46,6 @@ AppSettings::LanguageInfo_t AppSettings::_rgLanguageInfo[] = {
     { QLocale::Hebrew,          "עברית (Hebrew)" },
     { QLocale::Italian,         "Italiano (Italian)" },
     { QLocale::Japanese,        "日本語 (Japanese)" },
-    { QLocale::Korean,          "한국어 (Korean)" },
     { QLocale::NorwegianBokmal, "Norsk (Norwegian)" },
     { QLocale::Polish,          "Polskie (Polish)" },
     { QLocale::Portuguese,      "Português (Portuguese)" },
@@ -205,7 +198,7 @@ DECLARE_SETTINGSFACT_NO_FUNC(AppSettings, qLocaleLanguage)
                 rgEnumValues.append(languageInfo.languageId);
             }
         }
-#ifdef QGC_DAILY_BUILD
+#if defined(QGC_DAILY_BUILD) && defined(QGC_TEST_LANGUAGES)
         // Only daily builds include full set of languages for testing purposes
         for (const auto& languageInfo: _rgLanguageInfo) {
             if (!_rgReleaseLanguages.contains(languageInfo.languageId) && !_rgPartialLanguages.contains(languageInfo.languageId)) {
