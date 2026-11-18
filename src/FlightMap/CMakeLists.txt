@@ -6,6 +6,7 @@ qt_add_qml_module(FlightMapModule
     RESOURCE_PREFIX /qml
     QML_FILES
         Widgets/FoilAngle.qml
+        Widgets/InterceptorDeploy.qml
         Widgets/RudderDeploy.qml
         Widgets/VesselPitch.qml
         Widgets/VesselPower.qml

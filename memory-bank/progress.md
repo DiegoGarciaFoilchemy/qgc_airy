@@ -2,7 +2,11 @@
 
 ## What works
 
-- Gerris telemetry pages: `Page1`, `Page3`, `Page4` in `src/FlightDisplay`.
+- Boat switch: `QGC_BOAT=GERRIS` (default) or `QGC_BOAT=AIRY` in `src/FlightDisplay/CMakeLists.txt`. Each boat has its own page set under `src/FlightDisplay/Gerris` and `src/FlightDisplay/Airy`. The backend is shared, so one binary serves one boat per build.
+- Gerris telemetry pages: `Page1`, `Page3`, `Page4` in `src/FlightDisplay/Gerris`.
+- Airy pages: `Page1` (foils with `InterceptorDeploy`), `Page2` (freeboard), `Page3` (actuator control), `Page4` in `src/FlightDisplay/Airy`. Every vehicle fact and method they use already exists on this branch.
+
+Boat switch verification on 2026-11-18: both `QGC_BOAT=GERRIS` and `QGC_BOAT=AIRY` configure, build and link with zero errors. Both binaries pass a 20 second offscreen smoke test with no QML errors.
 - Gerris fact groups for ACU, BCM, BMS, charger, DCDC, inverter, alarms and warnings.
 - Setup pages, parameter editor, link manager, settings.
 - MAVLink dialect from the Airy fork.

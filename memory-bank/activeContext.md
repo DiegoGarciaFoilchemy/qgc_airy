@@ -2,10 +2,14 @@
 
 ## Current focus
 
-Pass one and part of pass two are complete and verified. Follow Me and ADSB are gone. The analyze tools stay, because the crew uses them.
+Boat switch is implemented. The CMake option `QGC_BOAT` selects the display page set: `GERRIS` (default) or `AIRY`. Pass one and part of pass two of the removal work are complete and verified. Follow Me and ADSB are gone. The analyze tools stay, because the crew uses them.
 
 ## Recent changes
 
+- Boat switch: `src/FlightDisplay/Gerris` and `src/FlightDisplay/Airy` each hold a `FlyView.qml`, `Page1.qml`, `Page3.qml`, `Page4.qml`. `Page2.qml` and `Page5.qml` are shared because they are identical on both boats.
+- `src/FlightDisplay/CMakeLists.txt` reads `QGC_BOAT` and registers the selected boat files with `QT_RESOURCE_ALIAS`, so the QML types keep their root names. Switch with `cmake -DQGC_BOAT=AIRY` and recompile.
+- `InterceptorDeploy.qml` restored to `src/FlightMap/Widgets` from the `airy` branch. `vesselBow.svg` restored to `src/FlightMap/Images` with alias `VesselBow.svg` in `qgcimages.qrc`, because Airy enables `Page2`.
+- The Airy `FlyView.qml` lost its `import Viewer3D` and `import QtLocation` lines, because both modules are off or removed on this branch.
 - Pass one: 3D viewer off, fonts trimmed, translations limited to Spanish, ArduPilot images dropped. See `progress.md`.
 - Pass two, part one: Follow Me and ADSB removed.
 - Maps switched off at startup: the hidden `PlanView` and its `FlightMap` are gone, so no tile cache and no tile requests.
