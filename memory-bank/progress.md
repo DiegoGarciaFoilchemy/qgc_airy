@@ -91,6 +91,7 @@ Fix:
 - New `MavlinkSettings` fact `sendSystemTimeToVehicle`, default false. It appears in Application Settings, Telemetry page, group "Time".
 - `_sendQGCTimeToVehicle` returns early when the fact is off.
 - When the fact is on, a clock before 2022-01-01 is refused with a warning, because such a date is certainly wrong.
+- `_sendQGCTimeToVehicle` takes its timestamp from `QGCClock`, so with both options on it sends the GPS corrected time. The send stays off by default.
 
 ArduPilot accepts a ground station time only when `RTC_TYPES` allows the MAVLink source (default allows GPS only), the vehicle is disarmed, and the new time is later than the current time. The default parameter set already ignores the message, but a changed parameter makes the vehicle follow the ground station clock.
 

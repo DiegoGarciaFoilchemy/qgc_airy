@@ -1821,8 +1821,9 @@ void Vehicle::_sendQGCTimeToVehicle()
     }
 
     // Refuse a date before 2022. Such a clock is certainly wrong.
+    // Use the application clock, which follows the vehicle GPS time when that option is on.
     static constexpr qint64 earliestPlausibleMsecs = 1640995200000LL; // 2022-01-01 00:00 UTC
-    const qint64 nowMsecs = QDateTime::currentMSecsSinceEpoch();
+    const qint64 nowMsecs = QGCClock::currentMSecsSinceEpoch();
     if (nowMsecs < earliestPlausibleMsecs) {
         qCWarning(VehicleLog) << "System time not sent to the vehicle. The computer clock is wrong:" << QDateTime::fromMSecsSinceEpoch(nowMsecs).toString(Qt::ISODate);
         return;
